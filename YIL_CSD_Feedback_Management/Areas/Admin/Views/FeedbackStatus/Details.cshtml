@@ -1,0 +1,422 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.ClosedCaseDetailsViewModel
+
+@{
+    ViewData["Title"] = "Closed Case Upload Details";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+
+        @TempData["Success"]
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+        </button>
+
+    </div>
+}
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header bg-primary text-white">
+
+        <h5 class="mb-0">
+
+            Upload Information
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <table class="table table-borderless">
+
+                    <tr>
+
+                        <th width="180">File Name</th>
+
+                        <td>@Model.FileName</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Uploaded By</th>
+
+                        <td>@Model.UploadedBy</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Upload Date</th>
+
+                        <td>@Model.UploadDate.ToString("dd-MMM-yyyy hh:mm tt")</td>
+
+                    </tr>
+
+                </table>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <table class="table table-borderless">
+
+                    <tr>
+
+                        <th width="180">Total Uploaded</th>
+
+                        <td>
+
+                            <span class="badge bg-primary">
+
+                                @Model.TotalCases
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>East</th>
+
+                        <td>
+
+                            <span class="badge bg-success">
+
+                                <a asp-action="RegionDetails"
+                                   asp-route-uploadId="@Model.UploadID"
+                                   asp-route-region="East"
+                                   class="text-decoration-none fw-bold">
+
+                                    @Model.EastCases
+
+                                </a>
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>West</th>
+
+                        <td>
+
+                            <span class="badge bg-info">
+
+                                @Model.WestCases
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>North</th>
+
+                        <td>
+
+                            <span class="badge bg-warning text-dark">
+
+                                @Model.NorthCases
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>South</th>
+
+                        <td>
+
+                            <span class="badge bg-danger">
+
+                                @Model.SouthCases
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Gujarat</th>
+
+                        <td>
+
+                            <span class="badge bg-secondary">
+
+                                @Model.GujaratCases
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>BHQ</th>
+
+                        <td>
+
+                            <span class="badge bg-dark">
+
+                                @Model.BHQCases
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Status</th>
+
+                        <td>
+
+                            @if (Model.Processed)
+                            {
+                                <span class="badge bg-success">
+                                    Processed
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">
+                                    Pending Processing
+                                </span>
+                            }
+
+                        </td>
+
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="card shadow-sm">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+
+            Uploaded Closed Case Preview
+
+        </h5>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="table-light">
+
+                <tr>
+
+                    <th width="60">#</th>
+
+                    <th>Case Number</th>
+
+                    <th>Feedback ID</th>
+
+                    <th>Region</th>
+
+                    <th>Case Owner</th>
+
+                    <th>Status</th>
+
+                    <th>Remarks</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @{
+                    int sl = 1;
+                }
+
+                @foreach (var item in Model.Records)
+                {
+                    <tr class="@(item.MatchStatus == "Closed Successfully" ? "table-success"
+                                    : item.MatchStatus == "Already Closed" ? "table-warning"
+                                    : item.MatchStatus == "Feedback Not Found" ? "table-danger"
+                                    : "")">
+
+                        <td>@sl</td>
+
+                        <td>
+
+                            <strong>
+
+                                @item.CaseNumber
+
+                            </strong>
+
+                        </td>
+
+                        <td>
+
+                            @if (item.FeedbackID.HasValue)
+                            {
+                                @item.FeedbackID
+                            }
+                            else
+                            {
+                                <span class="text-danger">
+
+                                    -
+
+                                </span>
+                            }
+
+                        </td>
+
+                        <td>
+
+                            @item.Region
+
+                        </td>
+
+                        <td>
+
+                            @item.CaseOwnerOrg
+
+                        </td>
+
+                        <td>
+
+                            @if (item.MatchStatus == "Closed Successfully")
+                            {
+                                <span class="badge bg-success">
+
+                                    Closed Successfully
+
+                                </span>
+                            }
+                            else if (item.MatchStatus == "Already Closed")
+                            {
+                                <span class="badge bg-warning text-dark">
+
+                                    Already Closed
+
+                                </span>
+                            }
+                            else if (item.MatchStatus == "Feedback Not Found")
+                            {
+                                <span class="badge bg-danger">
+
+                                    Feedback Not Found
+
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-info">
+
+                                    Ready
+
+                                </span>
+                            }
+
+                        </td>
+
+                        <td>
+
+                            @item.Remarks
+
+                        </td>
+
+                    </tr>
+
+                    sl++;
+
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<div class="mt-4 d-flex justify-content-between">
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+
+        <i class="bi bi-arrow-left"></i>
+
+        Back
+
+    </a>
+
+    @if (!Model.Processed)
+    {
+        <form asp-action="CloseUploadedCases"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   name="id"
+                   value="@Model.UploadID" />
+
+            <button type="submit"
+                    class="btn btn-success btn-lg"
+                    onclick="return confirm('Are you sure you want to close all matched cases?');">
+
+                <i class="bi bi-check-circle-fill"></i>
+
+                Close Uploaded Cases
+
+            </button>
+
+        </form>
+    }
+    else
+    {
+        <button class="btn btn-secondary btn-lg"
+                disabled>
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            Already Processed
+
+        </button>
+    }
+</div>
+

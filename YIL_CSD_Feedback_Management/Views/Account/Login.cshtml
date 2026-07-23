@@ -1,0 +1,198 @@
+﻿@model YIL_CSD_Feedback_Management.ViewModels.LoginViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSD Feedback | Sign In</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/login.css" />
+</head>
+<body class="login-page">
+    <div class="network-bg"></div>
+
+
+    <div class="container-fluid px-5 flex-grow-1 d-flex align-items-center">
+        <div class="row align-items-center w-100 gx-5">
+            <!-- Left Panel Information Section -->
+            <div class="col-lg-7 col-xl-7 text-start pe-xl-5">
+                <div class="d-flex align-items-center mb-4">
+                    <span class="yokogawa-symbol">◆</span>
+                    <h2 class="fw-bold tracking-wide m-0">YOKOGAWA INDIA LIMITED</h2>
+                    
+                </div>
+                <p class="text-muted small uppercase mb-1">Co-innovating tomorrow™</p>
+                <h1 class="display-4 fw-bold mb-3">Customer Feedback<br>Management System</h1>
+                <h5 class="text-info mb-4">Digital Customer Experience Platform</h5>
+
+                <!-- Dynamic Row Features -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6 d-flex align-items-start">
+                        <div class="fs-3 text-primary me-3"><i class="bi bi-grid-3x3-gap"></i></div>
+                        <div>
+                            <h6 class="mb-1">Region Wise Dashboard</h6>
+                            <p class="text-muted small">Real-time overview of all regions</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-start">
+                        <div class="fs-3 text-success me-3"><i class="bi bi-check2-square"></i></div>
+                        <div>
+                            <h6 class="mb-1">Closed Case Management</h6>
+                            <p class="text-muted small">Efficient tracking and resolution</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metrics Grid -->
+                <div class="row g-3">
+                    <div class="col-6 col-sm-3">
+                        <div class="stat-box blue-glow">
+                            <i class="bi bi-people text-info fs-4"></i>
+                            <h4 class="fw-bold mt-2 mb-0">10,000+</h4>
+                            <small class="text-muted d-block">Feedbacks</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <div class="stat-box green-glow">
+                            <i class="bi bi-globe text-success fs-4"></i>
+                            <h4 class="fw-bold mt-2 mb-0">6</h4>
+                            <small class="text-muted d-block">Regions</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <div class="stat-box purple-glow">
+                            <i class="bi bi-clock text-purple fs-4"></i>
+                            <h4 class="fw-bold mt-2 mb-0">99.9%</h4>
+                            <small class="text-muted d-block">Uptime</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <div class="stat-box orange-glow">
+                            <i class="bi bi-shield-check text-warning fs-4"></i>
+                            <h4 class="fw-bold mt-2 mb-0">24x7</h4>
+                            <small class="text-muted d-block">Secure Access</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel Login Card -->
+            <div class="col-lg-5">
+                <div class="login-card mx-auto">
+                    <div class="text-center mb-4">
+
+                        <div class="d-flex align-items-center justify-content-center mb-3">
+                            <span class="text-warning yokogawa-symbol">◆</span>
+                            <h2 class="fw-bold tracking-wide m-0">YOKOGAWA INDIA LIMITED</h2>
+                        </div>
+
+                        <small class="text-white-50 text-uppercase d-block mb-3">
+                            Co-innovating tomorrow™
+                        </small>
+
+                        <!-- Admin Badge -->
+                        <div id="adminBadge" class="mb-3 d-none">
+                            <span class="badge bg-danger px-3 py-2 fs-6">
+                                <i class="bi bi-shield-lock-fill me-1"></i>
+                                ADMIN ACCESS
+                            </span>
+                        </div>
+
+                        <h4 id="loginTitle" class="fw-normal">
+                            Welcome Back!
+                        </h4>
+
+                        <p id="loginDescription" class="text-white-50 small">
+                            Sign in to continue to the Customer Feedback Management Portal.
+                        </p>
+
+                    </div>
+
+                    <form id="loginForm" asp-action="Login"
+                          asp-controller="Account"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="UserName" class="form-label small text-muted"></label>
+                            <div class="custom-input-group">
+                                <i class="bi bi-person ms-2"></i>
+                                <input asp-for="UserName" placeholder="Enter your user name" autocomplete="off" />
+                            </div>
+                            <span asp-validation-for="UserName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Password" class="form-label small text-muted"></label>
+                            <div class="custom-input-group">
+                                <i class="bi bi-lock ms-2"></i>
+                                <input asp-for="Password" placeholder="Enter your password" id="passwordField" />
+                                <i id="passwordIcon" class="bi bi-eye me-2 style-pointer" style="cursor: pointer;" onclick="togglePassword()"></i>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-check mb-4 text-start">
+                            <input class="form-check-input bg-transparent border-secondary" asp-for="RememberMe" />
+                            <label class="form-check-label text-white-50" asp-for="RememberMe">Remember Me</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-signin mb-4">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
+                        </button>
+
+                        <div class="text-center text-muted small mt-2">
+                            <i class="bi bi-shield-lock text-info me-1"></i> Your data is protected with enterprise-grade security
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Persistent Bottom Information Dashboard Bar -->
+    <footer class="container-fluid border-top border-secondary py-3 rgba-bg-dark text-white-50 small mt-5">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center">
+            <div>© 2026 Yokogawa India Limited. All rights reserved.</div>
+            <div class="d-flex gap-4">
+                <span>
+
+                    <i class="bi bi-calendar3 me-1"></i>
+
+                    <span id="currentDate"></span>
+
+                </span>
+                <span>
+
+                    <i class="bi bi-clock me-1"></i>
+
+                    <span id="currentTime"></span>
+
+                </span>
+                <span>
+
+                    <i class="bi bi-sun me-1"></i>
+
+                    <span id="greeting"></span>
+
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/login.js"></script>
+</body>
+</html>

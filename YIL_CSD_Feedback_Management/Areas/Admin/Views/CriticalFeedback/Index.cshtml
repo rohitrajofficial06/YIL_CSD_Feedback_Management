@@ -1,0 +1,488 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.CriticalFeedbackIndexViewModel
+
+@{
+    ViewData["Title"] = "Critical Feedback";
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-critical-feedback.css"
+      asp-append-version="true" />
+
+<div class="critical-feedback-page">
+    <div class="card-header d-flex justify-content-between align-items-center">
+
+        <div>
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-exclamation-octagon-fill text-danger me-2"></i>
+
+                Critical Feedback Records
+
+            </h5>
+
+            <small class="text-muted">
+
+                Showing
+
+                <strong>
+                    @(Model.TotalRecords == 0 ? 0 : ((Model.PageNumber - 1) * Model.PageSize + 1))
+                </strong>
+
+                -
+
+                <strong>
+                    @(Math.Min(Model.PageNumber * Model.PageSize, Model.TotalRecords))
+                </strong>
+
+                of
+
+                <strong>@Model.TotalRecords</strong>
+
+                Records
+
+            </small>
+
+        </div>
+
+        <form asp-action="Index" method="get">
+
+            <input type="hidden" asp-for="SearchText" />
+            <input type="hidden" asp-for="Region" />
+            <input type="hidden" asp-for="Month" />
+            <input type="hidden" asp-for="Year" />
+            <input type="hidden" asp-for="FeedbackSource" />
+            <input type="hidden" asp-for="Rating" />
+
+            <label class="me-2">Show</label>
+
+            <select asp-for="PageSize"
+                    class="form-select d-inline-block"
+                    style="width:90px"
+                    onchange="this.form.submit()">
+
+                <option value="10">10</option>
+
+                <option value="25">25</option>
+
+                <option value="50">50</option>
+
+                <option value="100">100</option>
+
+            </select>
+
+        </form>
+
+    </div>
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-lg-3">
+
+            <div class="summary-card danger">
+
+                <i class="bi bi-exclamation-circle-fill"></i>
+
+                <h6>Total Critical Feedback</h6>
+
+                <h2>@Model.TotalCriticalFeedback</h2>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3">
+
+            <div class="summary-card warning">
+
+                <i class="bi bi-star-half"></i>
+
+                <h6>Average Rating</h6>
+
+                <h2>@Model.AverageRating.ToString("0.00")</h2>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3">
+
+            <div class="summary-card success">
+
+                <i class="bi bi-globe"></i>
+
+                <h6>Online</h6>
+
+                <h2>@Model.OnlineFeedback</h2>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3">
+
+            <div class="summary-card primary">
+
+                <i class="bi bi-upload"></i>
+
+                <h6>Uploaded</h6>
+
+                <h2>@Model.UploadedFeedback</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <strong>
+
+                Search Filters
+
+            </strong>
+
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="Index"
+                  method="get">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+
+                        <label>Search</label>
+
+                        <input asp-for="SearchText"
+                               class="form-control"
+                               placeholder="Company / SR No / Engineer" />
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <label>Region</label>
+
+                        <select asp-for="Region"
+                                class="form-select">
+
+                            <option value="">All</option>
+
+                            <option>East</option>
+
+                            <option>West</option>
+
+                            <option>North</option>
+
+                            <option>South</option>
+
+                            <option>Gujarat</option>
+
+                            <option>NCR</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <label>Month</label>
+
+                        <select asp-for="Month"
+                                class="form-select">
+
+                            <option value="">All</option>
+
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                <option value="@i">
+                                    @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <label>Year</label>
+
+                        <select asp-for="Year"
+                                class="form-select">
+
+                            <option value="">All</option>
+
+                            @for (int y = DateTime.Now.Year; y >= 2024; y--)
+                            {
+                                <option value="@y">@y</option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <label>Source</label>
+
+                        <select asp-for="FeedbackSource"
+                                class="form-select">
+
+                            <option value="">All</option>
+
+                            <option>Online</option>
+
+                            <option>Upload</option>
+
+                        </select>
+
+                    </div>
+
+
+                </div>
+
+                <div class="mt-4 text-end">
+
+                    <button class="btn btn-primary">
+
+                        <i class="bi bi-search"></i>
+
+                        Search
+
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary">
+
+                        Reset
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th>Company</th>
+                        <th>Region</th>
+                        <th>Engineer</th>
+                        <th>Source</th>
+                        <th>Average Rating</th>
+                        <th>Closed Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @if (Model.Feedbacks.Any())
+                    {
+                        foreach (var item in Model.Feedbacks)
+                        {
+                            <tr>
+
+                                <td>@item.CompanyName</td>
+
+                                <td>@item.Region</td>
+
+                                <td>@item.YILEngineer</td>
+
+                                <td>@item.FeedbackSource</td>
+
+                                <td>@item.AverageRating</td>
+
+                                <td>@item.ExcelClosedDate?.ToString("dd-MMM-yyyy")</td>
+
+                                <td>
+
+                                    @if (item.AverageRating <= 1)
+                                    {
+                                        <span class="badge bg-danger">Very Critical</span>
+                                    }
+                                    else if (item.AverageRating <= 2)
+                                    {
+                                        <span class="badge bg-warning text-dark">Critical</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info">Needs Attention</span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.FeedbackID"
+                                       class="btn btn-sm btn-primary">
+
+                                        View
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="8" class="text-center">
+
+                                No Critical Feedback Found
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <div>
+                <h5 class="mb-1">
+                    <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>
+                    Critical Feedback Records
+                </h5>
+
+                <small class="text-muted">
+                    Showing
+                    <strong>
+                        @(Model.TotalRecords == 0 ? 0 : ((Model.PageNumber - 1) * Model.PageSize + 1))
+                    </strong>
+                    -
+                    <strong>
+                        @(Math.Min(Model.PageNumber * Model.PageSize, Model.TotalRecords))
+                    </strong>
+                    of
+                    <strong>@Model.TotalRecords</strong>
+                    Critical Feedback(s)
+                </small>
+            </div>
+
+            <div class="d-flex align-items-center">
+
+                <label class="me-2 mb-0">Show</label>
+
+                <select asp-for="PageSize"
+                        class="form-select"
+                        style="width:90px"
+                        onchange="this.form.submit()">
+
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="mt-4">
+
+                <ul class="pagination justify-content-end">
+
+                    <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-PageNumber="@(Model.PageNumber - 1)"
+                           asp-route-SearchText="@Model.SearchText"
+                           asp-route-Region="@Model.Region"
+                           asp-route-Month="@Model.Month"
+                           asp-route-Year="@Model.Year"
+                           asp-route-FeedbackSource="@Model.FeedbackSource"
+                           asp-route-Rating="@Model.Rating"
+                           asp-route-PageSize="@Model.PageSize">
+
+                            <i class="bi bi-chevron-left"></i>
+
+                        </a>
+
+                    </li>
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-PageNumber="@i"
+                               asp-route-SearchText="@Model.SearchText"
+                               asp-route-Region="@Model.Region"
+                               asp-route-Month="@Model.Month"
+                               asp-route-Year="@Model.Year"
+                               asp-route-FeedbackSource="@Model.FeedbackSource"
+                               asp-route-Rating="@Model.Rating"
+                               asp-route-PageSize="@Model.PageSize">
+
+                                @i
+
+                            </a>
+
+                        </li>
+                    }
+
+                    <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-PageNumber="@(Model.PageNumber + 1)"
+                           asp-route-SearchText="@Model.SearchText"
+                           asp-route-Region="@Model.Region"
+                           asp-route-Month="@Model.Month"
+                           asp-route-Year="@Model.Year"
+                           asp-route-FeedbackSource="@Model.FeedbackSource"
+                           asp-route-Rating="@Model.Rating"
+                           asp-route-PageSize="@Model.PageSize">
+
+                            <i class="bi bi-chevron-right"></i>
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+        }
+
+    </div>
+
+
+
+
+</div>

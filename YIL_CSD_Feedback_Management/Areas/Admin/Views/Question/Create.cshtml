@@ -1,0 +1,247 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.QuestionCreateViewModel
+
+@{
+    ViewData["Title"] = "Create Question";
+}
+
+<div class="question-page">
+
+    <!-- ============================================== -->
+    <!-- PAGE HEADER -->
+    <!-- ============================================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h2>
+
+                <i class="bi bi-plus-circle-fill text-primary me-2"></i>
+
+                Create Question
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Add a new feedback question for the selected department.
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                Back
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- FORM -->
+    <!-- ============================================== -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <form asp-action="Create"
+                  method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="row g-4">
+                    <!-- Department -->
+
+                    <div class="col-md-6">
+
+                        <label asp-for="DepartmentID"
+                               class="form-label">
+                        </label>
+
+                        <select asp-for="DepartmentID"
+                                asp-items="Model.Departments"
+                                class="form-select">
+
+                            <option value="">Select Department</option>
+
+                        </select>
+
+                        <span asp-validation-for="DepartmentID"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- Question Number -->
+
+                    <div class="col-md-6">
+
+                        <label asp-for="QuestionNo"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="QuestionNo"
+                               class="form-control" />
+
+                        <span asp-validation-for="QuestionNo"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- Question -->
+
+                    <div class="col-md-12">
+
+                        <label asp-for="QuestionText"
+                               class="form-label">
+                        </label>
+
+                        <textarea asp-for="QuestionText"
+                                  rows="3"
+                                  class="form-control">
+                        </textarea>
+
+                        <span asp-validation-for="QuestionText"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- Control Type -->
+
+                    <div class="col-md-4">
+
+                        <label asp-for="ControlType"
+                               class="form-label">
+                        </label>
+
+                        <select asp-for="ControlType"
+                                class="form-select">
+
+                            <option value="Rating">
+                                Rating
+                            </option>
+
+                            <option value="Textbox">
+                                Textbox
+                            </option>
+
+                            <option value="Textarea">
+                                Textarea
+                            </option>
+
+                            <option value="Dropdown">
+                                Dropdown
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Minimum Rating -->
+
+                    <div class="col-md-4">
+
+                        <label asp-for="MinRating"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="MinRating"
+                               class="form-control" />
+
+                    </div>
+
+                    <!-- Maximum Rating -->
+
+                    <div class="col-md-4">
+
+                        <label asp-for="MaxRating"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="MaxRating"
+                               class="form-control" />
+
+                    </div>
+                    <!-- Display Order -->
+
+                    <div class="col-md-6">
+
+                        <label asp-for="DisplayOrder"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="DisplayOrder"
+                               class="form-control" />
+
+                    </div>
+
+                    <!-- Mandatory -->
+
+                    <div class="col-md-6 d-flex align-items-end">
+
+                        <div class="form-check form-switch">
+
+                            <input asp-for="IsMandatory"
+                                   class="form-check-input" />
+
+                            <label asp-for="IsMandatory"
+                                   class="form-check-label">
+
+                                Mandatory Question
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <hr class="my-4" />
+
+                <div class="text-end">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-check-circle me-1"></i>
+
+                        Save Question
+
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}

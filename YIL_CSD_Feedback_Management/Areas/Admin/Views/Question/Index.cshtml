@@ -1,0 +1,505 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.QuestionIndexViewModel
+
+@{
+    ViewData["Title"] = "Question Management";
+}
+
+<div class="question-page">
+
+    <!-- =============================================== -->
+    <!-- PAGE HEADER -->
+    <!-- =============================================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h2>
+
+                <i class="bi bi-ui-checks-grid text-primary me-2"></i>
+
+                Question Management
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Manage department-wise customer feedback questions.
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <a asp-action="Create"
+               class="btn btn-primary">
+
+                <i class="bi bi-plus-circle me-1"></i>
+
+                Add Question
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- =============================================== -->
+    <!-- SEARCH PANEL -->
+    <!-- =============================================== -->
+
+    <div class="search-panel">
+
+        <form asp-action="Index"
+              method="get">
+
+            <input type="hidden"
+                   asp-for="SortColumn" />
+
+            <input type="hidden"
+                   asp-for="SortDirection" />
+
+            <input type="hidden"
+                   asp-for="PageSize" />
+
+            <div class="row g-3">
+
+                <!-- Search -->
+
+                <div class="col-lg-5">
+
+                    <label class="form-label">
+
+                        Search
+
+                    </label>
+
+                    <input asp-for="SearchText"
+                           class="form-control"
+                           placeholder="Question No / Question Text" />
+
+                </div>
+
+                <!-- Department -->
+
+                <div class="col-lg-4">
+
+                    <label class="form-label">
+
+                        Department
+
+                    </label>
+
+                    <select asp-for="DepartmentID"
+                            asp-items="Model.Departments"
+                            class="form-select">
+
+                        <option value="">All Departments</option>
+
+                    </select>
+
+                </div>
+
+                <!-- Buttons -->
+
+                <div class="col-lg-3 d-flex align-items-end">
+
+                    <button class="btn btn-primary me-2">
+
+                        <i class="bi bi-search"></i>
+
+                        Search
+
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary">
+
+                        <i class="bi bi-arrow-clockwise"></i>
+
+                        Reset
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- =============================================== -->
+    <!-- QUESTION TABLE -->
+    <!-- =============================================== -->
+
+    <div class="feedback-table-card">
+
+        <!-- Table Header -->
+
+        <div class="table-header">
+
+            <div>
+
+                <h5>
+
+                    <i class="bi bi-list-check text-primary me-2"></i>
+
+                    Question List
+
+                </h5>
+
+                <small class="text-muted">
+
+                    Showing
+
+                    <strong>
+
+                        @(Model.TotalRecords == 0 ? 0 : ((Model.PageNumber - 1) * Model.PageSize + 1))
+
+                    </strong>
+
+                    -
+
+                    <strong>
+
+                        @(Math.Min(Model.PageNumber * Model.PageSize, Model.TotalRecords))
+
+                    </strong>
+
+                    of
+
+                    <strong>
+
+                        @Model.TotalRecords
+
+                    </strong>
+
+                    Questions
+
+                </small>
+
+            </div>
+
+            <!-- Page Size -->
+
+            <form asp-action="Index"
+                  method="get"
+                  class="d-flex align-items-center gap-2">
+
+                <!-- Preserve Search -->
+
+                <input type="hidden"
+                       asp-for="SearchText" />
+
+                <input type="hidden"
+                       asp-for="DepartmentID" />
+
+                <input type="hidden"
+                       asp-for="SortColumn" />
+
+                <input type="hidden"
+                       asp-for="SortDirection" />
+
+                <label class="small text-muted mb-0">
+
+                    Show
+
+                </label>
+
+                <select asp-for="PageSize"
+                        class="form-select"
+                        style="width:90px"
+                        onchange="this.form.submit()">
+
+                    <option value="10">10</option>
+
+                    <option value="25">25</option>
+
+                    <option value="50">50</option>
+
+                    <option value="100">100</option>
+
+                </select>
+
+            </form>
+
+        </div>
+
+        <!-- Table -->
+
+        <div class="table-responsive">
+
+            <table class="table feedback-table align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th style="width:90px;">
+
+                            <a asp-action="Index"
+                               asp-route-SortColumn="QuestionNo"
+                               asp-route-SortDirection="@(Model.SortDirection == "asc" ? "desc" : "asc")"
+                               asp-route-SearchText="@Model.SearchText"
+                               asp-route-DepartmentID="@Model.DepartmentID"
+                               asp-route-PageSize="@Model.PageSize">
+
+                                No.
+
+                            </a>
+
+                        </th>
+
+                        <th>
+
+                            <a asp-action="Index"
+                               asp-route-SortColumn="Department"
+                               asp-route-SortDirection="@(Model.SortDirection == "asc" ? "desc" : "asc")"
+                               asp-route-SearchText="@Model.SearchText"
+                               asp-route-DepartmentID="@Model.DepartmentID"
+                               asp-route-PageSize="@Model.PageSize">
+
+                                Department
+
+                            </a>
+
+                        </th>
+
+                        <th>
+
+                            Question
+
+                        </th>
+
+                        <th style="width:130px;">
+
+                            Control
+
+                        </th>
+
+                        <th style="width:120px;">
+
+                            Mandatory
+
+                        </th>
+
+                        <th style="width:120px;">
+
+                            Order
+
+                        </th>
+
+                        <th class="text-center"
+                            style="width:150px;">
+
+                            Action
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+                    @if (Model.Questions != null && Model.Questions.Any())
+                    {
+                        foreach (var item in Model.Questions)
+                        {
+                            <tr>
+
+                                <!-- Question Number -->
+
+                                <td>
+
+                                    <span class="badge bg-primary">
+
+                                        Q-@item.QuestionNo
+
+                                    </span>
+
+                                </td>
+
+                                <!-- Department -->
+
+                                <td>
+
+                                    <span class="badge bg-info text-dark">
+
+                                        @item.DepartmentName
+
+                                    </span>
+
+                                </td>
+
+                                <!-- Question -->
+
+                                <td>
+
+                                    <div class="fw-semibold">
+
+                                        @item.QuestionText
+
+                                    </div>
+
+                                </td>
+
+                                <!-- Control Type -->
+
+                                <td>
+
+                                    @if (item.ControlType == "Rating")
+                                    {
+                                        <span class="badge bg-success">
+
+                                            Rating
+
+                                        </span>
+                                    }
+                                    else if (item.ControlType == "Textbox")
+                                    {
+                                        <span class="badge bg-warning text-dark">
+
+                                            Textbox
+
+                                        </span>
+                                    }
+                                    else if (item.ControlType == "Textarea")
+                                    {
+                                        <span class="badge bg-secondary">
+
+                                            Textarea
+
+                                        </span>
+                                    }
+                                    else if (item.ControlType == "Dropdown")
+                                    {
+                                        <span class="badge bg-info">
+
+                                            Dropdown
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-dark">
+
+                                            @item.ControlType
+
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <!-- Mandatory -->
+
+                                <td>
+
+                                    @if (item.IsMandatory)
+                                    {
+                                        <span class="badge bg-success">
+
+                                            Yes
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+
+                                            No
+
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <!-- Display Order -->
+
+                                <td>
+
+                                    <span class="badge bg-light text-dark border">
+
+                                        @item.DisplayOrder
+
+                                    </span>
+
+                                </td>
+
+                                <!-- Action -->
+
+                                <td class="text-center">
+
+                                    <div class="btn-group">
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.QuestionID"
+                                           class="btn btn-sm btn-outline-primary"
+                                           title="View">
+
+                                            <i class="bi bi-eye-fill"></i>
+
+                                        </a>
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.QuestionID"
+                                           class="btn btn-sm btn-outline-warning"
+                                           title="Edit">
+
+                                            <i class="bi bi-pencil-fill"></i>
+
+                                        </a>
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@item.QuestionID"
+                                           class="btn btn-sm btn-outline-danger"
+                                           onclick="return confirm('Are you sure you want to delete this question?');"
+                                           title="Delete">
+
+                                            <i class="bi bi-trash-fill"></i>
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="7"
+                                class="text-center py-5">
+
+                                <i class="bi bi-inbox display-4 text-muted"></i>
+
+                                <br />
+
+                                <br />
+
+                                <h5>
+
+                                    No Questions Found
+
+                                </h5>
+
+                                <p class="text-muted">
+
+                                    No feedback questions are available.
+
+                                </p>
+
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>

@@ -1,0 +1,182 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.EngineerPerformanceViewModel
+
+@{
+    ViewData["Title"] = "Engineer Performance";
+}
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+
+        <h2>
+
+            <i class="bi bi-person-workspace text-primary"></i>
+
+            Engineer Performance
+
+        </h2>
+
+        <p class="text-muted">
+
+            Engineer-wise Closed Case Performance
+
+        </p>
+
+    </div>
+
+    <!-- KPI -->
+
+    <div class="row mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card border-primary shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Total Engineers</h6>
+
+                    <h2>@Model.TotalEngineers</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-success shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Total Closed Cases</h6>
+
+                    <h2>@Model.TotalClosedCases</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="card border-warning shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Top Performer</h6>
+
+                    <h4>@Model.TopEngineer</h4>
+
+                    <span class="badge bg-success">
+
+                        @Model.TopEngineerCases Closed Cases
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Grid -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <h5>
+
+                Engineer Summary
+
+            </h5>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Engineer</th>
+
+                        <th>Region</th>
+
+                        <th>Closed Cases</th>
+
+                        <th>Last Closed</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @{
+                        int sl = 1;
+                    }
+
+                    @foreach (var item in Model.Engineers)
+                    {
+                        <tr>
+
+                            <td>@sl</td>
+
+                            <td>@item.EngineerName</td>
+
+                            <td>@item.Region</td>
+
+                            <td>
+
+                                <span class="badge bg-success">
+
+                                    @item.ClosedCases
+
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                @item.LastClosedDate.ToString("dd-MMM-yyyy")
+
+                            </td>
+
+                            <td>
+
+                                <a asp-action="Details"
+                                   asp-route-EngineerName="@item.EngineerName"
+                                   class="btn btn-primary btn-sm">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        sl++;
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

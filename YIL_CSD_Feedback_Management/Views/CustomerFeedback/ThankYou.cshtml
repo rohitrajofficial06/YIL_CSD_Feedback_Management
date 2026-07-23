@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Thank You";
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-feedback-thankyou.css"
+      asp-append-version="true" />
+<div class="container mt-5">
+
+    <div class="text-center">
+
+        <i class="bi bi-check-circle-fill
+                  text-success"
+           style="font-size:90px;">
+        </i>
+
+        <h2 class="mt-4">
+
+            Thank You
+
+        </h2>
+
+        <p>
+
+            Your feedback has been submitted successfully.
+
+        </p>
+
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-primary">
+
+            Go to Dashboard
+
+        </a>
+
+    </div>
+
+</div>

@@ -1,0 +1,89 @@
+﻿@model YIL_CSD_Feedback_Management.Models.FeedbackUpload
+
+@{
+    ViewData["Title"] = "Feedback Details";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+
+            <h4>Uploaded Feedback</h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-7">
+
+                    @if (Model.FileExtension != ".pdf")
+                    {
+                        <img src="~/@Model.FilePath"
+                             class="img-fluid border rounded" />
+                    }
+                    else
+                    {
+                        <iframe src="~/@Model.FilePath"
+                                width="100%"
+                                height="700px">
+                        </iframe>
+                    }
+
+                </div>
+
+                <div class="col-md-5">
+
+                    <table class="table table-bordered">
+
+                        <tr>
+                            <th>Upload ID</th>
+                            <td>@Model.UploadID</td>
+                        </tr>
+
+                        <tr>
+                            <th>Original File</th>
+                            <td>@Model.OriginalFileName</td>
+                        </tr>
+
+                        <tr>
+                            <th>Upload Status</th>
+                            <td>@Model.UploadStatus</td>
+                        </tr>
+
+                        <tr>
+                            <th>OCR Status</th>
+                            <td>@Model.OCRStatus</td>
+                        </tr>
+
+                    </table>
+
+                    <form asp-action="ExtractOCR"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.UploadID" />
+
+                        <button class="btn btn-success w-100">
+
+                            Extract Data (OCR)
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,407 @@
+﻿/*=========================================================
+        YOKOGAWA ADMIN DASHBOARD
+=========================================================*/
+
+:root {
+    --primary: #0054A6;
+    --primary-light: #2563EB;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --
+        : #F4F7FC;
+    --white: #FFFFFF;
+    --border: #E5E7EB;
+    --text: #1F2937;
+    --shadow: 0 10px 35px rgba(0,0,0,.08);
+}
+
+/*=========================================================
+        PAGE
+=========================================================*/
+
+.dashboard-container {
+    width: 100%;
+}
+
+.page-content {
+    background: var(--background);
+    min-height: calc(100vh - 75px);
+}
+
+.section-space {
+    margin-top: 35px;
+}
+
+/*=========================================================
+        PAGE HEADER
+=========================================================*/
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+    .page-header h2 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .page-header p {
+        color: #6B7280;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .page-header .btn {
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        background: #0054A6;
+        border: none;
+        transition: .30s;
+    }
+
+        .page-header .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0,84,166,.25);
+        }
+
+/*=========================================================
+        KPI SECTION
+=========================================================*/
+
+.kpi-row {
+    margin-bottom: 35px;
+}
+
+/*=========================================================
+        KPI CARD
+=========================================================*/
+
+.kpi-card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 170px;
+    box-shadow: 0 15px 35px rgba(0,0,0,.08);
+    transition: .35s;
+    cursor: pointer;
+}
+
+    .kpi-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 22px 45px rgba(0,84,166,.15);
+    }
+
+    .kpi-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 6px;
+        height: 100%;
+        background: #0054A6;
+    }
+
+    .kpi-card.success::before {
+        background: #10B981;
+    }
+
+    .kpi-card.warning::before {
+        background: #F59E0B;
+    }
+
+    .kpi-card.danger::before {
+        background: #EF4444;
+    }
+
+    .kpi-card h6 {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        color: #6B7280;
+        margin-bottom: 12px;
+        font-weight: 700;
+    }
+
+    .kpi-card h2 {
+        font-size: 34px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 12px;
+    }
+
+.kpi-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ECFDF5;
+    color: #10B981;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+    .kpi-trend i {
+        font-size: 12px;
+    }
+
+.kpi-icon {
+    width: 74px;
+    height: 74px;
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    color: #FFFFFF;
+    background: linear-gradient(135deg,#0054A6,#2563EB);
+    box-shadow: 0 12px 30px rgba(37,99,235,.28);
+}
+
+.kpi-card.success .kpi-icon {
+    background: linear-gradient(135deg,#10B981,#34D399);
+}
+
+.kpi-card.warning .kpi-icon {
+    background: linear-gradient(135deg,#F59E0B,#FBBF24);
+}
+
+.kpi-card.danger .kpi-icon {
+    background: linear-gradient(135deg,#EF4444,#F87171);
+}
+
+.kpi-card::after {
+    content: "";
+    position: absolute;
+    right: -35px;
+    bottom: -35px;
+    width: 120px;
+    height: 120px;
+    background: rgba(0,84,166,.05);
+    border-radius: 50%;
+}
+
+/*=========================================================
+        DASHBOARD PANELS
+=========================================================*/
+
+.dashboard-card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 15px 35px rgba(0,0,0,.08);
+    margin-bottom: 30px;
+    transition: .35s;
+    position: relative;
+    overflow: hidden;
+}
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 25px 45px rgba(0,84,166,.12);
+    }
+
+    /*=========================================================
+        CARD HEADER
+=========================================================*/
+
+    .dashboard-card h5 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 22px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .dashboard-card h5 i {
+            color: #0054A6;
+            font-size: 20px;
+        }
+
+        .dashboard-card h5::after {
+            content: "";
+            flex: 1;
+            height: 2px;
+            background: #EEF3FA;
+            margin-left: 15px;
+        }
+
+/*=========================================================
+        CHART
+=========================================================*/
+
+.chart-container {
+    position: relative;
+    height: 360px;
+    width: 100%;
+}
+
+    .chart-container canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+.dashboard-card::before {
+    content: "";
+    position: absolute;
+    right: -60px;
+    top: -60px;
+    width: 180px;
+    height: 180px;
+    background: rgba(37,99,235,.04);
+    border-radius: 50%;
+}
+
+/*=========================================================
+        FEEDBACK TABLE
+=========================================================*/
+
+.feedback-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .feedback-table thead {
+        background: #F8FAFC;
+    }
+
+    .feedback-table th {
+        padding: 18px 20px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        color: #6B7280;
+        font-weight: 700;
+        border-bottom: 2px solid #EEF2F7;
+    }
+
+    .feedback-table td {
+        padding: 18px 20px;
+        vertical-align: middle;
+        border-bottom: 1px solid #EEF2F7;
+        font-size: 14px;
+    }
+
+    .feedback-table tbody tr {
+        transition: .30s;
+    }
+
+        .feedback-table tbody tr:hover {
+            background: #F8FBFF;
+        }
+
+.company-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.company-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#0054A6,#2563EB);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.company-name {
+    font-weight: 600;
+    color: #111827;
+}
+
+.company-email {
+    font-size: 12px;
+    color: #6B7280;
+}
+
+.rating-stars {
+    color: #F59E0B;
+    font-size: 15px;
+    display: flex;
+    gap: 3px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-online {
+    background: #DCFCE7;
+    color: #15803D;
+}
+
+.status-upload {
+    background: #DBEAFE;
+    color: #1D4ED8;
+}
+
+.view-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+    background: #EEF5FF;
+    color: #0054A6;
+    transition: .30s;
+}
+
+    .view-btn:hover {
+        background: #0054A6;
+        color: white;
+    }
+
+.status-open {
+    background: #0d6efd;
+    color: #fff;
+}
+
+.status-closed {
+    background: #198754;
+    color: #fff;
+}
+
+.status-pending {
+    background: #ffc107;
+    color: #000;
+}
+
+.status-progress {
+    background: #0dcaf0;
+    color: #000;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    transition: all .3s ease;
+}
+
+    /* Hide Sidebar */
+    .sidebar.collapsed {
+        width: 0;
+        overflow: hidden;
+    }

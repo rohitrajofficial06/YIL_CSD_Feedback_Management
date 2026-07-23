@@ -1,0 +1,381 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.ClosedCasesViewModel
+
+@{
+    ViewData["Title"] = "Closed Cases";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>
+
+                <i class="bi bi-check2-circle text-success me-2"></i>
+
+                Closed Cases
+
+            </h2>
+
+            <p class="text-muted">
+
+                Successfully Closed Customer Feedback Cases
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <form asp-action="Index"
+          method="get">
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-header">
+
+                <h5>
+
+                    <i class="bi bi-search me-2"></i>
+
+                    Search Filters
+
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <!-- Case Number -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+
+                            Case Number
+
+                        </label>
+
+                        <input asp-for="SearchCaseNumber"
+                               class="form-control"
+                               placeholder="Case Number" />
+
+                    </div>
+
+                    <!-- Engineer -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+
+                            Engineer
+
+                        </label>
+
+                        <input asp-for="SearchEngineer"
+                               class="form-control"
+                               placeholder="Engineer Name" />
+
+                    </div>
+
+                    <!-- Region -->
+
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+
+                            Region
+
+                        </label>
+
+                        <select asp-for="Region"
+                                class="form-select">
+
+                            <option value="">All</option>
+
+                            <option>East</option>
+
+                            <option>West</option>
+
+                            <option>North</option>
+
+                            <option>South</option>
+
+                            <option>Gujarat</option>
+
+                            <option>BHQ</option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- From -->
+
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+
+                            From Date
+
+                        </label>
+
+                        <input asp-for="FromDate"
+                               type="date"
+                               class="form-control" />
+
+                    </div>
+
+                    <!-- To -->
+
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+
+                            To Date
+
+                        </label>
+
+                        <input asp-for="ToDate"
+                               type="date"
+                               class="form-control" />
+
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+
+                    <button class="btn btn-primary">
+
+                        <i class="bi bi-search"></i>
+
+                        Search
+
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary">
+
+                        Clear
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+    <!-- KPI Cards -->
+
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-primary">
+
+                <div class="card-body text-center">
+
+                    <h6>Total Closed Cases</h6>
+
+                    <h2 class="text-primary">
+
+                        @Model.TotalClosedCases
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-success">
+
+                <div class="card-body text-center">
+
+                    <h6>Today's Closed Cases</h6>
+
+                    <h2 class="text-success">
+
+                        @Model.TodayClosedCases
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-warning">
+
+                <div class="card-body text-center">
+
+                    <h6>This Month</h6>
+
+                    <h2 class="text-warning">
+
+                        @Model.ThisMonthClosedCases
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Closed Case List -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <div class="d-flex justify-content-between">
+
+                <h5>
+
+                    Closed Case List
+
+                </h5>
+
+                <span class="badge bg-success">
+
+                    @Model.Cases.Count Records
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Case No.</th>
+
+                        <th>Region</th>
+
+                        <th>Company</th>
+
+                        <th>Respondent</th>
+
+                        <th>Engineer</th>
+
+                        <th>Closed Date</th>
+
+                        <th>Closed By</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @{
+                        int sl = 0;
+                    }
+
+                    @if (Model.Cases.Any())
+                    {
+                        foreach (var item in Model.Cases)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    @(++sl)
+
+                                </td>
+
+                                <td>
+
+                                    <strong>@item.CaseNumber</strong>
+
+                                </td>
+
+                                <td>
+
+                                    @item.Region
+
+                                </td>
+
+                                <td>
+
+                                    @item.CompanyName
+
+                                </td>
+
+                                <td>
+
+                                    @item.RespondentName
+
+                                </td>
+
+                                <td>
+
+                                    @item.EngineerName
+
+                                </td>
+
+                                <td>
+
+                                    @item.ClosedDate.ToString("dd-MMM-yyyy")
+
+                                </td>
+
+                                <td>
+
+                                    @item.ClosedBy
+
+                                </td>
+
+                              
+                            </tr>
+
+                           
+                        }
+                    
+                    }
+                    else
+                    {
+                    <tr>
+
+                        <td colspan="8"
+                            class="text-center text-danger">
+
+                            No Closed Cases Found.
+
+                        </td>
+
+                    </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

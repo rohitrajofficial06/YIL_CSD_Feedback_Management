@@ -1,0 +1,28 @@
+﻿@model YIL_CSD_Feedback_Management.Models.ViewModels.FeedbackUploadViewModel
+
+<div class="container-fluid mt-4">
+
+    <div class="row">
+
+        <div class="col-lg-5">
+
+            <partial name="_UploadForm" model="Model" />
+
+        </div>
+
+        <div class="col-lg-7">
+
+            <partial name="_UploadGrid" model="Model.UploadedFiles" />
+
+        </div>
+
+    </div>
+
+</div>
+
+<partial name="_UploadToast" />
+
+@section Scripts
+{
+    <partial name="_UploadScripts" />
+}

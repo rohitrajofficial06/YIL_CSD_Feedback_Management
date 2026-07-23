@@ -1,0 +1,214 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.EngineerDetailsViewModel
+
+@{
+    ViewData["Title"] = "Engineer Details";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>
+
+                <i class="bi bi-person-badge-fill text-primary me-2"></i>
+
+                @Model.EngineerName
+
+            </h2>
+
+            <p class="text-muted">
+
+                Engineer Performance Details
+
+            </p>
+
+        </div>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+
+            <i class="bi bi-arrow-left"></i>
+
+            Back
+
+        </a>
+
+    </div>
+
+    <!-- KPI -->
+
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card border-primary shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Total Closed Cases</h6>
+
+                    <h2 class="text-primary">
+
+                        @Model.TotalCases
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card border-success shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>First Closed Case</h6>
+
+                    <h5>
+
+                        @(Model.FirstClosedDate?.ToString("dd-MMM-yyyy") ?? "-")
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card border-warning shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Latest Closed Case</h6>
+
+                    <h5>
+
+                        @(Model.LastClosedDate?.ToString("dd-MMM-yyyy") ?? "-")
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- CASE LIST -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <h5>
+
+                Closed Cases
+
+            </h5>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Case Number</th>
+
+                        <th>Company</th>
+
+                        <th>Respondent</th>
+
+                        <th>Region</th>
+
+                        <th>Closed Date</th>
+
+                        <th>Closed By</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @{
+
+                        int sl = 1;
+
+                    }
+
+                    @foreach (var item in Model.Cases)
+                    {
+                        <tr>
+
+                            <td>@sl</td>
+
+                            <td>
+
+                                <strong>
+
+                                    @item.CaseNumber
+
+                                </strong>
+
+                            </td>
+
+                            <td>
+
+                                @item.CompanyName
+
+                            </td>
+
+                            <td>
+
+                                @item.RespondentName
+
+                            </td>
+
+                            <td>
+
+                                @item.Region
+
+                            </td>
+
+                            <td>
+
+                                @item.ClosedDate.ToString("dd-MMM-yyyy")
+
+                            </td>
+
+                            <td>
+
+                                @item.ClosedBy
+
+                            </td>
+
+                        </tr>
+
+                        sl++;
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

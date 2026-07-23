@@ -1,0 +1,807 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.FeedbackIndexViewModel
+
+@{
+    ViewData["Title"] = "Feedback Management";
+}
+
+<div class="feedback-page">
+
+    <!-- ===================================================== -->
+    <!-- PAGE HEADER -->
+    <!-- ===================================================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h2>
+
+                <i class="bi bi-chat-left-text-fill text-primary me-2"></i>
+
+                Feedback Management
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Manage, search, analyze and monitor customer feedback for Site Service Department.
+
+            </p>
+
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <button type="button"
+                    class="btn btn-success">
+
+                <i class="bi bi-file-earmark-excel-fill me-1"></i>
+
+                Export Excel
+
+            </button>
+
+            <button type="button"
+                    class="btn btn-danger">
+
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i>
+
+                Export PDF
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- SUMMARY CARDS -->
+    <!-- ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- Total Feedback -->
+
+        <div class="col-xl-3 col-lg-6 col-md-6">
+
+            <div class="summary-card total">
+
+                <div class="summary-icon">
+
+                    <i class="bi bi-chat-dots-fill"></i>
+
+                </div>
+
+                <div class="summary-content">
+
+                    <h6>
+
+                        Total Feedback
+
+                    </h6>
+
+                    <h2>
+
+                        @Model.TotalFeedback
+
+                    </h2>
+
+                    <small>
+
+                        Overall Feedback Received
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Online -->
+
+        <div class="col-xl-3 col-lg-6 col-md-6">
+
+            <div class="summary-card online">
+
+                <div class="summary-icon">
+
+                    <i class="bi bi-globe2"></i>
+
+                </div>
+
+                <div class="summary-content">
+
+                    <h6>
+
+                        Online Feedback
+
+                    </h6>
+
+                    <h2>
+
+                        @Model.OnlineFeedback
+
+                    </h2>
+
+                    <small>
+
+                        Submitted Online
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Uploaded -->
+
+        <div class="col-xl-3 col-lg-6 col-md-6">
+
+            <div class="summary-card upload">
+
+                <div class="summary-icon">
+
+                    <i class="bi bi-cloud-upload-fill"></i>
+
+                </div>
+
+                <div class="summary-content">
+
+                    <h6>
+
+                        Uploaded Forms
+
+                    </h6>
+
+                    <h2>
+
+                        @Model.UploadedFeedback
+
+                    </h2>
+
+                    <small>
+
+                        Scanned Feedback Forms
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Average Rating -->
+
+        <div class="col-xl-3 col-lg-6 col-md-6">
+
+            <div class="summary-card rating">
+
+                <div class="summary-icon">
+
+                    <i class="bi bi-star-fill"></i>
+
+                </div>
+
+                <div class="summary-content">
+
+                    <h6>
+
+                        Average Rating
+
+                    </h6>
+
+                    <h2>
+
+                        @Model.AverageRating.ToString("0.00")
+
+                    </h2>
+
+                    <small>
+
+                        Overall Customer Satisfaction
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- SEARCH PANEL -->
+    <!-- ===================================================== -->
+
+    <div class="search-panel">
+
+        <form asp-area="Admin"
+              asp-controller="Feedback"
+              asp-action="Index"
+              method="get">
+
+            <!-- Preserve Sorting -->
+
+            <input type="hidden"
+                   asp-for="SortColumn" />
+
+            <input type="hidden"
+                   asp-for="SortDirection" />
+
+            <!-- Preserve Pagination -->
+
+            <input type="hidden"
+                   asp-for="PageSize" />
+
+            <div class="row g-3">
+
+                <!-- Search -->
+
+                <div class="col-xl-4 col-lg-6">
+
+                    <label class="form-label">
+
+                        Search
+
+                    </label>
+
+                    <input asp-for="SearchText"
+                           class="form-control"
+                           placeholder="Company / Respondent / Engineer / SR No." />
+
+                </div>
+
+                <!-- Feedback Source -->
+
+                <div class="col-xl-2 col-lg-3">
+
+                    <label class="form-label">
+
+                        Source
+
+                    </label>
+
+                    <select asp-for="FeedbackSource"
+                            class="form-select">
+
+                        <option value="">All</option>
+
+                        <option value="Online">Online</option>
+
+                        <option value="Upload">Upload</option>
+
+                    </select>
+
+                </div>
+
+                <!-- Rating -->
+
+                <div class="col-xl-2 col-lg-3">
+
+                    <label class="form-label">
+
+                        Rating
+
+                    </label>
+
+                    <select asp-for="Rating"
+                            class="form-select">
+
+                        <option value="">All Ratings</option>
+
+                        <option value="5">★★★★★</option>
+
+                        <option value="4">★★★★☆</option>
+
+                        <option value="3">★★★☆☆</option>
+
+                        <option value="2">★★☆☆☆</option>
+
+                        <option value="1">★☆☆☆☆</option>
+
+                    </select>
+
+                </div>
+
+                <!-- From Month -->
+
+                <div class="col-xl-2 col-lg-3">
+
+                    <label class="form-label">
+                        From Month
+                    </label>
+
+                    <select asp-for="FromMonth" class="form-select">
+
+                        <option value="">Select</option>
+
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            <option value="@i">
+                                @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+                <!-- To Month -->
+
+                <div class="col-xl-2 col-lg-3">
+
+                    <label class="form-label">
+                        To Month
+                    </label>
+
+                    <select asp-for="ToMonth" class="form-select">
+
+                        <option value="">Select</option>
+
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            <option value="@i">
+                                @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="row mt-4">
+
+                <div class="col text-end">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-search me-1"></i>
+
+                        Search
+
+                    </button>
+
+                    <a asp-area="Admin"
+                       asp-controller="Feedback"
+                       asp-action="Index"
+                       class="btn btn-secondary ms-2">
+
+                        <i class="bi bi-arrow-clockwise me-1"></i>
+
+                        Reset
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- FEEDBACK TABLE -->
+    <!-- ===================================================== -->
+
+    <div class="feedback-table-card">
+
+        <!-- Table Header -->
+
+        <div class="table-header">
+
+            <div>
+
+                <h5>
+
+                    <i class="bi bi-table text-primary me-2"></i>
+
+                    Customer Feedback List
+
+                </h5>
+
+                <small class="text-muted">
+
+                    Showing
+
+                    <strong>
+
+                        @(Model.TotalRecords == 0 ? 0 : ((Model.PageNumber - 1) * Model.PageSize + 1))
+
+                    </strong>
+
+                    -
+
+                    <strong>
+
+                        @(Math.Min(Model.PageNumber * Model.PageSize, Model.TotalRecords))
+
+                    </strong>
+
+                    of
+
+                    <strong>
+
+                        @Model.TotalRecords
+
+                    </strong>
+
+                    Records
+
+                </small>
+
+            </div>
+
+            <!-- Page Size -->
+
+            <form asp-action="Index"
+                  method="get"
+                  class="d-flex align-items-center gap-2">
+
+                <!-- Preserve Filters -->
+
+                <input type="hidden" asp-for="SearchText" />
+
+                <input type="hidden" asp-for="FeedbackSource" />
+
+                <input type="hidden" asp-for="Rating" />
+
+                <input type="hidden" asp-for="FromMonth" />
+
+                <input type="hidden" asp-for="ToMonth" />
+
+                <input type="hidden" asp-for="SortColumn" />
+
+                <input type="hidden" asp-for="SortDirection" />
+
+                <label class="small text-muted mb-0">
+
+                    Show
+
+                </label>
+
+                <select asp-for="PageSize"
+                        class="form-select"
+                        style="width:90px"
+                        onchange="this.form.submit()">
+
+                    <option value="10">10</option>
+
+                    <option value="25">25</option>
+
+                    <option value="50">50</option>
+
+                    <option value="100">100</option>
+
+                </select>
+
+            </form>
+
+        </div>
+
+        <!-- Table -->
+
+        <div class="table-responsive">
+
+            <table class="table feedback-table align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+
+                            <a asp-action="Index"
+                               asp-route-SortColumn="Company"
+                               asp-route-SortDirection="@(Model.SortDirection == "asc" ? "desc" : "asc")"
+                               asp-route-SearchText="@Model.SearchText"
+                               asp-route-FeedbackSource="@Model.FeedbackSource"
+                               asp-route-Rating="@Model.Rating"
+                               asp-route-FromMonth="@Model.FromMonth"
+                               asp-route-ToMonth="@Model.ToMonth"
+                               asp-route-PageSize="@Model.PageSize">
+
+                                Company
+
+                            </a>
+
+                        </th>
+
+                        <th>
+
+                            Respondent
+
+                        </th>
+
+                        <th>
+
+                            Engineer
+
+                        </th>
+
+                        <th>
+
+                            SR No.
+
+                        </th>
+
+                        <th>
+
+                            Source
+
+                        </th>
+
+                        <th>
+
+                            <a asp-action="Index"
+                               asp-route-SortColumn="Rating"
+                               asp-route-SortDirection="@(Model.SortDirection == "asc" ? "desc" : "asc")"
+                               asp-route-SearchText="@Model.SearchText"
+                               asp-route-FeedbackSource="@Model.FeedbackSource"
+                               asp-route-Rating="@Model.Rating"
+                               asp-route-FromDate="@Model.FromDate"
+                               asp-route-ToDate="@Model.ToDate"
+                               asp-route-PageSize="@Model.PageSize">
+
+                                Rating
+
+                            </a>
+
+                        </th>
+
+                        <th>
+
+                            <a asp-action="Index"
+                               asp-route-SortColumn="CreatedDate"
+                               asp-route-SortDirection="@(Model.SortDirection == "asc" ? "desc" : "asc")"
+                               asp-route-SearchText="@Model.SearchText"
+                               asp-route-FeedbackSource="@Model.FeedbackSource"
+                               asp-route-Rating="@Model.Rating"
+                               asp-route-FromDate="@Model.FromDate"
+                               asp-route-ToDate="@Model.ToDate"
+                               asp-route-PageSize="@Model.PageSize">
+
+                                Date
+
+                            </a>
+
+                        </th>
+
+                        <th>Excel Closed Date</th>
+
+                        <th class="text-center">
+
+                            Action
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @if (Model.Feedbacks != null && Model.Feedbacks.Any())
+                    {
+                        @foreach (var item in Model.Feedbacks)
+                        {
+                            <tr>
+
+                                <!-- Company -->
+                                <td>
+                                    <div class="company-cell">
+                                        <div class="company-avatar">
+                                            @(string.IsNullOrWhiteSpace(item.CompanyName)
+                                                                                ? "?"
+                                                                                : item.CompanyName.Substring(0, 1).ToUpper())
+                                                                                                                         </div>
+
+                                        <div>
+                                            <div class="company-name">
+                                                @item.CompanyName
+                                            </div>
+
+                                            <small class="text-muted">
+                                                @(string.IsNullOrWhiteSpace(item.InstrumentCategory)
+                                                                                        ? "-"
+                                                                                        : item.InstrumentCategory)
+                                                                                                              </small>
+                                                                                                          </div>
+                                                                                                      </div>
+                                                                                                  </td>
+
+                                <!-- Respondent -->
+                                <td>
+                                    @item.RespondentName
+                                </td>
+
+                                <!-- Engineer -->
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(item.YILEngineer)
+                                                                ? "--"
+                                                                : item.YILEngineer)
+                                                                               </td>
+
+                                <!-- SR Number -->
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(item.ServiceRequestNo)
+                                                                ? "--"
+                                                                : item.ServiceRequestNo)
+                        </td>
+
+                                <!-- Source -->
+                                <td>
+                            @if (item.FeedbackSource == "Online")
+                                    {
+                                        <span class="badge bg-success">Online</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Upload</span>
+                                    }
+                                </td>
+
+                                <!-- Rating -->
+                                <td>
+                                    <div class="rating-stars">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= Math.Round(item.AverageRating))
+                                            {
+                                                <i class="bi bi-star-fill"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-star"></i>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+
+                                <!-- Date -->
+                                <td>
+                                    @item.CreatedDate.ToString("dd-MMM-yyyy")
+                                </td>
+
+                                <!-- Excel Closed Date -->
+                                <td>
+                                    @(item.ExcelClosedDate?.ToString("dd-MMM-yyyy") ?? "-")
+                                </td>
+
+                                <!-- Action -->
+                                <td class="text-center">
+                                    <a asp-area="Admin"
+                                       asp-controller="Feedback"
+                                       asp-action="Details"
+                                       asp-route-id="@item.FeedbackID"
+                                       class="btn btn-sm btn-primary">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+
+                                <i class="bi bi-inbox display-5 text-muted"></i>
+
+                                <br />
+
+                                <h5 class="mt-3">
+                                    No Feedback Found
+                                </h5>
+
+                                <p class="text-muted">
+                                    There are no customer feedback records matching your search.
+                                </p>
+
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- PAGINATION -->
+    <!-- ===================================== -->
+    @if (Model.TotalPages > 1)
+    {
+        <div class="pagination-wrapper">
+
+            <nav>
+
+                <ul class="pagination justify-content-end">
+
+                    <!-- Previous -->
+
+                    <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-PageNumber="@(Model.PageNumber - 1)"
+                           asp-route-SearchText="@Model.SearchText"
+                           asp-route-FeedbackSource="@Model.FeedbackSource"
+                           asp-route-Rating="@Model.Rating"
+                           asp-route-FromDate="@Model.FromDate"
+                           asp-route-ToDate="@Model.ToDate"
+                           asp-route-PageSize="@Model.PageSize"
+                           asp-route-SortColumn="@Model.SortColumn"
+                           asp-route-SortDirection="@Model.SortDirection">
+
+                            <i class="bi bi-chevron-left"></i>
+
+                        </a>
+
+                    </li>
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-PageNumber="@i"
+                               asp-route-SearchText="@Model.SearchText"
+                               asp-route-FeedbackSource="@Model.FeedbackSource"
+                               asp-route-Rating="@Model.Rating"
+                               asp-route-FromDate="@Model.FromDate"
+                               asp-route-ToDate="@Model.ToDate"
+                               asp-route-PageSize="@Model.PageSize"
+                               asp-route-SortColumn="@Model.SortColumn"
+                               asp-route-SortDirection="@Model.SortDirection">
+
+                                @i
+
+                            </a>
+
+                        </li>
+                    }
+
+                    <!-- Next -->
+
+                    <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-PageNumber="@(Model.PageNumber + 1)"
+                           asp-route-SearchText="@Model.SearchText"
+                           asp-route-FeedbackSource="@Model.FeedbackSource"
+                           asp-route-Rating="@Model.Rating"
+                           asp-route-FromDate="@Model.FromDate"
+                           asp-route-ToDate="@Model.ToDate"
+                           asp-route-PageSize="@Model.PageSize"
+                           asp-route-SortColumn="@Model.SortColumn"
+                           asp-route-SortDirection="@Model.SortDirection">
+
+                            <i class="bi bi-chevron-right"></i>
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+
+        </div>
+    }
+
+</div>

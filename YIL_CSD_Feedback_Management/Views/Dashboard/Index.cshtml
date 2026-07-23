@@ -1,0 +1,394 @@
+﻿@{
+    ViewData["Title"] = "Customer Feedback Portal";
+}
+
+
+<!-- ========================================= -->
+<!-- HERO -->
+<!-- ========================================= -->
+
+<section class="hero">
+
+    <div class="container py-1">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8">
+
+                <div class="card shadow-lg border-0 rounded-4">
+
+                    <div class="card-body p-5 text-center">
+
+                        <img src="~/images/logo-horizontal.png"
+                             height="70"
+                             class="mb-4" />
+
+                        <h2 class="fw-bold text-primary">
+
+                            Welcome,
+
+                            @ViewBag.FullName 👋
+
+                        </h2>
+
+                        <p class="text-muted fs-5">
+
+                            Welcome to the Customer Feedback Management Portal.
+
+                            Your valuable feedback helps us continuously improve our
+                            products and customer experience.
+
+                        </p>
+
+                        <hr class="my-4" />
+
+                        <div class="row text-center">
+
+                            <div class="row mt-4 g-3">
+
+                                <div class="col-md-6">
+                                    <div class="info-card">
+                                        <div class="info-icon">
+                                            <i class="bi bi-building"></i>
+                                        </div>
+
+                                        <div class="info-content">
+                                            <span class="info-title">Department</span>
+                                            <h5>@ViewBag.Module</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="info-card">
+                                        <div class="info-icon">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                        </div>
+
+                                        <div class="info-content">
+                                            <span class="info-title">Region</span>
+                                            <h5>@ViewBag.Region</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="mt-5">
+
+                            <a asp-controller="CustomerFeedback"
+                               asp-action="SelectFeedbackType"
+                               class="btn btn-warning btn-lg px-5 py-3 fw-bold shadow">
+
+                                <i class="bi bi-chat-left-text-fill me-2"></i>
+
+                                Start Feedback
+
+                            </a>
+
+                        </div>
+
+                      
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ========================================= -->
+<!-- OUR SERVICES -->
+<!-- ========================================= -->
+
+<section class="section bg-light">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2 class="fw-bold text-primary">
+
+                Our Services
+
+            </h2>
+
+            <p class="text-muted">
+
+                Select the appropriate department while submitting your valuable feedback.
+
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            @{
+                var services = new[]
+                {
+                        new { Name="Site Services", Icon="bi-tools" },
+                        new { Name="Calibration", Icon="bi-speedometer2" },
+                        new { Name="Bench Repair", Icon="bi-gear-wide-connected" },
+                        new { Name="Training", Icon="bi-journal-check" },
+                        new { Name="AMC", Icon="bi-calendar-check" },
+                        new { Name="Spares", Icon="bi-box-seam" },
+                        new { Name="System Upgrade", Icon="bi-cpu" },
+                        new { Name="Quality Support", Icon="bi-shield-check" }
+                        };
+            }
+
+            @foreach (var item in services)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6">
+
+                    <div class="service-card fade-up">
+
+                        <i class="bi @item.Icon"></i>
+
+                        <h5>@item.Name</h5>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================= -->
+<!-- STATISTICS -->
+<!-- ========================================= -->
+
+<section class="section">
+
+    <div class="container">
+
+        <div class="row text-center">
+
+            <div class="col-md-3">
+
+                <div class="counter-card fade-up">
+
+                    <div class="counter" data-target="1200">0</div>
+
+                    <h5>Total Feedback</h5>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="counter-card fade-up">
+
+                    <div class="counter" data-target="7">0</div>
+
+                    <h5>Departments</h5>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="counter-card fade-up">
+
+                    <div class="counter" data-target="98">0</div>
+
+                    <h5>Customer Satisfaction %</h5>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <div class="counter-card fade-up">
+
+                    <div class="counter" data-target="24">0</div>
+
+                    <h5>Support Hours</h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================= -->
+<!-- WHY YOKOGAWA -->
+<!-- ========================================= -->
+
+<section class="section why-section">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2 class="fw-bold text-primary">
+
+                Why Choose Yokogawa?
+
+            </h2>
+
+            <p class="text-muted">
+
+                Trusted globally for engineering excellence and customer satisfaction.
+
+            </p>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="why-card fade-up">
+
+                    <i class="bi bi-award-fill"></i>
+
+                    <h5>Quality Service</h5>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="why-card fade-up">
+
+                    <i class="bi bi-people-fill"></i>
+
+                    <h5>Customer First</h5>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="why-card fade-up">
+
+                    <i class="bi bi-globe2"></i>
+
+                    <h5>Global Presence</h5>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="why-card fade-up">
+
+                    <i class="bi bi-graph-up-arrow"></i>
+
+                    <h5>Continuous Improvement</h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================= -->
+<!-- CONTACT -->
+<!-- ========================================= -->
+
+<section class="section bg-light">
+
+    <div class="container text-center">
+
+        <h2 class="fw-bold text-primary">
+
+            Contact Us
+
+        </h2>
+
+        <p class="mt-4">
+
+            <i class="bi bi-envelope-fill"></i>
+
+            Yil-ServiceApps@yokogawa.com
+
+        </p>
+
+        <p>
+
+            <i class="bi bi-telephone-fill"></i>
+
+            +91-XXXXXXXXXX
+
+        </p>
+
+        <p>
+
+            <i class="bi bi-geo-alt-fill"></i>
+
+            Yokogawa India Limited
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<footer class="footer">
+
+    <div class="container text-center">
+
+        <img src="~/images/logo-horizontal.png"
+             height="60"
+             class="mb-3" />
+
+        <h5>
+
+            Yokogawa India Limited
+
+        </h5>
+
+        <p>
+
+            Customer Feedback Management Portal
+
+        </p>
+
+        <hr />
+
+        <small>
+
+            © @DateTime.Now.Year Yokogawa India Limited. All Rights Reserved.
+
+        </small>
+
+    </div>
+
+</footer>
+
+<div class="scroll-top">
+
+    <i class="bi bi-arrow-up"></i>
+
+</div>

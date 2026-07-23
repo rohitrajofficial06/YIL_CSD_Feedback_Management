@@ -1,0 +1,61 @@
+﻿@model IEnumerable<YIL_CSD_Feedback_Management.Models.Department>
+
+@{
+    ViewData["Title"] = "Department Master";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between mb-3">
+
+        <h3>Department Master</h3>
+
+        <a asp-action="Create"
+           class="btn btn-primary">
+
+            Add Department
+
+        </a>
+
+    </div>
+
+    <table class="table table-bordered table-striped">
+
+        <thead class="table-primary">
+
+            <tr>
+
+                <th>Code</th>
+
+                <th>Name</th>
+
+                <th>Description</th>
+
+                <th>Display Order</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>@item.DepartmentCode</td>
+
+                    <td>@item.DepartmentName</td>
+
+                    <td>@item.Description</td>
+
+                    <td>@item.DisplayOrder</td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+</div>

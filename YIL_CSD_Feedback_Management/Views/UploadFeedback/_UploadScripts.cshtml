@@ -1,0 +1,264 @@
+﻿<script>
+
+    // ===============================
+    // Elements
+    // ===============================
+
+    const uploadForm = document.getElementById("uploadForm");
+    const fileInput = document.getElementById("feedbackFile");
+    const dropZone = document.getElementById("dropZone");
+
+    const selectedFile = document.getElementById("selectedFile");
+
+    const fileName = document.getElementById("fileName");
+    const fileSize = document.getElementById("fileSize");
+    const fileType = document.getElementById("fileType");
+
+    const imagePreview = document.getElementById("imagePreview");
+    const pdfPreview = document.getElementById("pdfPreview");
+    const previewContainer = document.getElementById("previewContainer");
+
+    const progressContainer = document.getElementById("uploadProgressContainer");
+    const progressBar = document.getElementById("uploadProgressBar");
+
+    // ===============================
+    // Drag & Drop
+    // ===============================
+
+    dropZone.addEventListener("dragover", function (e) {
+
+        e.preventDefault();
+
+        dropZone.classList.add("border-success");
+        dropZone.classList.add("bg-white");
+
+    });
+
+    dropZone.addEventListener("dragleave", function () {
+
+        dropZone.classList.remove("border-success");
+        dropZone.classList.remove("bg-white");
+
+    });
+
+    dropZone.addEventListener("drop", function (e) {
+
+        e.preventDefault();
+
+        dropZone.classList.remove("border-success");
+        dropZone.classList.remove("bg-white");
+
+        fileInput.files = e.dataTransfer.files;
+
+        showPreview();
+
+    });
+
+    // ===============================
+    // Browse
+    // ===============================
+
+    fileInput.addEventListener("change", function () {
+
+        showPreview();
+
+    });
+
+    // ===============================
+    // Preview
+    // ===============================
+
+    function showPreview() {
+
+        if (fileInput.files.length === 0)
+            return;
+
+        const file = fileInput.files[0];
+
+        selectedFile.classList.remove("d-none");
+
+        previewContainer.classList.remove("d-none");
+
+        fileName.innerHTML = file.name;
+
+        fileSize.innerHTML = (file.size / 1024 / 1024).toFixed(2) + " MB";
+
+        fileType.innerHTML = file.type;
+
+        if (file.type === "application/pdf") {
+
+            imagePreview.style.display = "none";
+
+            pdfPreview.classList.remove("d-none");
+
+        }
+        else {
+
+            pdfPreview.classList.add("d-none");
+
+            imagePreview.style.display = "block";
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+
+                imagePreview.src = e.target.result;
+
+            };
+
+            reader.readAsDataURL(file);
+
+        }
+
+    }
+
+    // ===============================
+    // Upload
+    // ===============================
+
+    uploadForm.addEventListener("submit", function (e) {
+
+        e.preventDefault();
+
+        if (fileInput.files.length === 0) {
+
+            showToast("Please select a feedback file.", "danger");
+
+            return;
+
+        }
+
+        const formData = new FormData(uploadForm);
+
+        const xhr = new XMLHttpRequest();
+
+        xhr.open("POST", "/UploadFeedback/UploadAjax", true);
+
+        // Anti Forgery Token
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        xhr.setRequestHeader("RequestVerificationToken", token);
+
+        progressContainer.classList.remove("d-none");
+
+        progressBar.style.width = "0%";
+        progressBar.innerHTML = "0%";
+
+        xhr.upload.onprogress = function (e) {
+
+            if (e.lengthComputable) {
+
+                let percent = Math.round((e.loaded / e.total) * 100);
+
+                progressBar.style.width = percent + "%";
+
+                progressBar.innerHTML = percent + "%";
+
+            }
+
+        };
+
+        xhr.onload = function () {
+
+            if (xhr.status === 200) {
+
+                const result = JSON.parse(xhr.responseText);
+
+                if (result.success) {
+
+                    progressBar.style.width = "100%";
+
+                    progressBar.innerHTML = "Completed";
+
+                    showToast(result.message, "success");
+
+                    uploadForm.reset();
+
+                    resetPreview();
+
+                    refreshGrid();
+
+                }
+                else {
+
+                    showToast(result.message, "danger");
+
+                }
+
+            }
+            else {
+
+                showToast("Upload failed.", "danger");
+
+            }
+
+        };
+
+        xhr.send(formData);
+
+    });
+
+    // ===============================
+    // Refresh Grid
+    // ===============================
+
+    function refreshGrid() {
+
+        fetch("/UploadFeedback/UploadGrid")
+            .then(response => response.text())
+            .then(html => {
+
+                document.getElementById("uploadGrid").innerHTML = html;
+
+            });
+
+    }
+
+    // ===============================
+    // Reset Preview
+    // ===============================
+
+    function resetPreview() {
+
+        selectedFile.classList.add("d-none");
+
+        previewContainer.classList.add("d-none");
+
+        progressContainer.classList.add("d-none");
+
+        progressBar.style.width = "0%";
+
+        progressBar.innerHTML = "0%";
+
+        imagePreview.src = "";
+
+    }
+
+    // ===============================
+    // Toast
+    // ===============================
+
+    function showToast(message, type) {
+
+        const toast = document.getElementById("uploadToast");
+
+        const body = document.getElementById("toastMessage");
+
+        body.innerHTML = message;
+
+        toast.classList.remove("bg-success");
+        toast.classList.remove("bg-danger");
+
+        if (type === "success")
+            toast.classList.add("bg-success");
+        else
+            toast.classList.add("bg-danger");
+
+        const bsToast = new bootstrap.Toast(toast);
+
+        bsToast.show();
+
+    }
+
+</script>

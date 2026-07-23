@@ -1,0 +1,193 @@
+﻿@model YIL_CSD_Feedback_Management.ViewModels.CustomerFeedbackViewModel
+
+@{
+    ViewData["Title"] = "Feedback Type";
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-feedback-type.css"
+      asp-append-version="true" />
+
+<div class="feedback-page">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-xl-9 col-lg-10">
+
+                <div class="feedback-card">
+
+                    <div class="text-center">
+
+                        <img src="~/images/yokogawa-logo.png"
+                             class="portal-logo" />
+
+                        <h1 class="portal-title">
+
+                            Customer Feedback Portal
+
+                        </h1>
+
+                        <h4 class="portal-subtitle">
+
+                            Choose Feedback Method
+
+                        </h4>
+
+                        <p class="portal-description">
+
+                            Select how you would like to submit your feedback.
+
+                        </p>
+
+                    </div>
+
+                    <div class="row mt-5">
+
+                        <div class="col-md-6 mb-4">
+
+                            <div class="feedback-option-card">
+
+                                <i class="bi bi-cloud-arrow-up-fill option-icon"></i>
+
+                                <h3>
+
+                                    Upload Feedback
+
+                                </h3>
+
+                                <p>
+
+                                    Already have a completed
+                                    feedback form?
+
+                                    Upload it here.
+
+                                </p>
+
+                                <a asp-controller="UploadFeedback"
+                                   asp-action="Index"
+                                   class="btn btn-next">
+
+                                    Upload Now
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+
+                            <div class="feedback-option-card">
+
+                                <i class="bi bi-pencil-square option-icon"></i>
+
+                                <h3>
+
+                                    Fill Online
+
+                                </h3>
+
+                                <p>
+
+                                    Complete the feedback form
+                                    online in just a few minutes.
+
+                                </p>
+
+                                <a asp-action="FillFeedback"
+                                   class="btn btn-next">
+
+                                    Continue
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <hr />
+
+                    <div class="row mt-4">
+
+                        <div class="col-md-4">
+
+                            <div class="feature-item">
+
+                                <i class="bi bi-shield-check"></i>
+
+                                <h6>
+
+                                    Secure
+
+                                </h6>
+
+                                <small>
+
+                                    Safe Submission
+
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <div class="feature-item">
+
+                                <i class="bi bi-lightning-charge-fill"></i>
+
+                                <h6>
+
+                                    Fast
+
+                                </h6>
+
+                                <small>
+
+                                    Less than 2 Minutes
+
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <div class="feature-item">
+
+                                <i class="bi bi-globe2"></i>
+
+                                <h6>
+
+                                    Digital
+
+                                </h6>
+
+                                <small>
+
+                                    Available 24 x 7
+
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

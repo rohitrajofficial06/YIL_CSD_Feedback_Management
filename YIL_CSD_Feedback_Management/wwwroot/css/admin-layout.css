@@ -1,0 +1,433 @@
+﻿/*=========================================================
+    YOKOGAWA ADMIN PORTAL
+=========================================================*/
+
+:root {
+    --primary: #0054A6;
+    --primary-dark: #003D7A;
+    --secondary: #FFD400;
+    --success: #198754;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --white: #ffffff;
+    --light: #f4f7fc;
+    --border: #e5e8ef;
+    --text: #2b2b2b;
+    --gray: #6c757d;
+    --sidebar-width: 260px;
+    --header-height: 75px;
+    --shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins',sans-serif;
+    background: var(--light);
+    color: var(--text);
+    overflow-x: hidden;
+}
+
+/*=============================
+    Wrapper
+=============================*/
+
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/*=========================================================
+    MAIN CONTENT
+=========================================================*/
+
+
+.main {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+    background: #F4F7FC;
+    display: flex;
+    flex-direction: column;
+    transition: all .35s ease;
+}
+
+.page-content {
+    flex: 1;
+    margin-top: 75px;
+    padding: 35px;
+    background: #F4F7FC;
+}
+
+/*=========================================================
+SIDEBAR
+=========================================================*/
+
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 260px;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/*=============================
+    LOGO AREA
+=============================*/
+
+.logo-area {
+    padding: 18px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.logo {
+    width: 150px;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+
+.logo-area h5 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.logo-area small {
+    color: #d8e7ff;
+    font-size: 12px;
+}
+
+/*=============================
+    MENU
+=============================*/
+
+.sidebar-menu {
+    list-style: none;
+    padding: 15px 10px 25px;
+    margin: 0;
+    flex: 1;
+}
+
+    .sidebar-menu li {
+        margin: 3px 12px;
+    }
+
+    .sidebar-menu a {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 10px 16px;
+        font-size: 15px;
+        font-weight: 500;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 12px;
+        transition: .3s;
+    }
+
+        .sidebar-menu a i {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        /*=============================
+    HOVER
+=============================*/
+
+        .sidebar-menu a:hover {
+            background: rgba(255,255,255,.15);
+            transform: translateX(8px);
+            box-shadow: 0 10px 25px rgba(0,0,0,.15);
+        }
+
+        /*=============================
+    ACTIVE
+=============================*/
+
+        .sidebar-menu a.active {
+            background: white;
+            color: #0054A6;
+            font-weight: 600;
+            box-shadow: 0 12px 25px rgba(0,0,0,.15);
+        }
+/*=============================
+    SCROLLBAR
+=============================*/
+
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.25);
+    border-radius: 20px;
+}
+
+
+/*=========================================================
+    TOPBAR
+=========================================================*/
+
+.topbar {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    height: var(--header-height);
+    background: #FFFFFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.08);
+    z-index: 1000;
+}
+.main.expanded .topbar {
+    left: 0;
+}
+
+    /*=============================
+    LEFT
+=============================*/
+
+    .topbar .left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+#menuBtn {
+    width: 45px;
+    height: 45px;
+    border: none;
+    background: #EEF5FF;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: .30s;
+}
+
+    #menuBtn i {
+        font-size: 24px;
+        color: #0054A6;
+    }
+
+    #menuBtn:hover {
+        background: #0054A6;
+    }
+
+        #menuBtn:hover i {
+            color: white;
+        }
+
+.topbar h4 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #0054A6;
+}
+
+/*=============================
+    SEARCH
+=============================*/
+
+.search-box {
+    position: relative;
+}
+
+    .search-box input {
+        width: 320px;
+        height: 45px;
+        border: 1px solid #dce5f2;
+        border-radius: 30px;
+        padding-left: 45px;
+        outline: none;
+        transition: .30s;
+    }
+
+        .search-box input:focus {
+            border-color: #0054A6;
+            box-shadow: 0 0 15px rgba(0,84,166,.15);
+        }
+
+    .search-box i {
+        position: absolute;
+        left: 18px;
+        top: 13px;
+        color: #777;
+    }
+
+/*=============================
+    RIGHT
+=============================*/
+
+.topbar .right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+/*=============================
+    NOTIFICATION
+=============================*/
+
+.notification {
+    width: 45px;
+    height: 45px;
+    background: #EEF5FF;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: .30s;
+    position: relative;
+}
+
+    .notification i {
+        font-size: 20px;
+        color: #0054A6;
+    }
+
+    .notification:hover {
+        background: #0054A6;
+    }
+
+        .notification:hover i {
+            color: white;
+        }
+
+    .notification::after {
+        content: "3";
+        position: absolute;
+        right: -2px;
+        top: -3px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #dc3545;
+        color: white;
+        font-size: 11px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+/*=============================
+    PROFILE
+=============================*/
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+    .profile i {
+        font-size: 42px;
+        color: #0054A6;
+    }
+
+    .profile span {
+        font-weight: 600;
+        color: #444;
+    }
+
+
+.dashboard-container {
+    animation: fadeIn .5s ease;
+}
+
+@keyframes fadeIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.3);
+    border-radius: 10px;
+}
+
+.sidebar {
+    scrollbar-width: thin;
+}
+
+.sidebar {
+    opacity: 1 !important;
+    filter: none !important;
+    background: linear-gradient(180deg, #0054A6, #003D7A) !important;
+}
+
+    .sidebar * {
+        opacity: 1 !important;
+    }
+
+.sidebar-menu a {
+    color: #ffffff !important;
+}
+
+    .sidebar-menu a i {
+        color: #ffffff !important;
+    }
+/*==========================================
+    Sidebar Toggle
+==========================================*/
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: var(--sidebar-width);
+    transition: transform .35s ease;
+}
+
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+
+.main {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    transition: all .35s ease;
+}
+
+    .main.expanded {
+        margin-left: 0;
+        width: 100%;
+    }
+
+.topbar {
+    transition: left .35s ease, width .35s ease;
+}
+
+.main.expanded .topbar {
+    left: 0;
+}

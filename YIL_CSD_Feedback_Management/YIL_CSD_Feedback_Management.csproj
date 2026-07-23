@@ -1,0 +1,77 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\css\admin-dashboard.css" />
+    <Content Remove="wwwroot\css\admin-layout.css" />
+    <Content Remove="wwwroot\js\admin-dashboard.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Helpers\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Areas\Admin\Reports\" />
+    <Folder Include="Areas\Admin\wwwroot\css\" />
+    <Folder Include="Areas\Admin\wwwroot\images\" />
+    <Folder Include="Areas\Admin\wwwroot\js\" />
+    <Folder Include="Documents\Feedback\" />
+    <Folder Include="Documents\Reports\" />
+    <Folder Include="Documents\Templates\" />
+    <Folder Include="Documents\OCR\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Middleware\" />
+    <Folder Include="Filters\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Constants\" />
+    <Folder Include="Enums\" />
+    <Folder Include="Common\" />
+    <Folder Include="DTO\" />
+    <Folder Include="Mappings\" />
+    <Folder Include="Logs\" />
+    <Folder Include="Validators\" />
+    <Folder Include="Permissions\" />
+    <Folder Include="Resources\" />
+    <Folder Include="Utilities\" />
+    <Folder Include="ViewComponents\" />
+    <Folder Include="wwwroot\icons\" />
+    <Folder Include="wwwroot\templates\" />
+    <Folder Include="wwwroot\uploads\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\css\admin-dashboard.css" />
+    <None Include="wwwroot\css\admin-feedback.css" />
+    <None Include="wwwroot\css\admin-layout.css" />
+    <None Include="wwwroot\js\admin-dashboard.js" />
+    <None Include="wwwroot\js\admin-layout.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.26" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.26">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.26" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="8.0.26" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.26">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+    <PackageReference Include="QuestPDF" Version="2026.6.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageReference Include="Tesseract" Version="5.2.0" />
+  </ItemGroup>
+
+</Project>

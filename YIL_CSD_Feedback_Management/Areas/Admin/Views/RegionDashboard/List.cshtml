@@ -1,0 +1,113 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.ClosedCasesViewModel
+
+@{
+    ViewData["Title"] = "Region Closed Cases";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>
+
+                @ViewBag.Region Region
+
+            </h2>
+
+            <p class="text-muted">
+
+                Closed Cases
+
+            </p>
+
+        </div>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+
+            <i class="bi bi-arrow-left"></i>
+
+            Back
+
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <h5>
+
+                @Model.TotalClosedCases Closed Cases
+
+            </h5>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Case No</th>
+
+                        <th>Company</th>
+
+                        <th>Respondent</th>
+
+                        <th>Engineer</th>
+
+                        <th>Closed Date</th>
+
+                        <th>Closed By</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @{
+                        int sl = 1;
+                    }
+
+                    @foreach (var item in Model.Cases)
+                    {
+                        <tr>
+
+                            <td>@sl</td>
+
+                            <td>@item.CaseNumber</td>
+
+                            <td>@item.CompanyName</td>
+
+                            <td>@item.RespondentName</td>
+
+                            <td>@item.EngineerName</td>
+
+                            <td>@item.ClosedDate.ToString("dd-MMM-yyyy")</td>
+
+                            <td>@item.ClosedBy</td>
+
+                        </tr>
+
+                        sl++;
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

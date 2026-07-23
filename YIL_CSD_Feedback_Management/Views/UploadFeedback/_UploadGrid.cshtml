@@ -1,0 +1,241 @@
+﻿@model IEnumerable<YIL_CSD_Feedback_Management.Models.FeedbackUpload>
+
+<div class="card shadow border-0">
+
+    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+
+        <h4 class="mb-0">
+            Uploaded Feedback
+        </h4>
+
+        <span class="badge bg-light text-dark fs-6">
+            Total : @Model.Count()
+        </span>
+
+    </div>
+
+    <div class="card-body">
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table table-hover table-bordered align-middle">
+
+                    <thead class="table-primary">
+
+                        <tr>
+
+                            <th width="80">ID</th>
+
+                            <th>File Name</th>
+
+                            <th width="120">Department</th>
+
+                            <th width="160">Uploaded On</th>
+
+                            <th width="120">Status</th>
+
+                            <th width="150">OCR</th>
+
+                            <th width="150">Template</th>
+
+                            <th width="260">Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    <strong>
+                                        @item.UploadID
+                                    </strong>
+
+                                </td>
+
+                                <td>
+
+                                    <i class="bi bi-file-earmark-text text-primary"></i>
+
+                                    @item.OriginalFileName
+
+                                </td>
+
+                                <td>
+
+                                    @(item.DepartmentID?.ToString() ?? "-")
+
+                                </td>
+
+                                <td>
+
+                                    @item.UploadedDate.ToString("dd-MMM-yyyy")
+
+                                    <br />
+
+                                    <small class="text-muted">
+
+                                        @item.UploadedDate.ToString("hh:mm tt")
+
+                                    </small>
+
+                                </td>
+
+                                <td>
+
+                                    @if (item.UploadStatus == "Uploaded")
+                                    {
+                                        <span class="badge bg-success">
+
+                                            Uploaded
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+
+                                            @item.UploadStatus
+
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    @if (item.OCRStatus == "Completed")
+                                    {
+                                        <span class="badge bg-success">
+
+                                            Completed
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">
+
+                                            Pending
+
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.TemplateName))
+                                    {
+                                        @item.TemplateName
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+
+                                            Not Detected
+
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    <div class="btn-group">
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.UploadID"
+                                           class="btn btn-sm btn-primary">
+
+                                            <i class="bi bi-eye"></i>
+
+                                            View
+
+                                        </a>
+
+                                        @if (item.OCRStatus == "Pending")
+                                        {
+                                            <form asp-action="ExtractOCR"
+                                                  asp-route-id="@item.UploadID"
+                                                  method="post"
+                                                  class="d-inline">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-warning">
+
+                                                    <i class="bi bi-cpu"></i>
+
+                                                    OCR
+
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="OCR"
+                                               asp-route-id="@item.UploadID"
+                                               class="btn btn-sm btn-success">
+
+                                                <i class="bi bi-check-circle"></i>
+
+                                                Result
+
+                                            </a>
+                                        }
+
+                                        <a href="/@item.FilePath"
+                                           target="_blank"
+                                           class="btn btn-sm btn-info text-white">
+
+                                            <i class="bi bi-download"></i>
+
+                                            File
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning text-center mb-0">
+
+                <h5>
+
+                    No Feedback Uploaded Yet
+
+                </h5>
+
+                <p class="mb-0">
+
+                    Upload your first customer feedback form to begin OCR processing.
+
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+</div>

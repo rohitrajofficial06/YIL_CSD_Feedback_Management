@@ -1,0 +1,392 @@
+﻿:root {
+    --primary: #0054A6;
+    --secondary: #0D6EFD;
+    --yellow: #FFD400;
+    --white: #FFFFFF;
+    --light: #F7F9FC;
+    --shadow: 0 12px 30px rgba(0,0,0,.10);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--light);
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1320px;
+}
+
+/*=================================================
+NAVBAR
+==================================================*/
+
+.navbar {
+    background: #fff;
+    padding: 15px 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,.08);
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+    .navbar-brand img {
+        height: 55px;
+        margin-right: 15px;
+    }
+
+    .navbar-brand h4 {
+        font-weight: 700;
+        margin: 0;
+        color: #222;
+    }
+
+    .navbar-brand small {
+        color: #666;
+        font-size: 16px;
+    }
+
+.nav-link {
+    color: #555 !important;
+    font-size: 18px;
+    font-weight: 600;
+    margin-left: 28px;
+    position: relative;
+    transition: .3s;
+}
+
+    .nav-link:hover {
+        color: var(--primary) !important;
+    }
+
+    .nav-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        width: 0;
+        height: 3px;
+        background: var(--yellow);
+        transition: .3s;
+    }
+
+    .nav-link:hover::after {
+        width: 100%;
+    }
+
+/*=================================================
+HERO
+==================================================*/
+
+.hero {
+    min-height: 55vh;
+    padding: 50px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 90px 20px;
+    color: white;
+    background: linear-gradient( rgba(0,60,120,.88), rgba(0,60,120,.88) ), url('/images/yokogawa_asean_cover.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+    .hero h1 {
+        font-size: 54px;
+        font-weight: 700;
+        line-height: 1.2;
+        max-width: 820px;
+        margin: auto;
+    }
+
+    .hero p {
+        margin-top: 30px;
+        font-size: 22px;
+        line-height: 1.7;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero .btn {
+        min-width: 250px;
+        margin-top: 25px;
+    }
+
+/*=================================================
+BUTTONS
+==================================================*/
+
+.btn-yoko {
+    background: var(--yellow);
+    color: #000;
+    border: none;
+    border-radius: 50px;
+    padding: 16px 38px;
+    font-size: 21px;
+    font-weight: 700;
+    transition: .35s;
+}
+
+    .btn-yoko:hover {
+        background: #ffdf33;
+        transform: translateY(-4px);
+    }
+
+.btn-light {
+    border-radius: 50px;
+    padding: 16px 38px;
+    font-size: 21px;
+}
+
+/*=================================================
+COMMON SECTION
+==================================================*/
+
+.section {
+    padding: 70px 0;
+}
+
+    .section h2 {
+        font-size: 40px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .section p {
+        font-size: 18px;
+    }
+
+/*=================================================
+SERVICE CARD
+==================================================*/
+
+.service-card,
+.counter-card,
+.why-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 35px 25px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: .35s;
+    height: 100%;
+}
+
+    .service-card:hover,
+    .counter-card:hover,
+    .why-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 45px rgba(0,84,166,.15);
+    }
+
+    .service-card i,
+    .why-card i {
+        color: var(--primary);
+        font-size: 52px;
+        margin-bottom: 20px;
+    }
+
+    .service-card h5,
+    .why-card h5 {
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+/*=================================================
+COUNTER
+==================================================*/
+
+.counter {
+    color: var(--primary);
+    font-size: 50px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/*=================================================
+FOOTER
+==================================================*/
+
+.footer {
+    background: #003D7A;
+    color: white;
+    padding: 45px 0;
+    margin-top: 0;
+}
+
+    .footer img {
+        margin-bottom: 20px;
+    }
+
+    .footer hr {
+        border-color: rgba(255,255,255,.2);
+    }
+
+    .footer h5 {
+        margin-top: 15px;
+    }
+
+/*=================================================
+SCROLL BUTTON
+==================================================*/
+
+.scroll-top {
+    width: 55px;
+    height: 55px;
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    border-radius: 50%;
+    background: var(--yellow);
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0,0,0,.25);
+    z-index: 999;
+    transition: .35s;
+}
+
+    .scroll-top:hover {
+        transform: translateY(-5px);
+    }
+
+/*=================================================
+ANIMATION
+==================================================*/
+
+.fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all .8s ease;
+}
+
+    .fade-up.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+/*=================================================
+RESPONSIVE
+==================================================*/
+
+@media (max-width:992px) {
+
+    .hero {
+        min-height: auto;
+        padding: 70px 20px;
+    }
+
+        .hero h1 {
+            font-size: 42px;
+        }
+
+        .hero p {
+            font-size: 20px;
+        }
+}
+
+@media (max-width:768px) {
+
+    .navbar-brand img {
+        height: 42px;
+    }
+
+    .navbar-brand h4 {
+        font-size: 22px;
+    }
+
+    .hero h1 {
+        font-size: 34px;
+    }
+
+    .hero p {
+        font-size: 18px;
+    }
+
+    .hero .btn {
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .nav-link {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+
+.info-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 18px 22px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    transition: all .3s ease;
+    height: 100%;
+}
+
+    .info-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,.15);
+    }
+
+.info-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#005BAC,#0A78E3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.info-title {
+    display: block;
+    color: #6c757d;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 4px;
+}
+
+.info-content h5 {
+    margin: 0;
+    color: #212529;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+    .info-card small {
+        color: #6c757d !important;
+        font-size: 14px;
+    }
+
+    .info-card h5 {
+        color: #212529 !important;
+        font-size: 22px;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+
+.btn-warning {
+    padding: 12px 35px;
+    font-size: 18px;
+    border-radius: 40px;
+}

@@ -1,0 +1,652 @@
+﻿/*==========================================================
+    YOKOGAWA CUSTOMER FEEDBACK PORTAL
+==========================================================*/
+
+:root {
+    --primary: #0054A6;
+    --primary-light: #0D6EFD;
+    --secondary: #FFD400;
+    --white: #ffffff;
+    --light: #f5f8fd;
+    --dark: #1b1b1b;
+    --gray: #666;
+    --border: #dbe7ff;
+    --shadow: 0 20px 50px rgba(0,0,0,.12);
+}
+
+/*==========================================================
+    GLOBAL
+==========================================================*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Segoe UI",sans-serif;
+    background: linear-gradient(135deg,#eef5ff,#f9fbff);
+    color: var(--dark);
+    min-height: 100vh;
+}
+
+/*==========================================================
+    PAGE
+==========================================================*/
+
+.feedback-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+/*==========================================================
+    CARD
+==========================================================*/
+
+.feedback-card {
+    background: white;
+    border-radius: 25px;
+    padding: 60px;
+    box-shadow: var(--shadow);
+    border-top: 8px solid var(--primary);
+    transition: .35s;
+}
+
+    .feedback-card:hover {
+        transform: translateY(-8px);
+    }
+
+
+/*==========================================================
+    LOGO
+==========================================================*/
+
+.portal-logo {
+    height: 90px;
+    margin-bottom: 25px;
+    transition: .35s ease;
+}
+
+    .portal-logo:hover {
+        transform: scale(1.08);
+    }
+
+/*==========================================================
+    TITLES
+==========================================================*/
+
+.portal-title {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 10px;
+    letter-spacing: .5px;
+}
+
+.portal-subtitle {
+    font-size: 28px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.portal-description {
+    font-size: 18px;
+    color: var(--gray);
+    line-height: 32px;
+    max-width: 650px;
+    margin: auto;
+    margin-bottom: 45px;
+}
+
+/*==========================================================
+    FORM
+==========================================================*/
+
+.form-label {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.department-dropdown {
+    height: 62px;
+    border-radius: 15px;
+    border: 2px solid var(--border);
+    font-size: 19px;
+    transition: .30s;
+    padding-left: 18px;
+    background: #fff;
+}
+
+    .department-dropdown:hover {
+        border-color: var(--primary);
+    }
+
+    .department-dropdown:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 20px rgba(0,84,166,.18);
+        outline: none;
+    }
+
+/*==========================================================
+    VALIDATION
+==========================================================*/
+
+.text-danger {
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 8px;
+    display: block;
+}
+
+/*==========================================================
+    CONTINUE BUTTON
+==========================================================*/
+
+.btn-next {
+    width: 100%;
+    height: 65px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(90deg,#FFD400,#FFC107);
+    color: #111;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    transition: .35s;
+    overflow: hidden;
+    position: relative;
+}
+
+    .btn-next i {
+        transition: .35s;
+    }
+
+    .btn-next:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 40px rgba(255,212,0,.40);
+        color: #111;
+    }
+
+        .btn-next:hover i {
+            transform: translateX(8px);
+        }
+
+/*==========================================================
+    HORIZONTAL LINE
+==========================================================*/
+
+.feedback-card hr {
+    margin: 45px 0;
+    border: 0;
+    border-top: 1px solid rgba(0,0,0,.08);
+}
+
+/*==========================================================
+    FEATURE CARD
+==========================================================*/
+
+.feature-item {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    transition: .35s;
+    height: 100%;
+    border: 1px solid #edf2fb;
+    cursor: pointer;
+}
+
+    .feature-item:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,84,166,.12);
+        border-color: #0D6EFD;
+    }
+
+    .feature-item i {
+        font-size: 48px;
+        color: #0054A6;
+        margin-bottom: 18px;
+        transition: .35s;
+    }
+
+    .feature-item:hover i {
+        transform: scale(1.15);
+        color: #0D6EFD;
+    }
+
+    .feature-item h6 {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #222;
+    }
+
+    .feature-item small {
+        color: #666;
+        font-size: 15px;
+        line-height: 24px;
+        display: block;
+    }
+
+    /*==========================================================
+    ICON CIRCLE
+==========================================================*/
+
+    .feature-item i {
+        width: 85px;
+        height: 85px;
+        background: #EEF6FF;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+
+/*==========================================================
+    FADE ANIMATION
+==========================================================*/
+
+.feedback-card {
+    animation: fadeUp .8s ease;
+}
+
+@keyframes fadeUp {
+
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/*==========================================================
+    FEATURE HOVER GLOW
+==========================================================*/
+
+.feature-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #0054A6;
+    transform: scaleX(0);
+    transition: .35s;
+}
+
+.feature-item {
+    position: relative;
+    overflow: hidden;
+}
+
+    .feature-item:hover::before {
+        transform: scaleX(1);
+    }
+
+/*==========================================================
+    BUTTON CLICK EFFECT
+==========================================================*/
+
+.btn-next:active {
+    transform: scale(.98);
+}
+
+/*==========================================================
+    BACKGROUND DECORATION
+==========================================================*/
+
+.feedback-page {
+    position: relative;
+    overflow: hidden;
+}
+
+    .feedback-page::before {
+        content: "";
+        position: absolute;
+        width: 450px;
+        height: 450px;
+        background: rgba(0,84,166,.08);
+        border-radius: 50%;
+        top: -180px;
+        left: -180px;
+        z-index: -1;
+    }
+
+    .feedback-page::after {
+        content: "";
+        position: absolute;
+        width: 380px;
+        height: 380px;
+        background: rgba(255,212,0,.12);
+        border-radius: 50%;
+        bottom: -150px;
+        right: -150px;
+        z-index: -1;
+    }
+
+/*==========================================================
+    CARD SHINE EFFECT
+==========================================================*/
+
+.feedback-card {
+    position: relative;
+    overflow: hidden;
+}
+
+    .feedback-card::before {
+        content: "";
+        position: absolute;
+        top: -120%;
+        left: -40%;
+        width: 60%;
+        height: 250%;
+        background: rgba(255,255,255,.18);
+        transform: rotate(25deg);
+        transition: 1.2s;
+    }
+
+    .feedback-card:hover::before {
+        left: 140%;
+    }
+
+/*==========================================================
+    DROPDOWN ANIMATION
+==========================================================*/
+
+.department-dropdown {
+    transition: all .35s ease;
+}
+
+    .department-dropdown:hover {
+        transform: translateY(-2px);
+    }
+
+/*==========================================================
+    INPUT LABEL
+==========================================================*/
+
+.form-label {
+    letter-spacing: .4px;
+}
+
+/*==========================================================
+    BUTTON SHADOW
+==========================================================*/
+
+.btn-next {
+    box-shadow: 0 12px 25px rgba(255,212,0,.25);
+}
+
+    .btn-next:hover {
+        box-shadow: 0 20px 40px rgba(255,212,0,.45);
+    }
+
+/*==========================================================
+    FEATURE ICON ANIMATION
+==========================================================*/
+
+.feature-item:hover i {
+    animation: iconBounce .5s ease;
+}
+
+@keyframes iconBounce {
+
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+/*==========================================================
+    PAGE TITLE ANIMATION
+==========================================================*/
+
+.portal-title {
+    animation: titleFade .9s ease;
+}
+
+@keyframes titleFade {
+
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/*==========================================================
+    DESCRIPTION FADE
+==========================================================*/
+
+.portal-description {
+    animation: fadeText 1.2s ease;
+}
+
+@keyframes fadeText {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/*==========================================================
+    DESKTOP (1400+)
+==========================================================*/
+
+@media(min-width:1400px) {
+
+    .feedback-card {
+        max-width: 850px;
+        margin: auto;
+    }
+
+    .portal-title {
+        font-size: 56px;
+    }
+
+    .portal-description {
+        font-size: 20px;
+    }
+}
+
+/*==========================================================
+    TABLET
+==========================================================*/
+
+@media(max-width:991px) {
+
+    .feedback-page {
+        padding: 40px 20px;
+    }
+
+    .feedback-card {
+        padding: 40px;
+    }
+
+    .portal-title {
+        font-size: 40px;
+    }
+
+    .portal-subtitle {
+        font-size: 24px;
+    }
+
+    .portal-description {
+        font-size: 17px;
+        line-height: 28px;
+    }
+}
+
+/*==========================================================
+    MOBILE
+==========================================================*/
+
+@media(max-width:768px) {
+
+    .feedback-page {
+        padding: 25px 15px;
+    }
+
+    .feedback-card {
+        padding: 30px 22px;
+        border-radius: 18px;
+    }
+
+    .portal-logo {
+        height: 70px;
+    }
+
+    .portal-title {
+        font-size: 30px;
+    }
+
+    .portal-subtitle {
+        font-size: 20px;
+    }
+
+    .portal-description {
+        font-size: 15px;
+        line-height: 25px;
+    }
+
+    .department-dropdown {
+        height: 56px;
+        font-size: 17px;
+    }
+
+    .btn-next {
+        height: 58px;
+        font-size: 18px;
+    }
+
+    .feature-item {
+        margin-bottom: 20px;
+    }
+}
+
+/*==========================================================
+    SMALL MOBILE
+==========================================================*/
+
+@media(max-width:480px) {
+
+    .portal-title {
+        font-size: 26px;
+    }
+
+    .portal-subtitle {
+        font-size: 18px;
+    }
+
+    .portal-description {
+        font-size: 14px;
+    }
+
+    .feedback-card {
+        padding: 22px 18px;
+    }
+}
+
+/*==========================================================
+    SELECTION COLOR
+==========================================================*/
+
+::selection {
+    background: #0054A6;
+    color: #fff;
+}
+
+/*==========================================================
+    SCROLLBAR
+==========================================================*/
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #EEF5FF;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #0054A6;
+    border-radius: 20px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #003D7A;
+    }
+/*=========================================
+FEEDBACK OPTION CARD
+=========================================*/
+
+.feedback-option-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 45px;
+    text-align: center;
+    transition: .35s;
+    box-shadow: 0 15px 35px rgba(0,0,0,.08);
+    height: 100%;
+    border: 2px solid transparent;
+}
+
+    .feedback-option-card:hover {
+        transform: translateY(-8px);
+        border-color: #0054A6;
+        box-shadow: 0 25px 45px rgba(0,84,166,.18);
+    }
+
+.option-icon {
+    font-size: 70px;
+    color: #0054A6;
+    margin-bottom: 25px;
+}
+
+.feedback-option-card h3 {
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.feedback-option-card p {
+    color: #666;
+    min-height: 70px;
+    line-height: 28px;
+}
+
+.feedback-option-card .btn {
+    width: 100%;
+}

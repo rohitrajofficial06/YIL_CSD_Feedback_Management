@@ -1,0 +1,265 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.FeedbackStatusUploadViewModel
+
+@{
+    ViewData["Title"] = "Import Feedback Status";
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+
+        @TempData["Error"]
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+        </button>
+
+    </div>
+}
+
+<div class="feedback-page">
+
+    <div class="page-header">
+
+        <div>
+
+            <h2>
+
+                <i class="bi bi-upload text-primary me-2"></i>
+
+                Import Feedback Status
+
+            </h2>
+
+            <p class="text-muted">
+
+                Upload an Excel file to update customer feedback status using Case Number.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="feedback-table-card">
+
+        <form asp-action="Upload"
+              method="post"
+              enctype="multipart/form-data">
+
+            @Html.AntiForgeryToken()
+
+            <div class="row g-4">
+
+                <!-- Status -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+
+                        Status Type
+
+                    </label>
+
+                    <select asp-for="SelectedStatus"
+                            asp-items="Model.StatusList"
+                            class="form-select">
+                    </select>
+
+                </div>
+
+                <!-- Excel -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+
+                        Excel File (Please upload .xlsx file only)
+
+                    </label>
+
+                    <input asp-for="ExcelFile"
+                           type="file"
+                           class="form-control"
+                           accept=".xlsx" />
+
+                </div>
+
+                <!-- Upload -->
+
+                <div class="col-md-2 d-flex align-items-end">
+
+                    <button type="submit"
+                            id="btnUpload"
+                            class="btn btn-primary w-100">
+
+                        <i class="bi bi-cloud-upload"></i>
+
+                        Upload
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <br />
+
+    <div class="feedback-table-card">
+
+        <div class="table-header">
+
+            <h5>
+
+                <i class="bi bi-clock-history me-2"></i>
+
+                Upload History
+
+            </h5>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table feedback-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>File Name</th>
+
+                        <th>Status</th>
+
+                        <th>Total</th>
+
+                        <th>Updated</th>
+
+                        <th>Rejected</th>
+
+                        <th>Uploaded By</th>
+
+                        <th>Uploaded Date</th>
+
+                        <th width="140">Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @if (Model.UploadHistory != null && Model.UploadHistory.Any())
+                    {
+                        foreach (var item in Model.UploadHistory)
+                        {
+                            <tr>
+
+                                <td>@item.FileName</td>
+
+                                <td>
+                                    @switch (item.StatusType)
+                                    {
+                                        case "Closed":
+                                            <span class="badge bg-success">Closed</span>
+                                            break;
+
+                                        case "Pending":
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                            break;
+
+                                        case "In-Progress":
+                                            <span class="badge bg-info text-dark">In Progress</span>
+                                            break;
+
+                                        default:
+                                            <span class="badge bg-secondary">@item.StatusType</span>
+                                            break;
+                                    }
+                                </td>
+
+                                <td>@item.TotalRecords</td>
+
+                                <td>@item.UpdatedRecords</td>
+
+                                <td>@item.RejectedRecords</td>
+
+                                <td>@item.UploadedBy</td>
+
+                                <td>@item.UploadedDate.ToString("dd-MMM-yyyy HH:mm")</td>
+
+                                <td>
+
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.UploadHeaderID"
+                                       class="btn btn-primary btn-sm">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <a asp-action="DeleteUpload"
+                                       asp-route-id="@item.UploadHeaderID"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Delete this upload?');">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center">
+                                No Upload History Found
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    document.getElementById("btnUpload").addEventListener("click", function (e) {
+
+        var fileInput = document.getElementById("ExcelFile");
+
+        if (fileInput.files.length === 0) {
+
+            alert("Please select an Excel (.xlsx) file.");
+
+            e.preventDefault();
+
+            return;
+        }
+
+        var fileName = fileInput.files[0].name.toLowerCase();
+
+        if (!fileName.endsWith(".xlsx")) {
+
+            alert("Invalid file format.\n\nPlease upload only Excel (.xlsx) files.");
+
+            fileInput.value = "";
+
+            e.preventDefault();
+
+            return;
+        }
+
+    });
+
+</script>

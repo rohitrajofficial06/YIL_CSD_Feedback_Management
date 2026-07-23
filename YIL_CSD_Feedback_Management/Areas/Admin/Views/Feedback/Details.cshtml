@@ -1,0 +1,707 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.FeedbackDetailsViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <title>Customer Satisfaction Survey</title>
+
+    <link href="~/css/feedback-print.css" rel="stylesheet" />
+
+</head>
+
+<body>
+    <div class="page">
+
+        <table class="main-table">
+
+            <tr>
+
+                <td class="title-cell">
+
+                    CUSTOMER SATISFACTION SURVEY
+
+                </td>
+
+                <td class="company-cell">
+
+                    <strong>Yokogawa India Limited</strong><br />
+
+                    No.96, Electronic City Complex<br />
+
+                    Hosur Road<br />
+
+                    Bangalore - 560100, India
+
+                </td>
+
+                <td class="logo-cell">
+
+                    <img src="~/images/yokogawa-logo.png" />
+
+                </td>
+
+            </tr>
+
+        </table>
+
+        <table class="main-table">
+
+            <tr>
+
+                <th class="section-heading">
+
+                    Survey Information
+
+                </th>
+
+            </tr>
+
+        </table>
+
+        <table class="main-table">
+
+            <tr>
+
+                <td class="left-title">
+
+                    A1
+
+                </td>
+
+                <td class="heading">
+
+                    Customer Information :
+
+                </td>
+
+            </tr>
+
+        </table>
+
+        <table class="main-table">
+
+            <tr>
+
+                <td class="label-cell">
+
+                    Company Name & Address :
+
+                </td>
+
+                <td class="value-cell">
+
+                    @Model.CompanyName
+
+                </td>
+
+            </tr>
+
+        </table>
+
+        <table class="main-table">
+
+            <tr>
+
+                <td class="left-title">
+
+                    A2
+
+                </td>
+
+                <td class="heading">
+
+                    Respondent Information
+
+                </td>
+
+            </tr>
+
+        </table>
+
+        <table class="main-table">
+
+            <tr>
+
+                <td class="label-cell">
+
+                    Name :
+
+                </td>
+
+                <td class="value-cell">
+
+                    @Model.RespondentName
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="label-cell">
+
+                    Department / Position :
+
+                </td>
+
+                <td class="value-cell">
+
+                    @Model.Designation
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="label-cell">
+
+                    Contact Details :
+
+                </td>
+
+                <td class="value-cell">
+
+                    @Model.ContactNo
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="label-cell">
+
+                    Email :
+
+                </td>
+
+                <td class="value-cell">
+
+                    @Model.EmailID
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="label-cell">
+
+                    Service Request Reference :
+
+                </td>
+
+                <td class="value-cell">
+
+                    @Model.ServiceRequestNo
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="label-cell">
+
+                    Instrument Category :
+
+                </td>
+
+                <td class="value-cell">
+
+                    @Model.InstrumentCategory
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="label-cell">
+
+                    YIL Engineer :
+
+                </td>
+
+                <td class="value-cell">
+
+                    @Model.YILEngineer
+
+                </td>
+
+            </tr>
+
+        </table>
+
+        <table class="main-table">
+
+            <tr>
+
+                <td class="part-title" style="width:120px;">
+
+                    Part-1:
+
+                </td>
+
+                <td class="instruction">
+
+                    Please select your ratings in the respective box provided against the parameter
+
+                </td>
+
+            </tr>
+
+        </table>
+
+        <table class="rating-table">
+
+            <thead>
+
+                <tr>
+
+                    <th rowspan="3" style="width:70px;">
+
+                        Sl No
+
+                    </th>
+
+                    <th rowspan="3">
+
+                        Questionnaires
+
+                    </th>
+
+                    <th colspan="6">
+
+                        Ratings
+
+                    </th>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        Excellent
+
+                    </th>
+
+                    <th>
+
+                        Good
+
+                    </th>
+
+                    <th>
+
+                        Average
+
+                    </th>
+
+                    <th>
+
+                        Fair
+
+                    </th>
+
+                    <th>
+
+                        Poor
+
+                    </th>
+
+                    <th>
+
+                        Not Applicable
+
+                    </th>
+
+                </tr>
+
+                <tr>
+
+                    <th>5</th>
+
+                    <th>4</th>
+
+                    <th>3</th>
+
+                    <th>2</th>
+
+                    <th>1</th>
+
+                    <th>N/A</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model.Questions)
+                {
+                    <tr>
+
+                        <td class="center">
+
+                            @item.QuestionNo
+
+                        </td>
+
+                        <td>
+
+                            @item.QuestionText
+
+                        </td>
+
+                        <td class="center">
+
+                            @(item.Rating == 5 ? "✔" : "")
+
+                        </td>
+
+                        <td class="center">
+
+                            @(item.Rating == 4 ? "✔" : "")
+
+                        </td>
+
+                        <td class="center">
+
+                            @(item.Rating == 3 ? "✔" : "")
+
+                        </td>
+
+                        <td class="center">
+
+                            @(item.Rating == 2 ? "✔" : "")
+
+                        </td>
+
+                        <td class="center">
+
+                            @(item.Rating == 1 ? "✔" : "")
+
+                        </td>
+
+                        <td class="center">
+
+                            @(item.IsNotApplicable ? "✔" : "")
+
+                        </td>
+
+                    </tr>
+                }
+                </tbody>
+        </table>
+
+        <table class="main-table">
+
+            <tr>
+
+                <td class="part-title" style="width:120px;">
+
+                    Part-2:
+
+                </td>
+
+                <td class="instruction">
+
+                    Kindly provide the comments/suggestions related to other services/activities of YIL.
+
+                </td>
+
+            </tr>
+
+        </table>
+
+        <table class="main-table">
+
+            <tr>
+
+                <td class="comments-box">
+
+                    @if (string.IsNullOrWhiteSpace(Model.Comments))
+                    {
+                        <span style="color:#999;">
+                            No Comments
+                        </span>
+                    }
+                    else
+                    {
+                        @Model.Comments
+                    }
+
+                </td>
+
+            </tr>
+
+        </table>
+
+        <table class="main-table">
+
+            <tr>
+
+                <td style="height:55px;">
+
+                    <strong>
+
+                        Customer Signature :
+
+                    </strong>
+
+                </td>
+
+            </tr>
+
+        </table>
+
+        <table class="main-table">
+
+            <tr>
+
+                <td colspan="6"
+                    class="internal-header">
+
+                    Yokogawa Internal data (For YIL Internal Use Only)
+
+                </td>
+
+            </tr>
+            <tr>
+
+                <td style="width:40px;">
+
+                    1
+
+                </td>
+
+                <td>
+
+                    Yokogawa Group of Companies
+
+                </td>
+
+                <td colspan="4">
+
+                    YIL
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td>
+
+                    2
+
+                </td>
+
+                <td>
+
+                    Type of C.S. Survey
+
+                </td>
+
+                <td>
+
+                    @Model.FeedbackSource
+
+                </td>
+
+                <td>
+
+                    Interviewer
+
+                </td>
+
+                <td>
+
+                    @Model.YILEngineer
+
+                </td>
+
+                <td>
+
+                    Date
+
+                    <br />
+
+                    @Model.CreatedDate.ToString("dd-MMM-yyyy")
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td>
+
+                    3
+
+                </td>
+
+                <td>
+
+                    Specific Corrective Action
+
+                </td>
+
+                <td colspan="4">
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td></td>
+
+                <td>
+
+                    Action By
+
+                </td>
+
+                <td>
+                </td>
+
+                <td>
+
+                    Confirm Date
+
+                </td>
+
+                <td>
+                </td>
+
+                <td>
+
+                    Confirmed By
+
+                </td>
+
+            </tr>
+            <tr>
+
+                <td>
+
+                    4
+
+                </td>
+
+                <td colspan="5">
+
+                    Revision Management (Global / Local Form)
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td></td>
+
+                <td>
+
+                    Revision
+
+                </td>
+
+                <td>
+
+                    Date
+
+                </td>
+
+                <td>
+
+                    Issued By
+
+                </td>
+
+                <td colspan="2">
+
+                    Approved By
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td></td>
+
+                <td>
+
+                    Rev.0
+
+                </td>
+
+                <td>
+
+                    25-May-26
+
+                </td>
+
+                <td>
+
+                    Brundha M R
+
+                </td>
+
+                <td colspan="2">
+
+                    Atul Chhibbar
+
+                </td>
+
+            </tr>
+
+        </table>
+
+        <table class="main-table footer-table">
+
+            <tr>
+
+                <td>
+
+                    Doc. No. :
+
+                    QM3S-D-0912F-002
+
+                </td>
+
+                <td>
+
+                    Revision :
+
+                    Rev.0
+
+                </td>
+
+                <td>
+
+                    Revision Date :
+
+                    25-May-26
+
+                </td>
+
+            </tr>
+
+        </table>
+    </div>
+</body>
+
+</html>

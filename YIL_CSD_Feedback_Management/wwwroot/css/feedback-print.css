@@ -1,0 +1,147 @@
+﻿body {
+    margin: 0;
+    padding: 15px;
+    background: #d9d9d9;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #000;
+}
+
+.page {
+    width: 900px;
+    margin: auto;
+    background: #fff;
+    border: 2px solid #000;
+    padding: 0;
+}
+
+.main-table,
+.rating-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .main-table td,
+    .main-table th,
+    .rating-table td,
+    .rating-table th {
+        border: 2px solid #000;
+        padding: 6px;
+        vertical-align: middle;
+    }
+
+
+.title-cell {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: .5px;
+}
+
+.company-cell {
+    width: 230px;
+    font-size: 11px;
+    line-height: 17px;
+    vertical-align: top;
+}
+
+.logo-cell {
+    width: 110px;
+    text-align: center;
+}
+
+    .logo-cell img {
+        width: 85px;
+    }
+
+.section-heading {
+    background: #f1f1f1;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.left-title {
+    width: 50px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.heading {
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.value-cell {
+    background: #fff9bf;
+    height: 38px;
+    padding-left: 10px;
+    font-weight: 500;
+}
+
+.label-cell {
+    width: 210px;
+    font-weight: bold;
+    padding-left: 12px;
+}
+
+.part-title {
+    font-weight: bold;
+    background: #efefef;
+}
+
+.instruction {
+    text-align: center;
+}
+
+.rating-table th {
+    background: #f3f3f3;
+    text-align: center;
+    font-weight: bold;
+}
+
+.rating-table td {
+    height: 56px;
+}
+
+.center {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.comments-box {
+    background: #fff9bf;
+    height: 120px;
+    padding: 12px;
+    vertical-align: top;
+}
+
+.internal-header {
+    background: #efefef;
+    text-align: center;
+    font-weight: bold;
+}
+
+.footer-table td {
+    font-size: 11px;
+    text-align: center;
+}
+
+@media print {
+
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .page {
+        width: 100%;
+        border: none;
+        margin: 0;
+    }
+
+    .no-print {
+        display: none;
+    }
+}

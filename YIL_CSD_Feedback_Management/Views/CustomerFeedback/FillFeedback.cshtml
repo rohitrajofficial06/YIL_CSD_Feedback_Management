@@ -1,0 +1,315 @@
+﻿@model YIL_CSD_Feedback_Management.ViewModels.CustomerFeedbackViewModel
+
+@{
+    ViewData["Title"] = "Customer Feedback";
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-feedback-form.css"
+      asp-append-version="true" />
+
+<form asp-action="SubmitFeedback"
+      asp-controller="CustomerFeedback"
+      method="post"
+      enctype="multipart/form-data">
+
+    @Html.AntiForgeryToken()
+
+    <!-- Hidden Fields -->
+    <input asp-for="DepartmentID" type="hidden" />
+    <input asp-for="DepartmentName" type="hidden" />
+    <input asp-for="FeedbackSource" type="hidden" />
+
+    <div class="container mt-4">
+
+        <div class="card shadow">
+
+            <div class="card-header bg-primary text-white">
+
+                <h3 class="mb-0">
+                    Customer Satisfaction Survey
+                </h3>
+
+                <small>
+                    @Model.DepartmentName
+                </small>
+
+            </div>
+
+            <div class="card-body">
+
+                <!-- ========================= -->
+                <!-- Customer Information -->
+                <!-- ========================= -->
+
+                <h5 class="mb-4">
+                    Customer Information
+                </h5>
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Case Number <span class="text-danger">*</span>
+                    </label>
+
+                    <div class="d-flex align-items-center">
+
+                        <span class="form-control text-center"
+                              style="width:90px;
+                     background:#f8f9fa;
+                     font-weight:600;">
+
+                            YIL-C
+
+                        </span>
+
+                        <input asp-for="CaseNumberPart1"
+                               maxlength="4"
+                               class="form-control mx-2 text-center"
+                               style="width:90px;"
+                               placeholder="0000" />
+
+                        <span class="fw-bold">-</span>
+
+                        <input asp-for="CaseNumberPart2"
+                               maxlength="5"
+                               class="form-control mx-2 text-center"
+                               style="width:110px;"
+                               placeholder="00000" />
+
+                    </div>
+
+                    <span asp-validation-for="CaseNumberPart1"
+                          class="text-danger"></span>
+
+                    <span asp-validation-for="CaseNumberPart2"
+                          class="text-danger"></span>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="CompanyName" class="form-label"></label>
+
+                        <input asp-for="CompanyName"
+                               class="form-control" />
+
+                        <span asp-validation-for="CompanyName"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="RespondentName"
+                               class="form-label"></label>
+
+                        <input asp-for="RespondentName"
+                               class="form-control" />
+
+                        <span asp-validation-for="RespondentName"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="Designation"
+                               class="form-label"></label>
+
+                        <input asp-for="Designation"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="ContactNo"
+                               class="form-label"></label>
+
+                        <input asp-for="ContactNo"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="EmailID"
+                               class="form-label"></label>
+
+                        <input asp-for="EmailID"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="ServiceRequestNo"
+                               class="form-label"></label>
+
+                        <input asp-for="ServiceRequestNo"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="InstrumentCategory"
+                               class="form-label"></label>
+
+                        <input asp-for="InstrumentCategory"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="YILEngineer"
+                               class="form-label"></label>
+
+                        <input asp-for="YILEngineer"
+                               class="form-control" />
+
+                    </div>
+
+                </div>
+
+                <hr />
+
+                <!-- ========================= -->
+                <!-- Questions -->
+                <!-- ========================= -->
+
+                <h5 class="mb-3">
+                    Customer Feedback
+                </h5>
+
+                @for (int i = 0; i < Model.Questions.Count; i++)
+                {
+                    <input asp-for="Questions[i].QuestionID" type="hidden" />
+                    <input asp-for="Questions[i].QuestionNo" type="hidden" />
+                    <input asp-for="Questions[i].QuestionText" type="hidden" />
+                    <input asp-for="Questions[i].ControlType" type="hidden" />
+                    <input asp-for="Questions[i].IsMandatory" type="hidden" />
+
+                    <div class="card mb-3 shadow-sm">
+
+                        <div class="card-body">
+
+                            <h6>
+
+                                Q@(i + 1).
+
+                                @Model.Questions[i].QuestionText
+
+                            </h6>
+
+                            <div class="mt-3">
+
+                                @for (int r = 5; r >= 1; r--)
+                                {
+                                    <div class="form-check form-check-inline">
+
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               asp-for="Questions[i].RatingValue"
+                                               value="@r" />
+
+                                        <label class="form-check-label">
+
+                                            @r
+
+                                        </label>
+
+                                    </div>
+                                }
+
+                                <div class="form-check form-check-inline">
+
+                                    <input class="form-check-input"
+                                           asp-for="Questions[i].IsNotApplicable" />
+
+                                    <label class="form-check-label">
+
+                                        N/A
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+                <!-- ========================= -->
+                <!-- Comments -->
+                <!-- ========================= -->
+
+                <div class="mb-3">
+
+                    <label asp-for="Comments"
+                           class="form-label">
+
+                        Additional Comments
+
+                    </label>
+
+                    <textarea asp-for="Comments"
+                              class="form-control"
+                              rows="5"></textarea>
+
+                </div>
+
+                <!-- ========================= -->
+                <!-- Signature -->
+                <!-- ========================= -->
+
+                <div class="mb-4">
+
+                    <label asp-for="SignatureFile"
+                           class="form-label">
+
+                        Upload Signature (Optional)
+
+                    </label>
+
+                    <input asp-for="SignatureFile"
+                           type="file"
+                           class="form-control" />
+
+                </div>
+
+                <!-- ========================= -->
+                <!-- Buttons -->
+                <!-- ========================= -->
+
+                <div class="text-center">
+
+                    <button type="submit"
+                            class="btn btn-success btn-lg px-5">
+
+                        Submit Feedback
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</form>
+
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

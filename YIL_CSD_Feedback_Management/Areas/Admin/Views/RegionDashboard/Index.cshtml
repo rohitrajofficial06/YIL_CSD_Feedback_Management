@@ -1,0 +1,371 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.RegionDashboardViewModel
+
+@{
+    ViewData["Title"] = "Region Dashboard";
+}
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+
+        <h2>
+
+            <i class="bi bi-geo-alt-fill text-primary"></i>
+
+            Region Wise Closed Cases
+
+        </h2>
+
+        <p class="text-muted">
+
+            Closed Case Summary by Region
+
+        </p>
+
+    </div>
+
+    <!-- ================= KPI Cards ================= -->
+
+    <div class="row mb-4">
+
+        <div class="col-lg-3">
+
+            <div class="card border-primary shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Total Closed Cases</h6>
+
+                    <h2 class="text-primary">
+
+                        @Model.Total
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3">
+
+            <div class="card border-success shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Today's Closed</h6>
+
+                    <h2 class="text-success">
+
+                        @Model.TodayClosed
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3">
+
+            <div class="card border-warning shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>This Month</h6>
+
+                    <h2 class="text-warning">
+
+                        @Model.ThisMonthClosed
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3">
+
+            <div class="card border-info shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Last Upload</h6>
+
+                    <div>
+
+                        <strong>
+
+                            @(string.IsNullOrWhiteSpace(Model.LastUploadedFile)
+                                                        ? "No Upload Yet"
+                                                        : Model.LastUploadedFile)
+
+                        </strong>
+
+                    </div>
+
+                    @if (Model.LastUploadDate != null)
+                    {
+                        <small class="text-muted">
+
+                            @Model.LastUploadDate.Value.ToString("dd-MMM-yyyy HH:mm")
+
+                        </small>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        @{
+            var cards = new[]
+            {
+                new { Name="East", Total=Model.East, Color="primary" },
+                new { Name="West", Total=Model.West, Color="success" },
+                new { Name="North", Total=Model.North, Color="warning" },
+                new { Name="South", Total=Model.South, Color="danger" },
+                new { Name="Gujarat", Total=Model.Gujarat, Color="info" },
+                new { Name="BHQ", Total=Model.BHQ, Color="secondary" }
+                };
+        }
+
+        @foreach (var card in cards)
+        {
+            <div class="col-lg-4 mb-4">
+
+                <a asp-controller="RegionDashboard"
+                   asp-action="List"
+                   asp-route-region="@card.Name"
+                   class="text-decoration-none">
+
+                    <div class="card border-@card.Color shadow-sm"
+                         style="transition:0.3s; cursor:pointer;">
+
+                        <div class="card-body text-center">
+
+                            <h5 class="fw-bold">
+
+                                @card.Name
+
+                            </h5>
+
+                            <h1 class="display-5 text-@card.Color">
+
+                                @card.Total
+
+                            </h1>
+
+                            <small>
+
+                                Closed Cases
+
+                            </small>
+
+                            <hr />
+
+                            <small class="text-muted">
+
+                                Click to View Details
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+   @if (Model.MonthlySummary.Any())
+{
+    <div class="card shadow-sm mt-4">
+
+        <div class="card-header">
+
+            <h5>
+
+                Monthly Closed Cases Trend
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <canvas id="monthlyChart"
+                    height="90"></canvas>
+
+        </div>
+
+    </div>
+    }
+    else
+    {
+        <div class="alert alert-info mt-4">
+
+            No Monthly Closure Data Available.
+
+        </div>
+    }
+
+    <div class="card shadow-sm mt-4">
+
+            <div class="card-header">
+
+                <h5>
+
+                Monthly Closure Summary
+
+                </h5>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Year</th>
+
+                            <th>Month</th>
+
+                            <th>Total Closed Cases</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.MonthlySummary)
+                        {
+                            <tr>
+
+                                <td>@item.Year</td>
+
+                                <td>@item.MonthName</td>
+
+                                <td>@item.TotalCases</td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+    
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+@{
+    string labels = string.Join(",",
+        Model.MonthlySummary
+        .Select(x => $"'{x.MonthName}-{x.Year}'"));
+
+    string values = string.Join(",",
+        Model.MonthlySummary
+        .Select(x => x.TotalCases));
+}
+<script>
+
+    const ctx = document.getElementById('monthlyChart');
+
+    new Chart(ctx, {
+
+        type: 'bar',
+
+        data: {
+
+            labels: [@Html.Raw(labels)],
+
+            datasets: [{
+
+                label: 'Closed Cases',
+
+                data: [@Html.Raw(values)],
+
+                backgroundColor: [
+
+                    '#0d6efd',
+
+                    '#198754',
+
+                    '#ffc107',
+
+                    '#dc3545',
+
+                    '#20c997',
+
+                    '#6f42c1',
+
+                    '#fd7e14',
+
+                    '#6610f2',
+
+                    '#198754',
+
+                    '#0dcaf0',
+
+                    '#6c757d',
+
+                    '#d63384'
+
+                ]
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+
+                    display: false
+
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true
+
+                }
+
+            }
+
+        }
+
+    });
+
+</script>
