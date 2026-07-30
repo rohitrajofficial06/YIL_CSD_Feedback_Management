@@ -198,15 +198,18 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
             return model;
         }
 
-        public async Task<FeedbackDetailsViewModel?> GetDetailsAsync(long feedbackId)
+        public async Task<FeedbackDetailsViewModel?> GetDetailsAsync(long feedbackId, int departmentId)
         {
             var feedback = await _context.CustomerFeedbacks
                 .Include(x => x.Department)
                 .Include(x => x.Ratings)
-                .FirstOrDefaultAsync(x => x.FeedbackID == feedbackId);
+                .FirstOrDefaultAsync(x =>
+                    x.FeedbackID == feedbackId &&
+                    x.DepartmentID == departmentId);
 
             if (feedback == null)
                 return null;
+
 
             FeedbackDetailsViewModel model = new FeedbackDetailsViewModel
             {

@@ -6,6 +6,6 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Interfaces
     {
         Task<FeedbackIndexViewModel> GetFeedbackAsync(FeedbackIndexViewModel model);
 
-        Task<FeedbackDetailsViewModel?> GetDetailsAsync(long feedbackId);
+        Task<FeedbackDetailsViewModel?> GetDetailsAsync(long feedbackId, int departmentId);
     }
 }

@@ -17,13 +17,33 @@ namespace YIL_CSD_Feedback_Management.Services.Implementations
 
         public async Task<long> SaveAsync(CustomerFeedbackViewModel model)
         {
-            model.CaseNumber = $"YIL-C{model.CaseNumberPart1}-{model.CaseNumberPart2}";
+            if (model.DepartmentID == 1)
+            {
+                model.CaseNumber =
+                    $"YIL-C{model.CaseNumberPart1}-{model.CaseNumberPart2}";
+
+                model.ReferenceType = "CASE";
+            }
+            else if (model.DepartmentID == 2)
+            {
+                model.CaseNumber = model.ReferenceNumber;
+
+                model.ReferenceType = "TRN";
+            }
+            else if (model.DepartmentID == 3)
+            {
+                model.CaseNumber = model.ReferenceNumber;
+
+                model.ReferenceType = "SRN";
+            }
 
             CustomerFeedback feedback = new CustomerFeedback
             {
                 DepartmentID = model.DepartmentID,
 
                 CaseNumber = model.CaseNumber,
+
+                ReferenceType = model.ReferenceType,
 
                 FeedbackStatus = "Open",
 
@@ -45,11 +65,12 @@ namespace YIL_CSD_Feedback_Management.Services.Implementations
 
                 YILEngineer = model.YILEngineer,
 
+                Region = model.Region,        
+
                 Comments = model.Comments,
 
                 CreatedBy = "Customer"
             };
-
             foreach (var item in model.Questions)
             {
                 feedback.Ratings.Add(new CustomerFeedbackRating

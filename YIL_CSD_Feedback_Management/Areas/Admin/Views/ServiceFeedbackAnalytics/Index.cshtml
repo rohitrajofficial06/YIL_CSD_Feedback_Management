@@ -1,0 +1,637 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.ServiceFeedbackAnalyticsViewModel
+
+@{
+    ViewData["Title"] = "Service Feedback Analytics";
+}
+
+<div class="container-fluid">
+
+    <div class="row mb-3">
+
+        <div class="col-md-12">
+
+            <h2>
+                <i class="bi bi-bar-chart-line-fill text-primary"></i>
+
+                Service Feedback Analytics
+            </h2>
+
+            <hr />
+
+        </div>
+
+    </div>
+    <div class="card shadow-sm mb-3">
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row">
+
+                    <div class="col-md-3">
+
+                        <label>Month</label>
+
+                        <select asp-for="Month"
+                                class="form-select">
+
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                <option value="@i">
+
+                                    @(new DateTime(2000, i, 1).ToString("MMMM"))
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <label>Year</label>
+
+                        <input asp-for="Year"
+                               type="number"
+                               min="2024"
+                               max="2050"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-end">
+
+                        <button type="submit" class="btn btn-primary">
+
+                            <i class="bi bi-search"></i>
+
+                            Search
+
+                        </button>
+
+                        <a asp-action="ExportToExcel"
+                           asp-route-month="@Model.Month"
+                           asp-route-year="@Model.Year"
+                           class="btn btn-success ms-2">
+
+                            <i class="bi bi-file-earmark-excel"></i>
+                            Export Excel
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="row mb-4">
+
+        <!-- Closed Cases -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Closed Cases
+                            </h6>
+
+                            <h2 class="fw-bold text-primary">
+                                @Model.TotalClosedCases
+                            </h2>
+
+                        </div>
+
+                        <div class="align-self-center">
+
+                            <i class="bi bi-folder-check"
+                               style="font-size:40px;color:#0d6efd;"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Feedback Received -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Feedback Received
+                            </h6>
+
+                            <h2 class="fw-bold text-success">
+                                @Model.TotalFeedbackReceived
+                            </h2>
+
+                        </div>
+
+                        <div class="align-self-center">
+
+                            <i class="bi bi-chat-left-text"
+                               style="font-size:40px;color:#198754;"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Completion -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Completion %
+                            </h6>
+
+                            <h2 class="fw-bold text-warning">
+                                @Model.CompletionPercentage.ToString("0.00")%
+                            </h2>
+
+                        </div>
+
+                        <div class="align-self-center">
+
+                            <i class="bi bi-graph-up-arrow"
+                               style="font-size:40px;color:#ffc107;"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Average Rating -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Average Rating
+                            </h6>
+
+                            <h2 class="fw-bold text-danger">
+                                @Model.AverageRating.ToString("0.00") ★
+                            </h2>
+
+                        </div>
+
+                        <div class="align-self-center">
+
+                            <i class="bi bi-star-fill"
+                               style="font-size:40px;color:#dc3545;"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row mb-4">
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-success text-white">
+
+                    <h6 class="mb-0">
+
+                        Completion % by Region
+
+                    </h6>
+
+                </div>
+
+                <div class="card-body">
+
+                    <canvas id="completionChart"
+                            height="250"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-danger text-white">
+
+                    <h6 class="mb-0">
+
+                        Average Rating by Region
+
+                    </h6>
+
+                </div>
+
+                <div class="card-body">
+
+                    <canvas id="ratingChart"
+                            height="250"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-info text-white">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-graph-up"></i>
+
+                Monthly Trend
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <canvas id="monthlyTrendChart"
+                    height="100"></canvas>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <h5 class="mb-0">
+                <i class="bi bi-table"></i>
+
+                Regional Performance
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Region</th>
+
+                            <th class="text-center">Closed Cases</th>
+
+                            <th class="text-center">Feedback Received</th>
+
+                            <th class="text-center">Completion %</th>
+
+                            <th class="text-center">Average Rating</th>
+
+                            <th class="text-center">Status</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model.Regions.Any())
+                        {
+                        @foreach (var item in Model.Regions)
+                        {
+                            <tr>
+
+                                    <td>
+
+                                        <a asp-action="RegionDetails"
+                                           asp-route-region="@item.Region"
+                                           asp-route-month="@Model.Month"
+                                           asp-route-year="@Model.Year">
+
+                                            @item.Region
+
+                                        </a>
+
+                                    </td>
+
+                                <td class="text-center">
+                                    @item.ClosedCases
+                                </td>
+
+                                <td class="text-center">
+                                    @item.FeedbackReceived
+                                </td>
+
+                                <td class="text-center">
+                                    @item.CompletionPercentage.ToString("0.00")%
+                                </td>
+
+                                <td class="text-center">
+                                    @item.AverageRating.ToString("0.00") ★
+                                </td>
+
+                                <td class="text-center">
+
+                                    @if (item.Status == "Outstanding")
+                                    {
+                                        <span class="badge bg-success">
+                                            Outstanding
+                                        </span>
+                                    }
+                                    else if (item.Status == "Excellent")
+                                    {
+                                        <span class="badge bg-primary">
+                                            Excellent
+                                        </span>
+                                    }
+                                    else if (item.Status == "Good")
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            Good
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">
+                                            Needs Attention
+                                        </span>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">
+                                    No records found.
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+        // Region Labels
+        var regions = [
+            @Html.Raw(string.Join(",", Model.Regions.Select(x => $"'{x.Region}'")))
+        ];
+
+        // Completion %
+        var completion = [
+            @Html.Raw(string.Join(",", Model.Regions.Select(x => x.CompletionPercentage)))
+        ];
+
+        // Average Rating
+        var ratings = [
+            @Html.Raw(string.Join(",", Model.Regions.Select(x => x.AverageRating)))
+        ];
+
+    </script>
+
+    <script>
+
+const completionChart = new Chart(
+    document.getElementById('completionChart'),
+    {
+        type: 'bar',
+
+        data:
+        {
+            labels: regions,
+
+            datasets:
+            [
+                {
+                    label: 'Completion %',
+
+                    data: completion,
+
+                    backgroundColor: [
+                        '#0d6efd',
+                        '#198754',
+                        '#ffc107',
+                        '#dc3545',
+                        '#6f42c1',
+                        '#20c997'
+                    ],
+
+                    borderWidth: 1
+                }
+            ]
+        },
+
+        options:
+        {
+            responsive: true,
+
+            plugins:
+            {
+                legend:
+                {
+                    display: false
+                }
+            },
+
+            scales:
+            {
+                y:
+                {
+                    beginAtZero: true,
+
+                    max: 100
+                }
+            }
+        }
+    });
+
+</script>
+
+    <script>
+
+        const ratingChart = new Chart(
+            document.getElementById('ratingChart'),
+            {
+                type: 'bar',
+
+                data:
+                {
+                    labels: regions,
+
+                    datasets:
+                    [
+                        {
+                            label: 'Average Rating',
+
+                            data: ratings,
+
+                            backgroundColor: '#198754',
+
+                            borderWidth: 1
+                        }
+                    ]
+                },
+
+                options:
+                {
+                    responsive: true,
+
+                    plugins:
+                    {
+                        legend:
+                        {
+                            display: false
+                        }
+                    },
+
+                    scales:
+                    {
+                        y:
+                        {
+                            beginAtZero: true,
+
+                            max: 5
+                        }
+                    }
+                }
+            });
+
+    </script>
+
+    <script>
+
+        var months = [
+            @Html.Raw(string.Join(",", Model.MonthlyTrend.Select(x => $"'{x.Month}'")))
+        ];
+
+        var trend = [
+            @Html.Raw(string.Join(",", Model.MonthlyTrend.Select(x => x.CompletionPercentage)))
+        ];
+
+        new Chart(
+            document.getElementById('monthlyTrendChart'),
+            {
+                type: 'line',
+
+                data:
+                {
+                    labels: months,
+
+                    datasets:
+                    [
+                        {
+                            label: 'Completion %',
+
+                            data: trend,
+
+                            borderColor: '#0dcaf0',
+
+                            backgroundColor: 'rgba(13,202,240,0.20)',
+
+                            fill: true,
+
+                            tension: 0.3
+                        }
+                    ]
+                },
+
+                options:
+                {
+                    responsive: true,
+
+                    scales:
+                    {
+                        y:
+                        {
+                            beginAtZero: true,
+
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+    </script>
+
+}

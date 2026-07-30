@@ -45,6 +45,12 @@ namespace YIL_CSD_Feedback_Management.Models
         [StringLength(200)]
         public string? YILEngineer { get; set; }
 
+        [StringLength(50)]
+        public string? Region { get; set; }
+
+        [StringLength(20)]
+        public string? ReferenceType { get; set; }
+
         public string? Comments { get; set; }
 
         [StringLength(500)]

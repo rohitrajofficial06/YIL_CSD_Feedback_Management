@@ -2,6 +2,7 @@
 {
     public class CriticalFeedbackIndexViewModel
     {
+        public int? DepartmentId { get; set; }
         public string SearchText { get; set; }
 
         public string Region { get; set; }

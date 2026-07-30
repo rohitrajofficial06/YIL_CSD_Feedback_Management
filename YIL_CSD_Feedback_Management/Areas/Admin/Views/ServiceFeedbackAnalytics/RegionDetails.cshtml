@@ -1,0 +1,116 @@
+﻿@model List<YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.RegionDetailsViewModel>
+
+@{
+    ViewData["Title"] = "Region Details";
+}
+
+<div class="container-fluid">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <h4 class="mb-0">
+                Region : @ViewBag.Region
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <a asp-action="Index"
+               asp-route-month="@ViewBag.Month"
+               asp-route-year="@ViewBag.Year"
+               class="btn btn-secondary mb-3">
+
+                ← Back
+
+            </a>
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>Case Number</th>
+                            <th>Company</th>
+                            <th>Respondent</th>
+                            <th>Engineer</th>
+                            <th>Closed Date</th>
+                            <th>Feedback</th>
+                            <th>Rating</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>@item.CaseNumber</td>
+
+                                    <td>@item.CompanyName</td>
+
+                                    <td>@item.RespondentName</td>
+
+                                    <td>@item.YILEngineer</td>
+
+                                    <td>
+                                        @(item.ClosedDate?.ToString("dd-MMM-yyyy"))
+                                    </td>
+
+                                    <td>
+
+                                        @if (item.FeedbackReceived)
+                                        {
+                                            <span class="badge bg-success">
+                                                Received
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">
+                                                Pending
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <td>
+                                        @(item.Rating?.ToString("0.00") ?? "-")
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+
+                                <td colspan="7"
+                                    class="text-center">
+
+                                    No records found.
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

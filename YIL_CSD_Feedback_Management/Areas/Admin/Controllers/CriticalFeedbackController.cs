@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using YIL_CSD_Feedback_Management.Areas.Admin.ViewModels;
 using YIL_CSD_Feedback_Management.Services.Interfaces;
 
@@ -18,8 +19,15 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
         }
 
         public async Task<IActionResult> Index(
-            CriticalFeedbackIndexViewModel model)
+      CriticalFeedbackIndexViewModel model)
         {
+            var departmentClaim = User.FindFirst("DepartmentId")?.Value;
+
+            if (int.TryParse(departmentClaim, out int departmentId))
+            {
+                model.DepartmentId = departmentId;
+            }
+
             var result = await _service.GetAllAsync(model);
 
             return View(result);

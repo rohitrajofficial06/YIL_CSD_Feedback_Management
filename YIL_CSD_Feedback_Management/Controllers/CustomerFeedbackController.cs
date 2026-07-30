@@ -1,8 +1,9 @@
-﻿using YIL_CSD_Feedback_Management.ViewModels.Feedback;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using YIL_CSD_Feedback_Management.Services.Interfaces;
 using YIL_CSD_Feedback_Management.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using YIL_CSD_Feedback_Management.ViewModels.Feedback;
 
 namespace YIL_CSD_Feedback_Management.Controllers
 {
@@ -12,19 +13,19 @@ namespace YIL_CSD_Feedback_Management.Controllers
         private readonly IDepartmentService _departmentService;
         private readonly IFeedbackQuestionService _questionService;
         private readonly ICustomerFeedbackService _feedbackService;
+        private readonly IRegionService _regionService;
 
         public CustomerFeedbackController(
-     IDepartmentService departmentService,
-     IFeedbackQuestionService questionService,
-     ICustomerFeedbackService feedbackService)
+    IDepartmentService departmentService,
+    IFeedbackQuestionService questionService,
+    ICustomerFeedbackService feedbackService,
+    IRegionService regionService)
         {
             _departmentService = departmentService;
-
             _questionService = questionService;
-
             _feedbackService = feedbackService;
+            _regionService = regionService;
         }
-
 
         // ===========================================
         // Upload or Fill
@@ -61,6 +62,36 @@ namespace YIL_CSD_Feedback_Management.Controllers
 
             model.DepartmentID = departmentId;
 
+            switch (departmentId)
+            {
+                case 1:
+                    model.IsCaseNumber = true;
+                    model.IsReferenceNumber = false;
+                    model.ReferenceLabel = "Case Number";
+                    model.ReferenceType = "CASE";
+                    break;
+
+                case 2:
+                    model.IsCaseNumber = false;
+                    model.IsReferenceNumber = true;
+                    model.ReferenceLabel = "Training Request Number (TRN)";
+                    model.ReferenceType = "TRN";
+                    break;
+
+                case 3:
+                    model.IsCaseNumber = false;
+                    model.IsReferenceNumber = true;
+                    model.ReferenceLabel = "Service Request Number (SRN)";
+                    model.ReferenceType = "SRN";
+                    break;
+
+                default:
+                    model.IsCaseNumber = true;
+                    model.ReferenceLabel = "Case Number";
+                    model.ReferenceType = "CASE";
+                    break;
+            }
+
             var departments = await _departmentService.GetAllAsync();
 
             var department = departments
@@ -82,6 +113,15 @@ namespace YIL_CSD_Feedback_Management.Controllers
                 IsMandatory = x.IsMandatory
             }).ToList();
 
+            // Load Regions
+            var regions = await _regionService.GetAllAsync();
+
+            model.RegionList = regions.Select(r => new SelectListItem
+            {
+                Value = r.RegionName,
+                Text = r.RegionName
+            }).ToList();
+
             return View(model);
         }
 
@@ -89,6 +129,40 @@ namespace YIL_CSD_Feedback_Management.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitFeedback(CustomerFeedbackViewModel model)
         {
+
+            if (model.IsCaseNumber)
+            {
+                if (string.IsNullOrWhiteSpace(model.CaseNumberPart1))
+                {
+                    ModelState.AddModelError(nameof(model.CaseNumberPart1),
+                        "First part is required.");
+                }
+                else if (!System.Text.RegularExpressions.Regex.IsMatch(model.CaseNumberPart1, @"^\d{4}$"))
+                {
+                    ModelState.AddModelError(nameof(model.CaseNumberPart1),
+                        "Enter exactly 4 digits.");
+                }
+
+                if (string.IsNullOrWhiteSpace(model.CaseNumberPart2))
+                {
+                    ModelState.AddModelError(nameof(model.CaseNumberPart2),
+                        "Second part is required.");
+                }
+                else if (!System.Text.RegularExpressions.Regex.IsMatch(model.CaseNumberPart2, @"^\d{5}$"))
+                {
+                    ModelState.AddModelError(nameof(model.CaseNumberPart2),
+                        "Enter exactly 5 digits.");
+                }
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(model.ReferenceNumber))
+                {
+                    ModelState.AddModelError(nameof(model.ReferenceNumber),
+                        $"{model.ReferenceLabel} is required.");
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 var errors = ModelState

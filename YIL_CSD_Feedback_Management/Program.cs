@@ -26,6 +26,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+
+    options.Cookie.HttpOnly = true;
+
+    options.Cookie.IsEssential = true;
+});
 
 // ==========================================================
 // MVC
@@ -126,6 +136,16 @@ builder.Services.AddScoped<IEngineerPerformanceService,
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 
+builder.Services.AddScoped<IServiceFeedbackAnalyticsRepository,
+    ServiceFeedbackAnalyticsRepository>();
+
+builder.Services.AddScoped<IServiceFeedbackAnalyticsService,
+    ServiceFeedbackAnalyticsService>();
+
+builder.Services.AddScoped<IRegionRepository, RegionRepository>();
+
+builder.Services.AddScoped<IRegionService, RegionService>();
+
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -158,6 +178,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
+
+app.UseSession();
 
 app.UseAuthorization();
 

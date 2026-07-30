@@ -77,6 +77,22 @@ namespace YIL_CSD_Feedback_Management.Controllers
                     AllowRefresh = true
                 });
 
+            HttpContext.Session.SetInt32(
+    "DepartmentId",
+    user.DepartmentId);
+
+            HttpContext.Session.SetString(
+                "DepartmentName",
+                Helpers.DepartmentHelper.GetDepartmentName(user.DepartmentId));
+
+            HttpContext.Session.SetString(
+                "PortalTitle",
+                Helpers.DepartmentHelper.GetPortalTitle(user.DepartmentId));
+
+            HttpContext.Session.SetString(
+                "DashboardTitle",
+                Helpers.DepartmentHelper.GetDashboardTitle(user.DepartmentId));
+
             // If user was trying to access a protected page
             if (!string.IsNullOrWhiteSpace(model.ReturnUrl) &&
                 Url.IsLocalUrl(model.ReturnUrl))
@@ -84,35 +100,13 @@ namespace YIL_CSD_Feedback_Management.Controllers
                 return Redirect(model.ReturnUrl);
             }
 
-            // Redirect Admins based on Module
+            // Redirect all Admin users to the common Admin area
             if (string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase))
             {
-                switch (user.Module?.Trim().ToLower())
-                {
-                    case "siteservice":
-                        return RedirectToAction(
-                            "Index",
-                            "Dashboard",
-                            new { area = "Admin" });
-
-                    case "benchrepair":
-                        // Future Area
-                        return RedirectToAction(
-                            "Index",
-                            "Dashboard",
-                            new { area = "BenchRepair" });
-
-                    case "training":
-                        // Future Area
-                        return RedirectToAction(
-                            "Index",
-                            "Dashboard",
-                            new { area = "Training" });
-
-                    default:
-                        TempData["Error"] = "No module has been assigned to your account.";
-                        return RedirectToAction(nameof(AccessDenied));
-                }
+                return RedirectToAction(
+                    "Index",
+                    "Dashboard",
+                    new { area = "Admin" });
             }
 
             // Normal Users

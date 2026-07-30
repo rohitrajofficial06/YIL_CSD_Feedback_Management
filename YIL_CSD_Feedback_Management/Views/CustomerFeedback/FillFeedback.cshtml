@@ -46,46 +46,64 @@
                     Customer Information
                 </h5>
 
-                <div class="col-md-6">
+                <div class="row">
 
-                    <label class="form-label">
-                        Case Number <span class="text-danger">*</span>
-                    </label>
+                    <div class="col-md-6 mb-3">
 
-                    <div class="d-flex align-items-center">
+                        <label class="form-label">
+                            @Model.ReferenceLabel
+                            <span class="text-danger">*</span>
+                        </label>
 
-                        <span class="form-control text-center"
-                              style="width:90px;
-                     background:#f8f9fa;
-                     font-weight:600;">
+                        @if (Model.IsCaseNumber)
+                        {
+                            <div class="d-flex align-items-center">
 
-                            YIL-C
+                                <span class="form-control text-center"
+                                      style="width:90px;
+                                 background:#f8f9fa;
+                                 font-weight:600;">
 
-                        </span>
+                                    YIL-C
 
-                        <input asp-for="CaseNumberPart1"
-                               maxlength="4"
-                               class="form-control mx-2 text-center"
-                               style="width:90px;"
-                               placeholder="0000" />
+                                </span>
 
-                        <span class="fw-bold">-</span>
+                                <input asp-for="CaseNumberPart1"
+                                       maxlength="4"
+                                       class="form-control mx-2 text-center"
+                                       style="width:90px;"
+                                       placeholder="0000" />
 
-                        <input asp-for="CaseNumberPart2"
-                               maxlength="5"
-                               class="form-control mx-2 text-center"
-                               style="width:110px;"
-                               placeholder="00000" />
+                                <span class="fw-bold">-</span>
+
+                                <input asp-for="CaseNumberPart2"
+                                       maxlength="5"
+                                       class="form-control mx-2 text-center"
+                                       style="width:110px;"
+                                       placeholder="00000" />
+
+                            </div>
+
+                            <span asp-validation-for="CaseNumberPart1"
+                                  class="text-danger"></span>
+
+                            <span asp-validation-for="CaseNumberPart2"
+                                  class="text-danger"></span>
+                        }
+                        else
+                        {
+                            <input asp-for="ReferenceNumber"
+                                   class="form-control"
+                                   placeholder="Enter @Model.ReferenceLabel" />
+
+                            <span asp-validation-for="ReferenceNumber"
+                                  class="text-danger"></span>
+                        }
 
                     </div>
 
-                    <span asp-validation-for="CaseNumberPart1"
-                          class="text-danger"></span>
-
-                    <span asp-validation-for="CaseNumberPart2"
-                          class="text-danger"></span>
-
                 </div>
+
 
                 <div class="row">
 
@@ -171,6 +189,30 @@
 
                         <input asp-for="YILEngineer"
                                class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="Region"
+                               class="form-label">
+
+                            Region
+
+                        </label>
+
+                        <select asp-for="Region"
+                                asp-items="Model.RegionList"
+                                class="form-select">
+
+                            <option value="">
+                                -- Select Region --
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="Region"
+                              class="text-danger"></span>
 
                     </div>
 

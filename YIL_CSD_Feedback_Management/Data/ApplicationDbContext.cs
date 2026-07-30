@@ -35,6 +35,8 @@ namespace YIL_CSD_Feedback_Management.Data
         public DbSet<ClosedCaseUploadDetail> ClosedCaseUploadDetails { get; set; }
 
         public DbSet<ClosedCase> ClosedCases { get; set; }
+
+        public DbSet<Region> Regions { get; set; }
         // ==========================================
         // Model Configuration
         // ==========================================

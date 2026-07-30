@@ -1,6 +1,21 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 
+
+    @{
+            var departmentId = Context.Session.GetInt32("DepartmentId") ?? 1;
+
+            var departmentName = Context.Session.GetString("DepartmentName")
+            ?? "Site Service";
+
+            var portalTitle = Context.Session.GetString("PortalTitle")
+            ?? "Customer Feedback Management";
+
+            var dashboardTitle = Context.Session.GetString("DashboardTitle")
+            ?? "Dashboard";
+
+            var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "";
+    }
 <head>
 
     <meta charset="utf-8" />
@@ -8,7 +23,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1" />
 
-    <title>@ViewData["Title"] - Yokogawa Admin Portal</title>
+    <title>@ViewData["Title"] - @portalTitle</title>
 
     <!-- Bootstrap -->
 
@@ -42,7 +57,6 @@
 
 <body>
 
-  
 
     <div class="wrapper">
 
@@ -58,9 +72,9 @@
                      class="logo"
                      alt="Yokogawa" />
 
-                <h5>Site Service</h5>
+                <h5>@departmentName</h5>
 
-                <small>Admin Portal</small>
+                <small>Feedback Management</small>
 
             </div>
 
@@ -96,6 +110,8 @@
 
                 </li>
 
+                @if (departmentId == 1)
+                {
                 <li class="nav-item">
 
                     <a asp-area="Admin"
@@ -110,38 +126,27 @@
                     </a>
 
                 </li>
+                }
 
-              
-                <li class="nav-item">
+                @if (departmentId == 1)
+                {
+                    <li class="nav-item">
 
-                    <a asp-area="Admin"
-                       asp-controller="Reports"
-                       asp-action="Index"
-                       class="nav-link">
+                        <a asp-area="Admin"
+                           asp-controller="Reports"
+                           asp-action="Index"
+                           class="nav-link">
 
-                        <i class="nav-icon bi bi-bar-chart-fill"></i>
-                        
-                        <p>Reports</p>
+                            <i class="nav-icon bi bi-bar-chart-fill"></i>
 
-                    </a>
+                            <p>Reports</p>
 
-                </li>
+                        </a>
 
-                <li class="nav-item">
+                    </li>
+                }
 
-                    <a asp-area="Admin"
-                       asp-controller="Feedback"
-                       asp-action="Index"
-                       class="nav-link">
-
-                        <i class="nav-icon bi bi-chat-left-text"></i>
-
-                        <p>Feedback Management</p>
-
-                    </a>
-
-                </li>
-
+             
                 <li class="nav-item">
 
                     <a asp-area="Admin"
@@ -156,6 +161,24 @@
                     </a>
 
                 </li>
+
+                @if (departmentId == 1)
+                {
+                    <li class="nav-item">
+
+                        <a asp-area="Admin"
+                           asp-controller="ServiceFeedbackAnalytics"
+                           asp-action="Index"
+                           class="nav-link">
+
+                            <i class="nav-icon fas fa-chart-line"></i>
+
+                            <p>Service Feedback Analytics</p>
+
+                        </a>
+
+                    </li>
+                }
 
                 <li class="nav-item">
 
@@ -237,7 +260,7 @@
 
                     <h4 class="ms-3 mb-0">
 
-                        Site Service Dashboard
+                        @dashboardTitle
 
                     </h4>
 
@@ -266,7 +289,7 @@
 
                         <span>
 
-                            Site Service Admin
+                            @departmentName Admin
 
                         </span>
 

@@ -34,6 +34,15 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
                 .Where(x => criticalFeedbackIds.Contains(x.FeedbackID))
                 .AsNoTracking();
 
+            //===========================================
+            // Department Filter
+            //===========================================
+
+            if (model.DepartmentId.HasValue)
+            {
+                feedbackQuery = feedbackQuery.Where(x =>
+                    x.DepartmentID == model.DepartmentId.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(model.SearchText))
             {

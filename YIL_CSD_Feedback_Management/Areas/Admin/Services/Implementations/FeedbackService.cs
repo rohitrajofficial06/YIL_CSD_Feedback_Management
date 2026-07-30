@@ -18,9 +18,9 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Services.Implementations
             return await _feedbackRepository.GetFeedbackAsync(model);
         }
 
-        public async Task<FeedbackDetailsViewModel?> GetDetailsAsync(long feedbackId)
+        public async Task<FeedbackDetailsViewModel?> GetDetailsAsync(long feedbackId, int departmentId)
         {
-            return await _feedbackRepository.GetDetailsAsync(feedbackId);
+            return await _feedbackRepository.GetDetailsAsync(feedbackId, departmentId);
         }
     }
 }
