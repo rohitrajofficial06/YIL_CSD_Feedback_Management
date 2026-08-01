@@ -2,20 +2,24 @@
 <html lang="en">
 
 
-    @{
-            var departmentId = Context.Session.GetInt32("DepartmentId") ?? 1;
+   @{
+    var departmentId = Context.Session.GetInt32("DepartmentId") ?? 1;
 
-            var departmentName = Context.Session.GetString("DepartmentName")
-            ?? "Site Service";
+    var departmentName = Context.Session.GetString("DepartmentName")
+    ?? "Site Service";
 
-            var portalTitle = Context.Session.GetString("PortalTitle")
-            ?? "Customer Feedback Management";
+    var portalTitle = Context.Session.GetString("PortalTitle")
+    ?? "Customer Feedback Management";
 
-            var dashboardTitle = Context.Session.GetString("DashboardTitle")
-            ?? "Dashboard";
+    var dashboardTitle = Context.Session.GetString("DashboardTitle")
+    ?? "Dashboard";
 
-            var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "";
-    }
+    var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "";
+
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
 <head>
 
     <meta charset="utf-8" />
@@ -78,166 +82,146 @@
 
             </div>
 
-            <ul class="sidebar-menu">
+           <ul class="sidebar-menu">
 
-                <li class="nav-item">
+    <li class="sidebar-item">
+        <a asp-area="Admin"
+           asp-controller="Dashboard"
+           asp-action="Index"
+           class="sidebar-link @(currentController == "Dashboard" ? "active" : "")">
 
-                    <a asp-area="Admin"
-                       asp-controller="Dashboard"
-                       asp-action="Index"
-                       class="nav-link">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
 
-                        <i class="bi bi-grid-fill"></i>
+        </a>
+    </li>
 
-                        <p>Dashboard</p>
+    <li class="sidebar-item">
+        <a asp-area="Admin"
+           asp-controller="Feedback"
+           asp-action="Index"
+           class="sidebar-link @(currentController == "Feedback" ? "active" : "")">
 
-                    </a>
+            <i class="bi bi-chat-left-text-fill"></i>
+            <span>Feedback</span>
 
-                </li>
+        </a>
+    </li>
 
-                <li class="nav-item">
+    <li class="sidebar-item">
+        <a asp-area="Admin"
+           asp-controller="User"
+           asp-action="Index"
+           class="sidebar-link @(currentController == "User" ? "active" : "")">
 
-                    <a asp-area="Admin"
-                       asp-controller="Feedback"
-                       asp-action="Index"
-                       class="nav-link">
+            <i class="bi bi-people-fill"></i>
+            <span>Users</span>
 
-                        <i class="bi bi-chat-left-text-fill"></i>
+        </a>
+    </li>
 
-                        <p>Feedback</p>
+    @if (departmentId == 1)
+    {
+        <li class="sidebar-item">
+            <a asp-area="Admin"
+               asp-controller="FeedbackStatus"
+               asp-action="Index"
+               class="sidebar-link @(currentController == "FeedbackStatus" ? "active" : "")">
 
-                    </a>
+                <i class="bi bi-cloud-upload-fill"></i>
+                <span>Closed Case Management</span>
 
-                </li>
+            </a>
+        </li>
+    }
 
-                @if (departmentId == 1)
-                {
-                <li class="nav-item">
+    @if (departmentId == 1)
+    {
+        <li class="sidebar-item">
+            <a asp-area="Admin"
+               asp-controller="Reports"
+               asp-action="Index"
+               class="sidebar-link @(currentController == "Reports" ? "active" : "")">
 
-                    <a asp-area="Admin"
-                       asp-controller="FeedbackStatus"
-                       asp-action="Index"
-                       class="nav-link">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Reports</span>
 
-                        <i class="bi bi-cloud-upload-fill"></i>
+            </a>
+        </li>
+    }
 
-                        <p>Closed Case Management</p>
+    <li class="sidebar-item">
+        <a asp-area="Admin"
+           asp-controller="CriticalFeedback"
+           asp-action="Index"
+           class="sidebar-link @(currentController == "CriticalFeedback" ? "active" : "")">
 
-                    </a>
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>Critical Feedback</span>
 
-                </li>
-                }
+        </a>
+    </li>
 
-                @if (departmentId == 1)
-                {
-                    <li class="nav-item">
+    @if (departmentId == 1)
+    {
+        <li class="sidebar-item">
+            <a asp-area="Admin"
+               asp-controller="ServiceFeedbackAnalytics"
+               asp-action="Index"
+               class="sidebar-link @(currentController == "ServiceFeedbackAnalytics" ? "active" : "")">
 
-                        <a asp-area="Admin"
-                           asp-controller="Reports"
-                           asp-action="Index"
-                           class="nav-link">
+                <i class="bi bi-graph-up-arrow"></i>
+                <span>Service Feedback Analytics</span>
 
-                            <i class="nav-icon bi bi-bar-chart-fill"></i>
+            </a>
+        </li>
+    }
 
-                            <p>Reports</p>
+    <li class="sidebar-item">
+        <a asp-area="Admin"
+           asp-controller="Question"
+           asp-action="Index"
+           class="sidebar-link @(currentController == "Question" ? "active" : "")">
 
-                        </a>
+            <i class="bi bi-question-circle-fill"></i>
+            <span>Question Management</span>
 
-                    </li>
-                }
+        </a>
+    </li>
 
-             
-                <li class="nav-item">
+    <li class="sidebar-item">
+        <a href="#"
+           class="sidebar-link">
 
-                    <a asp-area="Admin"
-                       asp-controller="CriticalFeedback"
-                       asp-action="Index"
-                       class="nav-link">
+            <i class="bi bi-people-fill"></i>
+            <span>Customers</span>
 
-                        <i class="nav-icon bi bi-exclamation-triangle-fill text-danger"></i>
+        </a>
+    </li>
 
-                        <p>Critical Feedback</p>
+    <li class="sidebar-item">
+        <a href="#"
+           class="sidebar-link">
 
-                    </a>
+            <i class="bi bi-gear-fill"></i>
+            <span>Settings</span>
 
-                </li>
+        </a>
+    </li>
 
-                @if (departmentId == 1)
-                {
-                    <li class="nav-item">
+    <li class="sidebar-item">
+        <a asp-area=""
+           asp-controller="Account"
+           asp-action="Logout"
+           class="sidebar-link">
 
-                        <a asp-area="Admin"
-                           asp-controller="ServiceFeedbackAnalytics"
-                           asp-action="Index"
-                           class="nav-link">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
 
-                            <i class="nav-icon fas fa-chart-line"></i>
+        </a>
+    </li>
 
-                            <p>Service Feedback Analytics</p>
-
-                        </a>
-
-                    </li>
-                }
-
-                <li class="nav-item">
-
-                    <a asp-area="Admin"
-                       asp-controller="Question"
-                       asp-action="Index"
-                       class="nav-link">
-
-                        <i class="bi bi-question-circle-fill"></i>
-
-                        <p>Question Management</p>
-
-                    </a>
-
-                </li>
-
-                <li class="nav-item">
-
-                    <a href="#"
-                       class="nav-link">
-
-                        <i class="bi bi-people-fill"></i>
-
-                        <p>Customers</p>
-
-                    </a>
-
-                </li>
-
-               
-                <li class="nav-item">
-
-                    <a href="#"
-                       class="nav-link">
-
-                        <i class="bi bi-gear-fill"></i>
-
-                        <p>Settings</p>
-
-                    </a>
-
-                </li>
-
-                <li class="nav-item">
-
-                    <a asp-controller="Account"
-                       asp-action="Logout"
-                       asp-area=""
-                       class="nav-link">
-
-                        <i class="bi bi-box-arrow-right"></i>
-
-                        <p>Logout</p>
-
-                    </a>
-
-                </li>
-
-            </ul>
+</ul>
 
         </aside>
 
@@ -302,6 +286,32 @@
             <!-- Page -->
 
             <div class="page-content">
+
+                @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+
+                            @TempData["Success"]
+
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="alert"></button>
+
+                        </div>
+                    }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show">
+
+                        @TempData["Error"]
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert"></button>
+
+                    </div>
+                }
 
                 @RenderBody()
 

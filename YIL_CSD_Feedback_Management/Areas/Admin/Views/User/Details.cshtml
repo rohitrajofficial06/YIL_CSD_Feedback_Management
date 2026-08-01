@@ -1,0 +1,114 @@
+﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.User.UserDetailsViewModel
+
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<div class="card shadow-sm">
+
+    <div class="card-header">
+
+        <h4 class="mb-0">
+            User Details
+        </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-bordered">
+
+            <tr>
+                <th width="250">Full Name</th>
+                <td>@Model.FullName</td>
+            </tr>
+
+            <tr>
+                <th>User Name</th>
+                <td>@Model.UserName</td>
+            </tr>
+
+            <tr>
+                <th>Email</th>
+                <td>@Model.Email</td>
+            </tr>
+
+            <tr>
+                <th>Role</th>
+                <td>@Model.Role</td>
+            </tr>
+
+            <tr>
+                <th>Region</th>
+                <td>@Model.Region</td>
+            </tr>
+
+            <tr>
+                <th>Module</th>
+                <td>@Model.Module</td>
+            </tr>
+
+            <tr>
+                <th>Status</th>
+
+                <td>
+
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Inactive</span>
+                    }
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <th>Created Date</th>
+
+                <td>
+
+                    @Model.CreatedDate.ToString("dd-MMM-yyyy HH:mm")
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <th>Last Login</th>
+
+                <td>
+
+                    @(Model.LastLogin?.ToString("dd-MMM-yyyy HH:mm") ?? "-")
+
+                </td>
+
+            </tr>
+
+        </table>
+
+        <a asp-action="Edit"
+           asp-route-id="@Model.UserID"
+           class="btn btn-warning">
+
+            <i class="bi bi-pencil"></i>
+
+            Edit
+
+        </a>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+
+            Back
+
+        </a>
+
+    </div>
+
+</div>

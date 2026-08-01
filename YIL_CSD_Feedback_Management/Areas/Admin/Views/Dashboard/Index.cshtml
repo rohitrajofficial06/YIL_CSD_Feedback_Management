@@ -325,11 +325,13 @@
 
                             <td class="text-center">
 
-                                <a asp-area="Admin"
+                               <a asp-area="Admin"
                                    asp-controller="Feedback"
                                    asp-action="Details"
                                    asp-route-id="@item.FeedbackID"
-                                   class="view-btn">
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="btn btn-sm btn-primary">
 
                                     <i class="bi bi-eye-fill"></i>
 

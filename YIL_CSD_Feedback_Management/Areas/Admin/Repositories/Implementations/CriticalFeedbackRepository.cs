@@ -225,11 +225,7 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
 
                     CreatedDate = x.CreatedDate,
 
-                    Region = _context.ClosedCaseUploadDetails
-                        .Where(c => c.CaseNumber == x.CaseNumber)
-                        .OrderByDescending(c => c.UploadID)
-                        .Select(c => c.Region)
-                        .FirstOrDefault(),
+                    Region = x.Region,
 
                     ExcelClosedDate = _context.ClosedCaseUploadDetails
                         .Where(c => c.CaseNumber == x.CaseNumber)

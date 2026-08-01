@@ -146,6 +146,10 @@ builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 
 builder.Services.AddScoped<IRegionService, RegionService>();
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

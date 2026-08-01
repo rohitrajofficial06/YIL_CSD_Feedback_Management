@@ -116,68 +116,11 @@ SIDEBAR
     MENU
 =============================*/
 
-.sidebar-menu {
-    list-style: none;
-    padding: 15px 10px 25px;
-    margin: 0;
-    flex: 1;
-}
 
-    .sidebar-menu li {
-        margin: 3px 12px;
-    }
-
-    .sidebar-menu a {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 10px 16px;
-        font-size: 15px;
-        font-weight: 500;
-        color: #fff;
-        text-decoration: none;
-        border-radius: 12px;
-        transition: .3s;
-    }
-
-        .sidebar-menu a i {
-            font-size: 18px;
-            width: 22px;
-            text-align: center;
-        }
-
-        /*=============================
-    HOVER
-=============================*/
-
-        .sidebar-menu a:hover {
-            background: rgba(255,255,255,.15);
-            transform: translateX(8px);
-            box-shadow: 0 10px 25px rgba(0,0,0,.15);
-        }
-
-        /*=============================
-    ACTIVE
-=============================*/
-
-        .sidebar-menu a.active {
-            background: white;
-            color: #0054A6;
-            font-weight: 600;
-            box-shadow: 0 12px 25px rgba(0,0,0,.15);
-        }
 /*=============================
     SCROLLBAR
 =============================*/
 
-.sidebar::-webkit-scrollbar {
-    width: 8px;
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,.25);
-    border-radius: 20px;
-}
 
 
 /*=========================================================
@@ -198,19 +141,20 @@ SIDEBAR
     box-shadow: 0 8px 25px rgba(0,0,0,.08);
     z-index: 1000;
 }
+
 .main.expanded .topbar {
     left: 0;
 }
 
-    /*=============================
+/*=============================
     LEFT
 =============================*/
 
-    .topbar .left {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    }
+.topbar .left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
 
 #menuBtn {
     width: 45px;
@@ -367,6 +311,31 @@ SIDEBAR
     }
 }
 
+
+
+.main {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    transition: all .35s ease;
+}
+
+    .main.expanded {
+        margin-left: 0;
+        width: 100%;
+    }
+
+.topbar {
+    transition: left .35s ease, width .35s ease;
+}
+
+.main.expanded .topbar {
+    left: 0;
+}
+
+/*==========================================
+    Sidebar Toggle
+==========================================*/
+
 .sidebar::-webkit-scrollbar {
     width: 6px;
 }
@@ -390,16 +359,6 @@ SIDEBAR
         opacity: 1 !important;
     }
 
-.sidebar-menu a {
-    color: #ffffff !important;
-}
-
-    .sidebar-menu a i {
-        color: #ffffff !important;
-    }
-/*==========================================
-    Sidebar Toggle
-==========================================*/
 
 .sidebar {
     position: fixed;
@@ -413,21 +372,180 @@ SIDEBAR
         transform: translateX(-100%);
     }
 
-.main {
-    margin-left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width));
-    transition: all .35s ease;
-}
 
-    .main.expanded {
-        margin-left: 0;
-        width: 100%;
+    .sidebar::-webkit-scrollbar {
+        width: 8px;
     }
 
-.topbar {
-    transition: left .35s ease, width .35s ease;
+    .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,.25);
+        border-radius: 20px;
+    }
+
+
+.sidebar-item {
+    margin-bottom: 6px;
 }
 
-.main.expanded .topbar {
-    left: 0;
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 13px 18px;
+    border-radius: 12px;
+    color: #ffffff;
+    text-decoration: none;
+    transition: .25s;
 }
+
+    .sidebar-link i {
+        width: 22px;
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .sidebar-link span {
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .sidebar-link:hover {
+        background: rgba(255,255,255,.15);
+        color: #fff;
+        transform: translateX(6px);
+    }
+
+    /* Active Menu */
+    .sidebar-link.active {
+        background: #615fb8;
+        color: #0054A6 !important;
+        font-weight: 600;
+    }
+
+        .sidebar-link.active i,
+        .sidebar-link.active span {
+            color: #0054A6 !important;
+        }
+
+
+.sidebar-item {
+    margin-bottom: 6px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 13px 18px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #ffffff;
+    transition: all .25s ease;
+}
+
+    .sidebar-link i {
+        width: 22px;
+        font-size: 18px;
+        text-align: center;
+        color: inherit;
+    }
+
+    .sidebar-link span {
+        font-size: 15px;
+        font-weight: 500;
+        color: inherit;
+    }
+
+    .sidebar-link:hover {
+        background: rgba(255,255,255,.15);
+        color: #ffffff;
+        transform: translateX(6px);
+    }
+
+    .sidebar-link.active {
+        background: #ffffff;
+        color: #0054A6;
+        font-weight: 600;
+        box-shadow: 0 12px 25px rgba(0,0,0,.15);
+    }
+
+        .sidebar-link.active i,
+        .sidebar-link.active span {
+            color: #0054A6;
+        }
+
+/*==========================================
+    SIDEBAR MENU
+==========================================*/
+
+.sidebar-menu {
+    list-style: none;
+    margin: 0;
+    padding: 15px 12px;
+}
+
+.sidebar-item {
+    margin-bottom: 6px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 13px 18px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #ffffff;
+    transition: all .30s ease;
+}
+
+    .sidebar-link i {
+        width: 22px;
+        font-size: 18px;
+        text-align: center;
+        color: inherit;
+    }
+
+    .sidebar-link span {
+        font-size: 15px;
+        font-weight: 500;
+        color: inherit;
+    }
+
+    .sidebar-link:hover {
+        background: rgba(255,255,255,.10);
+        color: #ffffff;
+        transform: translateX(5px);
+    }
+
+/*==========================================
+    ACTIVE SIDEBAR
+==========================================*/
+
+.sidebar-menu .sidebar-link.active {
+    background: rgba(255,255,255,.18);
+    color: #fff !important;
+    border-left: 4px solid #FFD400;
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(0,0,0,.15);
+}
+
+    .sidebar-menu .sidebar-link.active i,
+    .sidebar-menu .sidebar-link.active span {
+        color: #fff !important;
+    }
+/*==========================================
+    NON ACTIVE
+==========================================*/
+
+.sidebar-menu .sidebar-link:not(.active) {
+    color: #ffffff !important;
+}
+
+    .sidebar-menu .sidebar-link:not(.active) i,
+    .sidebar-menu .sidebar-link:not(.active) span {
+        color: #ffffff !important;
+    }

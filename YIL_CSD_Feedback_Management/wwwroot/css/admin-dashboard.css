@@ -393,15 +393,3 @@
     background: #0dcaf0;
     color: #000;
 }
-
-/* Sidebar */
-.sidebar {
-    width: 260px;
-    transition: all .3s ease;
-}
-
-    /* Hide Sidebar */
-    .sidebar.collapsed {
-        width: 0;
-        overflow: hidden;
-    }

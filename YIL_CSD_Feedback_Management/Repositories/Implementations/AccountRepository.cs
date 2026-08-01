@@ -29,7 +29,11 @@ namespace YIL_CSD_Feedback_Management.Repositories.Implementations
 
             if (user != null)
             {
-                user.LastLogin = DateTime.Now;
+                TimeZoneInfo indiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+
+                user.LastLogin = TimeZoneInfo.ConvertTimeFromUtc(
+                    DateTime.UtcNow,
+                    indiaTimeZone);
 
                 _context.Users.Update(user);
 
