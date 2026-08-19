@@ -66,24 +66,30 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
                     x.FeedbackSource == model.FeedbackSource);
             }
 
-            if (model.FromMonth.HasValue)
+            //===========================================
+            // Excel Closed Date Filter
+            //===========================================
+
+            if (model.FromDate.HasValue)
             {
+                DateTime fromDate = model.FromDate.Value.Date;
+
                 feedbackQuery = feedbackQuery.Where(x =>
-                    _context.ClosedCaseUploadDetails
-                        .Any(c =>
-                            c.CaseNumber == x.CaseNumber &&
-                            c.ExcelClosedDate.HasValue &&
-                            c.ExcelClosedDate.Value.Month >= model.FromMonth.Value));
+                    _context.ClosedCaseUploadDetails.Any(c =>
+                        c.CaseNumber == x.CaseNumber &&
+                        c.ExcelClosedDate.HasValue &&
+                        c.ExcelClosedDate.Value >= fromDate));
             }
 
-            if (model.ToMonth.HasValue)
+            if (model.ToDate.HasValue)
             {
+                DateTime toDate = model.ToDate.Value.Date.AddDays(1);
+
                 feedbackQuery = feedbackQuery.Where(x =>
-                    _context.ClosedCaseUploadDetails
-                        .Any(c =>
-                            c.CaseNumber == x.CaseNumber &&
-                            c.ExcelClosedDate.HasValue &&
-                            c.ExcelClosedDate.Value.Month <= model.ToMonth.Value));
+                    _context.ClosedCaseUploadDetails.Any(c =>
+                        c.CaseNumber == x.CaseNumber &&
+                        c.ExcelClosedDate.HasValue &&
+                        c.ExcelClosedDate.Value < toDate));
             }
 
             //===========================================
@@ -178,6 +184,10 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
               .Select(c => c.ExcelClosedDate)
               .FirstOrDefault(),
 
+          FeedbackFileName = x.FeedbackFileName,
+
+          FeedbackFilePath = x.FeedbackFilePath,
+
           AverageRating = 0
       })
 
@@ -198,6 +208,22 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
             return model;
         }
 
+
+        public async Task<FeedbackAttachmentViewModel?> GetAttachmentAsync(long feedbackId, int departmentId)
+        {
+            return await _context.CustomerFeedbacks
+                .AsNoTracking()
+                .Where(x =>
+                    x.FeedbackID == feedbackId &&
+                    x.DepartmentID == departmentId)
+                .Select(x => new FeedbackAttachmentViewModel
+                {
+                    FeedbackID = x.FeedbackID,
+                    FeedbackFileName = x.FeedbackFileName,
+                    FeedbackFilePath = x.FeedbackFilePath
+                })
+                .FirstOrDefaultAsync();
+        }
         public async Task<FeedbackDetailsViewModel?> GetDetailsAsync(long feedbackId, int departmentId)
         {
             var feedback = await _context.CustomerFeedbacks

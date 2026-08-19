@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YIL_CSD_Feedback_Management.Helpers;
 using YIL_CSD_Feedback_Management.Models;
 using YIL_CSD_Feedback_Management.Services.Interfaces;
 using YIL_CSD_Feedback_Management.ViewModels;
@@ -100,7 +101,7 @@ namespace YIL_CSD_Feedback_Management.Controllers
             department.DepartmentName = model.DepartmentName.Trim();
             department.Description = model.Description;
             department.DisplayOrder = model.DisplayOrder;
-            department.ModifiedDate = DateTime.Now;
+            department.ModifiedDate = DateTimeHelper.Now;
             department.ModifiedBy = "Admin";
 
             await _departmentService.UpdateAsync(department);

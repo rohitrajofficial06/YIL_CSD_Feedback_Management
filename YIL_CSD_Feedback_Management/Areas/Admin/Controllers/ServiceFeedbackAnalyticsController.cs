@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using YIL_CSD_Feedback_Management.Areas.Admin.Services.Interfaces;
 using YIL_CSD_Feedback_Management.Areas.Admin.ViewModels;
+using YIL_CSD_Feedback_Management.Services.Interfaces;
 
 namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
 {
@@ -8,17 +9,25 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
     public class ServiceFeedbackAnalyticsController : Controller
     {
         private readonly IServiceFeedbackAnalyticsService _service;
+        private readonly ILogService _logService;
 
         public ServiceFeedbackAnalyticsController(
-            IServiceFeedbackAnalyticsService service)
+     IServiceFeedbackAnalyticsService service,
+     ILogService logService)
         {
             _service = service;
+            _logService = logService;
         }
 
         public async Task<IActionResult> Index(
             ServiceFeedbackAnalyticsViewModel model)
         {
             model = await _service.GetAnalyticsAsync(model);
+
+            await _logService.InformationAsync(
+    "Service Feedback Analytics",
+    "Index",
+    $"Viewed Analytics Dashboard. Month : {model.Month}, Year : {model.Year}");
 
             return View(model);
         }
@@ -37,6 +46,11 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
                 month,
                 year);
 
+            await _logService.InformationAsync(
+    "Service Feedback Analytics",
+    "RegionDetails",
+    $"Viewed Region Analytics. Region : {region}, Month : {month}, Year : {year}");
+
             ViewBag.Region = region;
             ViewBag.Month = month;
             ViewBag.Year = year;
@@ -46,6 +60,11 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
 
         public async Task<IActionResult> ExportToExcel(int? month, int? year)
         {
+            await _logService.InformationAsync(
+                "Service Feedback Analytics",
+                "ExportToExcel",
+                $"Exported Analytics Report. Month : {month}, Year : {year}");
+
             return await _service.ExportToExcelAsync(month, year);
         }
     }

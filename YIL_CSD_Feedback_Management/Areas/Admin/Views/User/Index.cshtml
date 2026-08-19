@@ -28,6 +28,118 @@
 
 </div>
 
+
+<!-- =====================================================
+     SUMMARY CARDS
+===================================================== -->
+
+<div class="row g-3 mb-4">
+
+    <!-- Total Users -->
+
+    <div class="col-md-4">
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <small class="text-muted">
+                        TOTAL USERS
+                    </small>
+
+                    <h3 class="fw-bold mb-0">
+                        @Model.TotalUsers
+                    </h3>
+
+                </div>
+
+                <div class="rounded-circle bg-primary bg-opacity-10 p-3">
+
+                    <i class="bi bi-people-fill text-primary fs-3"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Online Users -->
+
+    <div class="col-md-4">
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <small class="text-muted">
+                        ONLINE USERS
+                    </small>
+
+                    <h3 class="fw-bold text-success mb-0">
+                        @Model.OnlineUsers
+                    </h3>
+
+                </div>
+
+                <div class="rounded-circle bg-success bg-opacity-10 p-3">
+
+                    <i class="bi bi-person-check-fill text-success fs-3"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Offline Users -->
+
+    <div class="col-md-4">
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <small class="text-muted">
+                        OFFLINE USERS
+                    </small>
+
+                    <h3 class="fw-bold text-secondary mb-0">
+                        @Model.OfflineUsers
+                    </h3>
+
+                </div>
+
+                <div class="rounded-circle bg-secondary bg-opacity-10 p-3">
+
+                    <i class="bi bi-person-x-fill text-secondary fs-3"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     SEARCH / FILTER
+===================================================== -->
+
 <div class="card shadow-sm mb-4">
 
     <div class="card-body">
@@ -36,9 +148,11 @@
               asp-action="Index"
               method="get">
 
-            <div class="row">
+            <div class="row g-3">
 
-                <div class="col-md-4">
+                <!-- Search -->
+
+                <div class="col-md-3">
 
                     <input asp-for="SearchText"
                            class="form-control"
@@ -46,7 +160,10 @@
 
                 </div>
 
-                <div class="col-md-3">
+
+                <!-- Region -->
+
+                <div class="col-md-2">
 
                     <input asp-for="Region"
                            class="form-control"
@@ -54,27 +171,87 @@
 
                 </div>
 
-                <div class="col-md-3">
+
+                <!-- Role -->
+
+                <div class="col-md-2">
 
                     <select asp-for="Role"
                             class="form-select">
 
-                        <option value="">All Roles</option>
+                        <option value="">
+                            All Roles
+                        </option>
 
-                        <option>Admin</option>
+                        <option value="Admin">
+                            Admin
+                        </option>
 
-                        <option>User</option>
+                        <option value="User">
+                            User
+                        </option>
 
                     </select>
 
                 </div>
 
+
+                <!-- Account Status -->
+
                 <div class="col-md-2">
 
-                    <button type="submit"
-                            class="btn btn-primary w-100">
+                    <select asp-for="IsActive"
+                            class="form-select">
 
-                        Search
+                        <option value="">
+                            All Account Status
+                        </option>
+
+                        <option value="true">
+                            Active
+                        </option>
+
+                        <option value="false">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Online Status -->
+
+                <div class="col-md-2">
+
+                    <select asp-for="OnlineStatus"
+                            class="form-select">
+
+                        <option value="">
+                            Online / Offline
+                        </option>
+
+                        <option value="Online">
+                            Online
+                        </option>
+
+                        <option value="Offline">
+                            Offline
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Search Button -->
+
+                <div class="col-md-1 d-grid">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-search"></i>
 
                     </button>
 
@@ -88,6 +265,11 @@
 
 </div>
 
+
+<!-- =====================================================
+     USER TABLE
+===================================================== -->
+
 <div class="card shadow-sm">
 
     <div class="card-body p-0">
@@ -100,70 +282,166 @@
 
                     <tr>
 
-                        <th>Name</th>
+                        <th width="70">
+                            SI No.
+                        </th>
 
-                        <th>User Name</th>
+                        <th>
+                            Name
+                        </th>
 
-                        <th>Email</th>
+                        <th>
+                            User Name
+                        </th>
 
-                        <th>Role</th>
+                        <th>
+                            Email
+                        </th>
 
-                        <th>Region</th>
+                        <th>
+                            Role
+                        </th>
 
-                        <th>Status</th>
+                        <th>
+                            Region
+                        </th>
 
-                        <th>Last Login</th>
+                        <th>
+                            Status
+                        </th>
 
-                        <th width="220">Action</th>
+                        <th>
+                            Online Status
+                        </th>
+
+                        <th>
+                            Last Login
+                        </th>
+
+                        <th width="220">
+                            Action
+                        </th>
 
                     </tr>
 
                 </thead>
 
+
                 <tbody>
 
                     @if (Model.Users.Any())
                     {
+                        int serialNo = 1;
+
                         foreach (var item in Model.Users)
                         {
                             <tr>
 
-                                <td>@item.FullName</td>
+                                <!-- SI No -->
 
-                                <td>@item.UserName</td>
+                                <td class="fw-semibold">
+                                    @serialNo
+                                </td>
 
-                                <td>@item.Email</td>
 
-                                <td>@item.Role</td>
+                                <!-- Name -->
 
-                                <td>@item.Region</td>
+                                <td>
+                                    @item.FullName
+                                </td>
+
+
+                                <!-- User Name -->
+
+                                <td>
+                                    @item.UserName
+                                </td>
+
+
+                                <!-- Email -->
+
+                                <td>
+                                    @item.Email
+                                </td>
+
+
+                                <!-- Role -->
+
+                                <td>
+                                    @item.Role
+                                </td>
+
+
+                                <!-- Region -->
+
+                                <td>
+                                    @item.Region
+                                </td>
+
+
+                                <!-- Account Status -->
 
                                 <td>
 
                                     @if (item.IsActive)
                                     {
                                         <span class="badge bg-success">
-
                                             Active
-
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="badge bg-danger">
-
                                             Inactive
-
                                         </span>
                                     }
 
                                 </td>
 
+
+                                <!-- Online Status -->
+
                                 <td>
 
-                                    @(item.LastLogin?.ToString("dd-MMM-yyyy HH:mm") ?? "-")
+                                    @if (item.IsOnline)
+                                    {
+                                        <span class="badge bg-success">
 
-                                </td>
+                                            <i class="bi bi-circle-fill"
+                                               style="font-size:8px;">
+                                            </i>
+
+                                            Online
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+
+                                            <i class="bi bi-circle-fill"
+                                               style="font-size:8px;">
+                                            </i>
+
+                                            Offline
+
+                                        </span>
+                                    }
+
+                        </td>
+
+
+                        <!-- Last Login -->
+
+                        <td>
+
+                            @(item.LastLogin?.ToString(
+                                                        "dd-MMM-yyyy HH:mm") ?? "-")
+
+                        </td>
+
+
+                                <!-- Action -->
 
                                 <td>
 
@@ -175,6 +453,7 @@
 
                                     </a>
 
+
                                     <a asp-action="Edit"
                                        asp-route-id="@item.UserID"
                                        class="btn btn-sm btn-warning">
@@ -182,10 +461,14 @@
                                         <i class="bi bi-pencil"></i>
 
                                     </a>
+
+
                                     <form asp-action="Delete"
                                           asp-route-id="@item.UserID"
                                           method="post"
                                           style="display:inline">
+
+                                        @Html.AntiForgeryToken()
 
                                         <button type="submit"
                                                 class="btn btn-sm btn-danger"
@@ -200,13 +483,15 @@
                                 </td>
 
                             </tr>
+
+                                        serialNo++;
                         }
                     }
                     else
                     {
                         <tr>
 
-                            <td colspan="8"
+                            <td colspan="10"
                                 class="text-center py-4">
 
                                 No Users Found
@@ -221,5 +506,7 @@
             </table>
 
         </div>
+
     </div>
+
 </div>

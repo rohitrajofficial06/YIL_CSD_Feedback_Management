@@ -49,9 +49,9 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.ViewModels
         public string SortDirection { get; set; } = "desc";
 
         public int TotalRecords { get; set; }
-        public int? FromMonth { get; set; }
+        //public int? FromMonth { get; set; }
 
-        public int? ToMonth { get; set; }
+        //public int? ToMonth { get; set; }
 
         public int TotalPages =>
             (int)Math.Ceiling((double)TotalRecords / PageSize);

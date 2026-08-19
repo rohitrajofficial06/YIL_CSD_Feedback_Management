@@ -1,0 +1,95 @@
+﻿@{
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+
+<div class="sidebar-container">
+
+    <div class="sidebar-logo">
+
+        <img src="~/images/yokogawa-logo.png" class="logo-img" />
+
+        <h5>Engineer Portal</h5>
+
+    </div>
+
+    <ul class="sidebar-menu">
+
+        <li>
+            <a asp-controller="Dashboard"
+               asp-action="Index"
+               class="@(currentController == "Dashboard" ? "active" : "")">
+
+                <i class="bi bi-speedometer2"></i>
+
+                <span>Dashboard</span>
+
+            </a>
+        </li>
+
+        <li>
+            <a asp-controller="CustomerFeedback"
+               asp-action="SelectFeedbackType"
+               class="@(currentController=="CustomerFeedback" &&
+                           currentAction == "SelectFeedbackType"
+                           ? "active" : "")">
+
+                <i class="bi bi-pencil-square"></i>
+
+                <span>Fill Feedback</span>
+
+            </a>
+        </li>
+
+        <li>
+            <a asp-controller="FeedbackUpload"
+               asp-action="Index"
+               class="@(currentController=="FeedbackUpload"
+                           ? "active" : "")">
+
+                <i class="bi bi-upload"></i>
+
+                <span>Upload Feedback</span>
+
+            </a>
+        </li>
+
+        <li>
+            <a asp-controller="CustomerFeedback"
+               asp-action="MyFeedback"
+               class="@(currentController=="CustomerFeedback" &&
+                           (currentAction == "MyFeedback" ||
+                            currentAction == "Details")
+                           ? "active" : "")">
+
+                <i class="bi bi-card-list"></i>
+
+                <span>My Feedback</span>
+
+            </a>
+        </li>
+
+        <li>
+            <a href="#">
+
+                <i class="bi bi-person"></i>
+
+                <span>My Profile</span>
+
+            </a>
+        </li>
+
+        <li>
+            <a asp-controller="Account"
+               asp-action="Logout">
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span>Logout</span>
+
+            </a>
+        </li>
+
+    </ul>
+
+</div>

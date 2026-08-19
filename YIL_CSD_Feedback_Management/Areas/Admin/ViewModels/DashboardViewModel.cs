@@ -5,7 +5,7 @@
         // ============================
         // KPI Cards
         // ============================
-
+        public int DepartmentID { get; set; }
         public int TotalFeedback { get; set; }
 
         public decimal AverageRating { get; set; }
@@ -47,5 +47,11 @@
         public decimal Rating { get; set; }
 
         public DateTime CreatedDate { get; set; }
+
+        public DateTime? ExcelClosedDate { get; set; }
+
+        public string? FeedbackFileName { get; set; }
+
+        public string? FeedbackFilePath { get; set; }
     }
 }

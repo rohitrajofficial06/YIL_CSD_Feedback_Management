@@ -6,5 +6,7 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Services.Interfaces
     {
         Task<FeedbackIndexViewModel> GetFeedbackAsync(FeedbackIndexViewModel model);
         Task<FeedbackDetailsViewModel?> GetDetailsAsync(long feedbackId, int departmentId);
+
+        Task<FeedbackAttachmentViewModel?> GetAttachmentAsync(long feedbackId, int departmentId);
     }
 }

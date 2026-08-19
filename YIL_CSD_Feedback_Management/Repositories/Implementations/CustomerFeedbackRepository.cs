@@ -14,42 +14,112 @@ namespace YIL_CSD_Feedback_Management.Repositories.Implementations
             _context = context;
         }
 
+        //----------------------------------------------------
+        // Add Feedback
+        //----------------------------------------------------
+
         public async Task AddAsync(CustomerFeedback feedback)
         {
-            feedback.CaseNumber = await GenerateCaseNumberAsync(feedback.DepartmentID);
-
             await _context.CustomerFeedbacks.AddAsync(feedback);
         }
+
+        //----------------------------------------------------
+        // Save Changes
+        //----------------------------------------------------
+
         public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();
         }
 
-        private async Task<string> GenerateCaseNumberAsync(int departmentId)
+        //----------------------------------------------------
+        // Validate Case Number
+        //----------------------------------------------------
+
+        public async Task<bool> CaseNumberExistsAsync(string caseNumber)
         {
-            string prefix = $"YIL-C{departmentId:D4}-";
-
-            string? lastCaseNumber = await _context.CustomerFeedbacks
-                .Where(x => x.DepartmentID == departmentId)
-                .OrderByDescending(x => x.FeedbackID)
-                .Select(x => x.CaseNumber)
-                .FirstOrDefaultAsync();
-
-            int nextSequence = 1;
-
-            if (!string.IsNullOrWhiteSpace(lastCaseNumber))
-            {
-                string[] parts = lastCaseNumber.Split('-');
-
-                if (parts.Length == 3 &&
-                    int.TryParse(parts[2], out int last))
-                {
-                    nextSequence = last + 1;
-                }
-            }
-
-            return $"{prefix}{nextSequence:D5}";
+            return await _context.CustomerFeedbacks
+                .AnyAsync(x =>
+                    x.CaseNumber == caseNumber &&
+                    x.IsActive);
         }
 
+        //----------------------------------------------------
+        // Get Feedback For Edit
+        //----------------------------------------------------
+
+        public async Task<CustomerFeedback?> GetForEditAsync(
+     long feedbackId,
+     string createdBy)
+        {
+            return await _context.CustomerFeedbacks
+                .Include(x => x.Ratings)
+                .FirstOrDefaultAsync(x =>
+                    x.FeedbackID == feedbackId &&
+                    x.CreatedBy == createdBy &&
+                    x.IsActive &&
+                    x.FeedbackStatus == "Open" &&
+                    x.CreatedDate.AddMinutes(30) >= DateTime.Now);
+        }
+
+        //----------------------------------------------------
+        // Update Feedback
+        //----------------------------------------------------
+
+        public async Task UpdateAsync(CustomerFeedback feedback)
+        {
+            _context.CustomerFeedbacks.Update(feedback);
+
+            await _context.SaveChangesAsync();
+        }
+
+        //----------------------------------------------------
+        // My Feedback
+        //----------------------------------------------------
+
+        public async Task<List<CustomerFeedback>> GetMyFeedbackAsync(
+            string createdBy,
+            string? searchText,
+            string? status,
+            string? region,
+            DateTime? fromDate,
+            DateTime? toDate)
+        {
+            var query = _context.CustomerFeedbacks
+                .Include(x => x.Ratings)
+                .Where(x => x.CreatedBy == createdBy);
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                query = query.Where(x =>
+                    x.CaseNumber!.Contains(searchText) ||
+                    x.CompanyName.Contains(searchText) ||
+                    x.RespondentName.Contains(searchText));
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                query = query.Where(x => x.FeedbackStatus == status);
+            }
+
+            if (!string.IsNullOrWhiteSpace(region))
+            {
+                query = query.Where(x => x.Region == region);
+            }
+
+            if (fromDate.HasValue)
+            {
+                query = query.Where(x => x.CreatedDate >= fromDate);
+            }
+
+            if (toDate.HasValue)
+            {
+                query = query.Where(x => x.CreatedDate <= toDate.Value.AddDays(1));
+            }
+
+            return await query
+                .OrderByDescending(x => x.CreatedDate)
+                .ToListAsync();
+        }
     }
 }

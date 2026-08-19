@@ -5,11 +5,12 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Services.Interfaces
     public interface IUserService
     {
         Task<UserIndexViewModel> GetUsersAsync(
-            int departmentId,
-            string? searchText,
-            string? region,
-            string? role,
-            bool? isActive);
+                     int departmentId,
+                     string? searchText,
+                     string? region,
+                     string? role,
+                     bool? isActive,
+                     string? onlineStatus);
 
         Task<UserDetailsViewModel?> GetDetailsAsync(
             long userId,

@@ -8,17 +8,45 @@
       href="~/css/customer-feedback-form.css"
       asp-append-version="true" />
 
-<form asp-action="SubmitFeedback"
+<form asp-action="@(Model.IsEditMode ? "UpdateFeedback" : "SubmitFeedback")"
       asp-controller="CustomerFeedback"
       method="post"
       enctype="multipart/form-data">
 
     @Html.AntiForgeryToken()
-
+    <div asp-validation-summary="ModelOnly"
+         class="alert alert-danger"
+         style="display:@(ViewData.ModelState.IsValid ? "none" : "block")">
+    </div>
     <!-- Hidden Fields -->
     <input asp-for="DepartmentID" type="hidden" />
     <input asp-for="DepartmentName" type="hidden" />
     <input asp-for="FeedbackSource" type="hidden" />
+    <input asp-for="IsCaseNumber" type="hidden" />
+    <input asp-for="IsReferenceNumber" type="hidden" />
+    <input asp-for="ReferenceLabel" type="hidden" />
+    <input asp-for="ReferenceType" type="hidden" />
+    <input asp-for="FeedbackID" type="hidden" />
+    <input asp-for="IsEditMode" type="hidden" />
+    <input asp-for="CanEdit" type="hidden" />
+
+
+    @if (Model.IsEditMode)
+    {
+        <div class="alert alert-warning mb-3">
+
+            <i class="bi bi-pencil-square"></i>
+
+            <strong>Edit Mode</strong>
+
+            <br />
+
+            You are editing an existing feedback.
+
+            Case Number / Reference Number cannot be changed.
+
+        </div>
+    }
 
     <div class="container mt-4">
 
@@ -61,14 +89,15 @@
 
                                 <span class="form-control text-center"
                                       style="width:90px;
-                                 background:#f8f9fa;
-                                 font-weight:600;">
+                                                                     background:#f8f9fa;
+                                                                     font-weight:600;">
 
                                     YIL-C
 
                                 </span>
 
                                 <input asp-for="CaseNumberPart1"
+                                       readonly="@Model.IsEditMode"
                                        maxlength="4"
                                        class="form-control mx-2 text-center"
                                        style="width:90px;"
@@ -77,10 +106,14 @@
                                 <span class="fw-bold">-</span>
 
                                 <input asp-for="CaseNumberPart2"
+                                       readonly="@Model.IsEditMode"
                                        maxlength="5"
                                        class="form-control mx-2 text-center"
                                        style="width:110px;"
                                        placeholder="00000" />
+
+                                <div id="caseValidationMessage"
+                                     class="mt-2"></div>
 
                             </div>
 
@@ -93,8 +126,13 @@
                         else
                         {
                             <input asp-for="ReferenceNumber"
+                                   readonly="@Model.IsEditMode"
                                    class="form-control"
                                    placeholder="Enter @Model.ReferenceLabel" />
+
+                            <div id="caseValidationMessage"
+                                 class="mt-2">
+                            </div>
 
                             <span asp-validation-for="ReferenceNumber"
                                   class="text-danger"></span>
@@ -109,7 +147,9 @@
 
                     <div class="col-md-6 mb-3">
 
-                        <label asp-for="CompanyName" class="form-label"></label>
+                        <label asp-for="CompanyName" class="form-label">
+                            Company Name <span class="text-danger">*</span>
+                        </label>
 
                         <input asp-for="CompanyName"
                                class="form-control" />
@@ -121,8 +161,11 @@
 
                     <div class="col-md-6 mb-3">
 
-                        <label asp-for="RespondentName"
-                               class="form-label"></label>
+                        <label asp-for="RespondentName" class="form-label">
+
+                            Respondent Name <span class="text-danger">*</span>
+
+                        </label>
 
                         <input asp-for="RespondentName"
                                class="form-control" />
@@ -133,9 +176,11 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
+                        <label asp-for="Designation" class="form-label">
 
-                        <label asp-for="Designation"
-                               class="form-label"></label>
+                            Designation<span class="text-danger">*</span>
+
+                        </label>
 
                         <input asp-for="Designation"
                                class="form-control" />
@@ -164,11 +209,15 @@
 
                     <div class="col-md-6 mb-3">
 
-                        <label asp-for="ServiceRequestNo"
-                               class="form-label"></label>
+                        <label asp-for="ServiceRequestNo" class="form-label">
+
+                            Service Request No<span class="text-danger">*</span>
+
+                        </label>
 
                         <input asp-for="ServiceRequestNo"
-                               class="form-control" />
+                               class="form-control"
+                               readonly="@(Model.DepartmentID == 2 || Model.DepartmentID == 3)" />
 
                     </div>
 
@@ -194,11 +243,8 @@
 
                     <div class="col-md-6 mb-3">
 
-                        <label asp-for="Region"
-                               class="form-label">
-
-                            Region
-
+                        <label asp-for="Region" class="form-label">
+                            Region <span class="text-danger">*</span>
                         </label>
 
                         <select asp-for="Region"
@@ -236,7 +282,8 @@
                     <input asp-for="Questions[i].ControlType" type="hidden" />
                     <input asp-for="Questions[i].IsMandatory" type="hidden" />
 
-                    <div class="card mb-3 shadow-sm">
+                    <div class="card mb-3 shadow-sm question-card"
+                         id="questionCard_@i">
 
                         <div class="card-body">
 
@@ -254,15 +301,14 @@
                                 {
                                     <div class="form-check form-check-inline">
 
-                                        <input class="form-check-input"
+                                        <input class="form-check-input rating-option"
                                                type="radio"
                                                asp-for="Questions[i].RatingValue"
-                                               value="@r" />
+                                               value="@r"
+                                               data-question="@i" />
 
                                         <label class="form-check-label">
-
                                             @r
-
                                         </label>
 
                                     </div>
@@ -270,16 +316,19 @@
 
                                 <div class="form-check form-check-inline">
 
-                                    <input class="form-check-input"
-                                           asp-for="Questions[i].IsNotApplicable" />
+                                    <input class="form-check-input na-option"
+                                           asp-for="Questions[i].IsNotApplicable"
+                                           data-question="@i" />
 
                                     <label class="form-check-label">
-
                                         N/A
-
                                     </label>
 
                                 </div>
+
+                                <span asp-validation-for="Questions[i].RatingValue"
+                                      class="text-danger d-block mt-2">
+                                </span>
 
                             </div>
 
@@ -305,6 +354,10 @@
                               class="form-control"
                               rows="5"></textarea>
 
+                    <small class="text-muted">
+                        <span id="commentCount">0</span> / 1000 characters
+                    </small>
+
                 </div>
 
                 <!-- ========================= -->
@@ -327,15 +380,68 @@
                 </div>
 
                 <!-- ========================= -->
+                <!-- Feedback Attachment -->
+                <!-- ========================= -->
+
+                <div class="mb-4">
+
+                    <label asp-for="FeedbackFile" class="form-label">
+                        Attach Feedback
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    @if (!Model.IsEditMode)
+                    {
+                        <input asp-for="FeedbackFile"
+                               type="file"
+                               class="form-control"
+                               accept=".pdf,.jpg,.jpeg,.png"
+                               required />
+
+                        <small class="text-muted">
+                            Please attach the completed feedback document.
+                            Allowed formats: PDF, JPG, JPEG, PNG.
+                        </small>
+                    }
+                    else
+                    {
+                        <input asp-for="FeedbackFile"
+                               type="file"
+                               class="form-control"
+                               accept=".pdf,.jpg,.jpeg,.png" />
+
+                        <small class="text-muted">
+                            You can upload a new feedback attachment if required.
+                            Allowed formats: PDF, JPG, JPEG, PNG.
+                        </small>
+                    }
+
+                    <span asp-validation-for="FeedbackFile"
+                          class="text-danger d-block">
+                    </span>
+
+                </div>
+
+                <!-- ========================= -->
                 <!-- Buttons -->
                 <!-- ========================= -->
 
                 <div class="text-center">
 
                     <button type="submit"
-                            class="btn btn-success btn-lg px-5">
+                            class="btn btn-success btn-lg px-5"
+                            id="btnSubmit">
 
-                        Submit Feedback
+                        @if (Model.IsEditMode)
+                        {
+                            <i class="bi bi-save"></i>
+                            <text> Update Feedback</text>
+                        }
+                        else
+                        {
+                            <i class="bi bi-check-circle"></i>
+                            <text> Submit Feedback</text>
+                        }
 
                     </button>
 
@@ -354,4 +460,717 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            //------------------------------------------------------
+            // Controls
+            //------------------------------------------------------
+
+            const part1 = document.getElementById("CaseNumberPart1");
+            const part2 = document.getElementById("CaseNumberPart2");
+
+            const referenceNumber =
+                document.getElementById("ReferenceNumber");
+
+            const serviceRequestNo =
+                document.getElementById("ServiceRequestNo");
+
+            const departmentId =
+                document.getElementById("DepartmentID");
+
+            const validationMessage =
+                document.getElementById("caseValidationMessage");
+
+            const form =
+                document.querySelector("form");
+
+            const btn =
+                document.getElementById("btnSubmit");
+
+            const isEditMode =
+                document.getElementById("IsEditMode");
+
+
+            //------------------------------------------------------
+            // Helper - Reset Submit Button
+            //------------------------------------------------------
+
+            function resetSubmitButton() {
+
+                if (!btn)
+                    return;
+
+                btn.disabled = false;
+
+                if (isEditMode &&
+                    isEditMode.value === "True") {
+
+                    btn.innerHTML =
+                        '<i class="bi bi-check-circle me-2"></i>Update Feedback';
+
+                }
+                else {
+
+                    btn.innerHTML =
+                        '<i class="bi bi-check-circle me-2"></i>Submit Feedback';
+
+                }
+            }
+
+
+            //------------------------------------------------------
+            // Helper - Set Submitting State
+            //------------------------------------------------------
+
+            function setSubmittingState() {
+
+                if (!btn)
+                    return;
+
+                btn.disabled = true;
+
+                if (isEditMode &&
+                    isEditMode.value === "True") {
+
+                    btn.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                        'Updating Feedback...';
+
+                }
+                else {
+
+                    btn.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                        'Submitting Feedback...';
+
+                }
+            }
+
+
+            //------------------------------------------------------
+            // Training & Bench Repair
+            // TRN / SRN -> Service Request No
+            //------------------------------------------------------
+
+            function syncServiceRequestNumber() {
+
+                if (!referenceNumber ||
+                    !serviceRequestNo ||
+                    !departmentId) {
+
+                    return;
+                }
+
+                // Training
+                // DepartmentID = 2
+                //
+                // Bench Repair
+                // DepartmentID = 3
+
+                if (departmentId.value === "2" ||
+                    departmentId.value === "3") {
+
+                    serviceRequestNo.value =
+                        referenceNumber.value;
+
+                }
+            }
+
+
+            //------------------------------------------------------
+            // Site Service - Validate Case Number
+            //------------------------------------------------------
+
+            async function validateCaseNumber() {
+
+                if (!part1 ||
+                    !part2) {
+
+                    return;
+                }
+
+                if (part1.value.length !== 4 ||
+                    part2.value.length !== 5) {
+
+                    if (validationMessage) {
+                        validationMessage.innerHTML = "";
+                    }
+
+                    return;
+                }
+
+                try {
+
+                    const response = await fetch(
+                        "/CustomerFeedback/ValidateCaseNumber?part1=" +
+                        encodeURIComponent(part1.value) +
+                        "&part2=" +
+                        encodeURIComponent(part2.value)
+                    );
+
+                    if (!response.ok) {
+                        return;
+                    }
+
+                    const result =
+                        await response.json();
+
+                    if (!validationMessage) {
+                        return;
+                    }
+
+                    if (result.valid) {
+
+                        validationMessage.innerHTML =
+                            '<span class="text-success">' +
+                            '<i class="bi bi-check-circle-fill"></i> ' +
+                            'Case Number available' +
+                            '</span>';
+
+                    }
+                    else {
+
+                        validationMessage.innerHTML =
+                            '<span class="text-danger">' +
+                            '<i class="bi bi-x-circle-fill"></i> ' +
+                            'Case Number already exists' +
+                            '</span>';
+
+                    }
+
+                }
+                catch (error) {
+
+                    console.error(
+                        "Case number validation error:",
+                        error
+                    );
+
+                }
+            }
+
+
+            //------------------------------------------------------
+            // Training / Bench Repair
+            // Validate Reference Number
+            //------------------------------------------------------
+
+            async function validateReferenceNumber() {
+
+                if (!referenceNumber) {
+                    return;
+                }
+
+                const value =
+                    referenceNumber.value.trim();
+
+                if (value === "") {
+
+                    if (validationMessage) {
+                        validationMessage.innerHTML = "";
+                    }
+
+                    return;
+                }
+
+                try {
+
+                    const response = await fetch(
+                        "/CustomerFeedback/ValidateCaseNumber?referenceNumber=" +
+                        encodeURIComponent(value)
+                    );
+
+                    if (!response.ok) {
+                        return;
+                    }
+
+                    const result =
+                        await response.json();
+
+                    if (!validationMessage) {
+                        return;
+                    }
+
+                    let label = "Reference Number";
+
+                    if (referenceNumber.previousElementSibling) {
+
+                        label =
+                            referenceNumber.previousElementSibling.innerText
+                                .replace("*", "")
+                                .trim();
+
+                    }
+
+                    if (result.valid) {
+
+                        validationMessage.innerHTML =
+                            '<span class="text-success">' +
+                            '<i class="bi bi-check-circle-fill"></i> ' +
+                            label +
+                            ' available' +
+                            '</span>';
+
+                    }
+                    else {
+
+                        validationMessage.innerHTML =
+                            '<span class="text-danger">' +
+                            '<i class="bi bi-x-circle-fill"></i> ' +
+                            label +
+                            ' already exists' +
+                            '</span>';
+
+                    }
+
+                }
+                catch (error) {
+
+                    console.error(
+                        "Reference number validation error:",
+                        error
+                    );
+
+                }
+            }
+
+
+            //------------------------------------------------------
+            // Register Case Number Events
+            //------------------------------------------------------
+
+            if (part1) {
+
+                part1.addEventListener(
+                    "input",
+                    validateCaseNumber
+                );
+
+            }
+
+            if (part2) {
+
+                part2.addEventListener(
+                    "input",
+                    validateCaseNumber
+                );
+
+            }
+
+
+            //------------------------------------------------------
+            // Register Reference Number Events
+            //------------------------------------------------------
+
+            if (referenceNumber) {
+
+                // Initial value for Edit Mode
+                syncServiceRequestNumber();
+
+                referenceNumber.addEventListener(
+                    "input",
+                    function () {
+
+                        validateReferenceNumber();
+
+                        syncServiceRequestNumber();
+
+                        // User changed the field
+                        // so allow submit button again
+                        resetSubmitButton();
+
+                    }
+                );
+
+            }
+
+
+            //------------------------------------------------------
+            // Rating Selected
+            //------------------------------------------------------
+
+            document.querySelectorAll(".rating-option")
+                .forEach(function (radio) {
+
+                    radio.addEventListener(
+                        "change",
+                        function () {
+
+                            const questionIndex =
+                                this.dataset.question;
+
+                            const naCheckbox =
+                                document.querySelector(
+                                    '.na-option[data-question="' +
+                                    questionIndex +
+                                    '"]'
+                                );
+
+                            if (naCheckbox) {
+
+                                naCheckbox.checked = false;
+
+                            }
+
+                            const card =
+                                this.closest(".question-card");
+
+                            if (card) {
+
+                                card.classList.remove(
+                                    "question-error"
+                                );
+
+                                card.classList.add(
+                                    "question-valid"
+                                );
+
+                            }
+
+                            // User corrected validation
+                            resetSubmitButton();
+
+                        }
+                    );
+
+                });
+
+
+            //------------------------------------------------------
+            // N/A Selected
+            //------------------------------------------------------
+
+            document.querySelectorAll(".na-option")
+                .forEach(function (checkbox) {
+
+                    checkbox.addEventListener(
+                        "change",
+                        function () {
+
+                            const questionIndex =
+                                this.dataset.question;
+
+                            if (this.checked) {
+
+                                document.querySelectorAll(
+                                    '.rating-option[data-question="' +
+                                    questionIndex +
+                                    '"]'
+                                )
+                                .forEach(function (radio) {
+
+                                    radio.checked = false;
+
+                                });
+
+                            }
+
+                            const card =
+                                this.closest(".question-card");
+
+                            if (card) {
+
+                                card.classList.remove(
+                                    "question-error"
+                                );
+
+                                card.classList.add(
+                                    "question-valid"
+                                );
+
+                            }
+
+                            // User corrected validation
+                            resetSubmitButton();
+
+                        }
+                    );
+
+                });
+
+
+            //------------------------------------------------------
+            // Remove Error When User Corrects Any Field
+            //------------------------------------------------------
+
+            if (form) {
+
+                form.querySelectorAll(
+                    "input, select, textarea"
+                )
+                .forEach(function (control) {
+
+                    control.addEventListener(
+                        "input",
+                        function () {
+
+                            if (this.checkValidity()) {
+
+                                this.classList.remove(
+                                    "is-invalid"
+                                );
+
+                            }
+
+                            // IMPORTANT:
+                            // If user corrects a field after
+                            // validation failed, restore button.
+
+                            resetSubmitButton();
+
+                        }
+                    );
+
+                    control.addEventListener(
+                        "change",
+                        function () {
+
+                            if (this.checkValidity()) {
+
+                                this.classList.remove(
+                                    "is-invalid"
+                                );
+
+                            }
+
+                            resetSubmitButton();
+
+                        }
+                    );
+
+                });
+
+            }
+
+
+            //------------------------------------------------------
+            // Native HTML Validation
+            //
+            // IMPORTANT:
+            // "invalid" fires even when browser prevents
+            // the submit event from firing.
+            //
+            // This fixes the stuck "Submitting Feedback..."
+            // button issue.
+            //------------------------------------------------------
+
+            if (form) {
+
+                form.addEventListener(
+                    "invalid",
+                    function () {
+
+                        resetSubmitButton();
+
+                    },
+                    true
+                );
+
+            }
+
+
+            //------------------------------------------------------
+            // Form Submit Validation
+            //------------------------------------------------------
+
+            if (form) {
+
+                form.addEventListener(
+                    "submit",
+                    function (e) {
+
+                        //--------------------------------------------------
+                        // ALWAYS reset button before validation
+                        //--------------------------------------------------
+
+                        resetSubmitButton();
+
+
+                        //--------------------------------------------------
+                        // 1. Browser / Required Field Validation
+                        //--------------------------------------------------
+
+                        if (!form.checkValidity()) {
+
+                            e.preventDefault();
+
+                            form.reportValidity();
+
+                            return false;
+                        }
+
+
+                        //--------------------------------------------------
+                        // 2. Validate Rating / N/A
+                        //--------------------------------------------------
+
+                        let ratingValid = true;
+
+                        let firstQuestionError = null;
+
+                        document.querySelectorAll(
+                            ".question-card"
+                        )
+                        .forEach(function (card) {
+
+                            card.classList.remove(
+                                "question-valid"
+                            );
+
+                            card.classList.remove(
+                                "question-error"
+                            );
+
+                            const hasRating =
+                                card.querySelector(
+                                    ".rating-option:checked"
+                                );
+
+                            const hasNA =
+                                card.querySelector(
+                                    ".na-option:checked"
+                                );
+
+                            if (!hasRating &&
+                                !hasNA) {
+
+                                card.classList.add(
+                                    "question-error"
+                                );
+
+                                ratingValid = false;
+
+                                if (!firstQuestionError) {
+
+                                    firstQuestionError =
+                                        card;
+
+                                }
+
+                            }
+                            else {
+
+                                card.classList.add(
+                                    "question-valid"
+                                );
+
+                            }
+
+                        });
+
+
+                        //--------------------------------------------------
+                        // 3. Rating Validation Failed
+                        //--------------------------------------------------
+
+                        if (!ratingValid) {
+
+                            e.preventDefault();
+
+                            if (firstQuestionError) {
+
+                                firstQuestionError.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "center"
+                                });
+
+                            }
+
+                            // Keep button enabled
+                            resetSubmitButton();
+
+                            return false;
+                        }
+
+
+                        //--------------------------------------------------
+                        // 4. Attachment Validation
+                        //--------------------------------------------------
+
+                        const attachment =
+                            document.getElementById(
+                                "FeedbackAttachment"
+                            );
+
+                        if (attachment &&
+                            attachment.required &&
+                            !attachment.files.length) {
+
+                            e.preventDefault();
+
+                            resetSubmitButton();
+
+                            attachment.focus();
+
+                            return false;
+                        }
+
+
+                        //--------------------------------------------------
+                        // 5. Region / Other Required Fields
+                        //
+                        // form.checkValidity() already handles these.
+                        //--------------------------------------------------
+
+                        if (!form.checkValidity()) {
+
+                            e.preventDefault();
+
+                            form.reportValidity();
+
+                            resetSubmitButton();
+
+                            return false;
+                        }
+
+
+                        //--------------------------------------------------
+                        // 6. ALL VALIDATIONS PASSED
+                        //
+                        // ONLY NOW disable Submit button.
+                        //--------------------------------------------------
+
+                        setSubmittingState();
+
+                        // Allow form submission
+                        return true;
+
+                    }
+                );
+
+            }
+
+
+            //------------------------------------------------------
+            // Comments Counter
+            //------------------------------------------------------
+
+            const comments =
+                document.getElementById("Comments");
+
+            const counter =
+                document.getElementById("commentCount");
+
+            if (comments &&
+                counter) {
+
+                counter.innerText =
+                    comments.value.length;
+
+                comments.addEventListener(
+                    "input",
+                    function () {
+
+                        counter.innerText =
+                            this.value.length;
+
+                    }
+                );
+
+            }
+
+        });
+    </script>
 }

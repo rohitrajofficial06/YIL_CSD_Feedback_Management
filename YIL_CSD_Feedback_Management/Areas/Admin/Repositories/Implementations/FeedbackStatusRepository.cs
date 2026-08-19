@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Interfaces;
 using YIL_CSD_Feedback_Management.Areas.Admin.ViewModels;
 using YIL_CSD_Feedback_Management.Data;
+using YIL_CSD_Feedback_Management.Helpers;
 using YIL_CSD_Feedback_Management.Models;
 using static YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.FeedbackStatusUploadViewModel;
 
@@ -74,7 +75,7 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
 
                     UploadedBy = uploadedBy,
 
-                    UploadDate = DateTime.Now,
+                    UploadDate = DateTimeHelper.Now,
 
                     TotalCases = 0,
 
@@ -533,7 +534,7 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
 
                                 Region = row.Region ?? "",
 
-                                ClosedDate = DateTime.Now,
+                                ClosedDate = DateTimeHelper.Now,
 
                                 ClosedBy = closedBy
                             });
@@ -559,7 +560,7 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
 
                 upload.Processed = true;
 
-                upload.ProcessedDate = DateTime.Now;
+                upload.ProcessedDate = DateTimeHelper.Now;
 
                 //---------------------------------------
                 // Save All Changes
@@ -667,7 +668,7 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
 
                                 Region = row.Region,
 
-                                ClosedDate = DateTime.Now,
+                                ClosedDate = DateTimeHelper.Now,
 
                                 ClosedBy = closedBy
                             });
@@ -806,11 +807,11 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
 
         private async Task<(string FileName, string FilePath)> SaveExcelFileAsync(IFormFile file)
         {
-            string year = DateTime.Now.Year.ToString();
+            string year = DateTimeHelper.Now.Year.ToString();
 
-            string month = DateTime.Now.ToString("MMM");   // Jan Feb Mar Apr
+            string month = DateTimeHelper.Now.ToString("MMM");   // Jan Feb Mar Apr
 
-            string day = DateTime.Now.ToString("dd");
+            string day = DateTimeHelper.Now.ToString("dd");
 
             string folder = Path.Combine(
                 Directory.GetCurrentDirectory(),
@@ -827,7 +828,7 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
             string extension = Path.GetExtension(file.FileName);
 
             string fileName =
-                $"ClosedCases_{DateTime.Now:yyyyMMdd_HHmmss}{extension}";
+                $"ClosedCases_{DateTimeHelper.Now:yyyyMMdd_HHmmss}{extension}";
 
             string fullPath = Path.Combine(folder, fileName);
 

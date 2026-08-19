@@ -23,10 +23,10 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
                 .AsNoTracking();
 
             var criticalFeedbackIds = await _context.CustomerFeedbackRatings
-     .Where(r => r.RatingValue.HasValue)
-     .GroupBy(r => r.FeedbackID)
-     .Where(g => g.Average(x => x.RatingValue.Value) <= 3)
-     .Select(g => g.Key)
+     .Where(r => r.RatingValue.HasValue &&
+                 r.RatingValue.Value <= 3)
+     .Select(r => r.FeedbackID)
+     .Distinct()
      .ToListAsync();
 
             feedbackQuery = _context.CustomerFeedbacks

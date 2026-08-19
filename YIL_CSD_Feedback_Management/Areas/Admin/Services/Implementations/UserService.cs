@@ -14,18 +14,20 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Services.Implementations
         }
 
         public async Task<UserIndexViewModel> GetUsersAsync(
-            int departmentId,
-            string? searchText,
-            string? region,
-            string? role,
-            bool? isActive)
+      int departmentId,
+      string? searchText,
+      string? region,
+      string? role,
+      bool? isActive,
+      string? onlineStatus)
         {
             return await _repository.GetUsersAsync(
                 departmentId,
                 searchText,
                 region,
                 role,
-                isActive);
+                isActive,
+                onlineStatus);
         }
 
         public async Task<UserDetailsViewModel?> GetDetailsAsync(

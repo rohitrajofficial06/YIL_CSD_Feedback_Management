@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using YIL_CSD_Feedback_Management.Helpers;
 
 namespace YIL_CSD_Feedback_Management.Models
 {
@@ -20,7 +21,7 @@ namespace YIL_CSD_Feedback_Management.Models
 
         public bool IsNotApplicable { get; set; }
 
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = DateTimeHelper.Now;
 
         [ForeignKey(nameof(FeedbackID))]
         public virtual CustomerFeedback Feedback { get; set; } = null!;

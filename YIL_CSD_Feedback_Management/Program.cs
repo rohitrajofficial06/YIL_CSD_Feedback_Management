@@ -1,22 +1,35 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Serilog;
 using YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations;
 // Admin Dashboard
 using YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Interfaces;
 using YIL_CSD_Feedback_Management.Areas.Admin.Services.Implementations;
 using YIL_CSD_Feedback_Management.Areas.Admin.Services.Interfaces;
 using YIL_CSD_Feedback_Management.Data;
+using YIL_CSD_Feedback_Management.Middleware;
 using YIL_CSD_Feedback_Management.Repositories.Implementations;
 // Customer Portal Repositories
 using YIL_CSD_Feedback_Management.Repositories.Interfaces;
-
 using YIL_CSD_Feedback_Management.Services.Implementations;
 // Customer Portal Services
 using YIL_CSD_Feedback_Management.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Directory.CreateDirectory("Logs");
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.File(
+        "Logs/log-.txt",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 30,
+        shared: true)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // ==========================================================
 // DATABASE
@@ -27,15 +40,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddDistributedMemoryCache();
-
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-
-    options.Cookie.HttpOnly = true;
-
-    options.Cookie.IsEssential = true;
-});
 
 // ==========================================================
 // MVC
@@ -56,6 +60,7 @@ builder.Services.AddSession(options =>
 });
 
 
+builder.Services.AddHttpContextAccessor();
 // ==========================================================
 // CUSTOMER PORTAL SERVICES
 // ==========================================================
@@ -88,15 +93,6 @@ builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
-
-builder.Services.AddScoped<
-    IFeedbackRepository,
-    FeedbackRepository>();
-
-builder.Services.AddScoped<
-    IFeedbackService,
-    FeedbackService>();
-
 
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 
@@ -150,6 +146,16 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddScoped<IMyFeedbackRepository, MyFeedbackRepository>();
+
+builder.Services.AddScoped<IMyFeedbackService, MyFeedbackService>();
+
+builder.Services.AddScoped<IEngineerDashboardRepository,
+    EngineerDashboardRepository>();
+
+builder.Services.AddScoped<IEngineerDashboardService,
+    EngineerDashboardService>();
+
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -169,11 +175,21 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddScoped<ICriticalFeedbackRepository, CriticalFeedbackRepository>();
 
 builder.Services.AddScoped<ICriticalFeedbackService, CriticalFeedbackService>();
+
+builder.Services.AddScoped<ILogService, LogService>();
 // ==========================================================
 // BUILD APPLICATION
 // ==========================================================
 
+
 var app = builder.Build();
+
+// HTTP Pipeline
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
 
@@ -183,20 +199,11 @@ app.UseRouting();
 
 app.UseAuthentication();
 
+app.UseMiddleware<SingleSessionMiddleware>();
+
 app.UseSession();
 
 app.UseAuthorization();
-
-// ==========================================================
-// HTTP REQUEST PIPELINE
-// ==========================================================
-
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
-
 
 app.MapControllerRoute(
     name: "areas",
@@ -206,4 +213,15 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
-app.Run();
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly.");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

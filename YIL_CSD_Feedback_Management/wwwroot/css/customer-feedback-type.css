@@ -52,7 +52,7 @@ body {
 ==========================================================*/
 
 .feedback-card {
-    background: blue;
+    background: #e4e5cd;
     border-radius: 25px;
     padding: 60px;
     box-shadow: var(--shadow);

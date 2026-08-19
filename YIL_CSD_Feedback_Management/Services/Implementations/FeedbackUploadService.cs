@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using YIL_CSD_Feedback_Management.Helpers;
 using YIL_CSD_Feedback_Management.Models;
 using YIL_CSD_Feedback_Management.Repositories.Interfaces;
 using YIL_CSD_Feedback_Management.Services.Interfaces;
@@ -133,7 +134,7 @@ namespace YIL_CSD_Feedback_Management.Services.Implementations
 
             // Update Upload Information
             upload.OCRStatus = "Completed";
-            upload.OCRCompletedDate = DateTime.Now;
+            upload.OCRCompletedDate = DateTimeHelper.Now;
             upload.OCRText = result.OCRText;
             upload.TemplateName = result.TemplateName;
 

@@ -21,5 +21,7 @@
         public bool IsSubmitted { get; set; }
 
         public DateTime? ExcelClosedDate { get; set; }
+        public string? FeedbackFileName { get; set; }
+        public string? FeedbackFilePath { get; set; }
     }
 }

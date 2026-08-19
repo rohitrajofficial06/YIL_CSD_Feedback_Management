@@ -11,19 +11,26 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
     {
         private readonly IQuestionService _questionService;
         private readonly IDepartmentService _departmentService;
+        private readonly ILogService _logService;
 
         public QuestionController(
      IQuestionService questionService,
-     IDepartmentService departmentService)
+     IDepartmentService departmentService,
+     ILogService logService)
         {
             _questionService = questionService;
-
             _departmentService = departmentService;
+            _logService = logService;
         }
 
         public async Task<IActionResult> Index(QuestionIndexViewModel model)
         {
             model = await _questionService.GetQuestionsAsync(model);
+
+            await _logService.InformationAsync(
+    "Question",
+    "Index",
+    "Viewed Question List.");
 
             return View(model);
         }
@@ -42,6 +49,11 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
                 })
                 .ToList();
 
+            await _logService.InformationAsync(
+    "Question",
+    "Create(GET)",
+    "Opened Create Question page.");
+
             return View(model);
         }
 
@@ -51,6 +63,11 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
+                await _logService.WarningAsync(
+    "Question",
+    "Create",
+    "Question creation failed due to validation.");
+
                 var departments = await _departmentService.GetAllAsync();
 
                 model.Departments = departments
@@ -65,6 +82,11 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
             }
 
             await _questionService.CreateAsync(model);
+
+            await _logService.InformationAsync(
+    "Question",
+    "Create",
+    $"Created Question : {model.QuestionText}");
 
             TempData["Success"] = "Question created successfully.";
 
@@ -88,6 +110,11 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
                 })
                 .ToList();
 
+            await _logService.InformationAsync(
+    "Question",
+    "Edit(GET)",
+    $"Opened Edit Question page. QuestionID : {id}");
+
             return View(model);
         }
 
@@ -97,6 +124,11 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
+                await _logService.WarningAsync(
+    "Question",
+    "Edit",
+    $"Question update failed due to validation. QuestionID : {model.QuestionID}");
+
                 var departments = await _departmentService.GetAllAsync();
 
                 model.Departments = departments
@@ -112,6 +144,11 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
 
             await _questionService.UpdateAsync(model);
 
+            await _logService.InformationAsync(
+    "Question",
+    "Edit",
+    $"Updated Question : {model.QuestionText}");
+
             TempData["Success"] = "Question updated successfully.";
 
             return RedirectToAction(nameof(Index));
@@ -120,6 +157,11 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             await _questionService.DeleteAsync(id);
+
+            await _logService.WarningAsync(
+    "Question",
+    "Delete",
+    $"Deleted Question. QuestionID : {id}");
 
             TempData["Success"] = "Question deleted successfully.";
 

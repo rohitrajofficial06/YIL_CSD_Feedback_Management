@@ -58,6 +58,12 @@ namespace YIL_CSD_Feedback_Management.Models
 
         public long? UploadID { get; set; }
 
+        [StringLength(500)]
+        public string? FeedbackFilePath { get; set; }
+
+        [StringLength(255)]
+        public string? FeedbackFileName { get; set; }
+
         public bool IsSubmitted { get; set; } = true;
 
         [ForeignKey(nameof(DepartmentID))]

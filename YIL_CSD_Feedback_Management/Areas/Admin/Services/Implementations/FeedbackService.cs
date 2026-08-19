@@ -22,5 +22,10 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Services.Implementations
         {
             return await _feedbackRepository.GetDetailsAsync(feedbackId, departmentId);
         }
+
+        public async Task<FeedbackAttachmentViewModel?> GetAttachmentAsync(long feedbackId, int departmentId)
+        {
+            return await _feedbackRepository.GetAttachmentAsync(feedbackId, departmentId);
+        }
     }
 }

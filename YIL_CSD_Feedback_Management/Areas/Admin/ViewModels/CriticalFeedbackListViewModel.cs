@@ -18,6 +18,7 @@
 
         public decimal AverageRating { get; set; }
 
+        public decimal LowestRating { get; set; }
         public DateTime CreatedDate { get; set; }
 
         public DateTime? ExcelClosedDate { get; set; }

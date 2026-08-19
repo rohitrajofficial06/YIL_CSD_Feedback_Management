@@ -1,98 +1,123 @@
-﻿@{
-    ViewData["Title"] = "Customer Feedback Portal";
+﻿@model YIL_CSD_Feedback_Management.ViewModels.Dashboard.EngineerDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
+<div class="container-fluid">
 
-<!-- ========================================= -->
-<!-- HERO -->
-<!-- ========================================= -->
+    <!-- Welcome Banner -->
 
-<section class="hero">
+    <div class="card shadow-sm border-0 mb-4">
 
-    <div class="container py-1">
+        <div class="card-body">
 
-        <div class="row justify-content-center">
+            <div class="row align-items-center">
 
-            <div class="col-lg-8">
+                <div class="col-md-8">
 
-                <div class="card shadow-lg border-0 rounded-4">
+                    <h2 class="fw-bold text-primary">
 
-                    <div class="card-body p-5 text-center">
+                        @Model.Greeting, @Model.FullName 👋
 
-                        <img src="~/images/logo-horizontal.png"
-                             height="70"
-                             class="mb-4" />
+                    </h2>
 
-                        <h2 class="fw-bold text-primary">
+                    <p class="text-muted mb-0">
 
-                            Welcome,
+                        Welcome to Yokogawa Customer Feedback Portal
 
-                            @ViewBag.FullName 👋
+                    </p>
 
-                        </h2>
+                    <small class="text-secondary">
 
-                        <p class="text-muted fs-5">
+                        Region :
+                        <strong>@Model.Region</strong>
 
-                            Welcome to the Customer Feedback Management Portal.
+                        |
 
-                            Your valuable feedback helps us continuously improve our
-                            products and customer experience.
+                        Department :
+                        <strong>@Model.Module</strong>
 
-                        </p>
+                    </small>
 
-                        <hr class="my-4" />
+                </div>
 
-                        <div class="row text-center">
 
-                            <div class="row mt-4 g-3">
+            </div>
 
-                                <div class="col-md-6">
-                                    <div class="info-card">
-                                        <div class="info-icon">
-                                            <i class="bi bi-building"></i>
-                                        </div>
+        </div>
 
-                                        <div class="info-content">
-                                            <span class="info-title">Department</span>
-                                            <h5>@ViewBag.Module</h5>
-                                        </div>
-                                    </div>
-                                </div>
+    </div>
 
-                                <div class="col-md-6">
-                                    <div class="info-card">
-                                        <div class="info-icon">
-                                            <i class="bi bi-geo-alt-fill"></i>
-                                        </div>
+    <!-- Dashboard Cards -->
 
-                                        <div class="info-content">
-                                            <span class="info-title">Region</span>
-                                            <h5>@ViewBag.Region</h5>
-                                        </div>
-                                    </div>
-                                </div>
+    <div class="row g-4 mb-4">
 
-                            </div>
+        <div class="col-md-3">
 
-                        </div>
+            <div class="card dashboard-card card-primary">
 
-                        <div class="mt-5">
+                <div class="card-body">
 
-                            <a asp-controller="CustomerFeedback"
-                               asp-action="SelectFeedbackType"
-                               class="btn btn-warning btn-lg px-5 py-3 fw-bold shadow">
+                    <i class="bi bi-chat-left-text-fill"></i>
 
-                                <i class="bi bi-chat-left-text-fill me-2"></i>
+                    <h6>Total Submitted</h6>
 
-                                Start Feedback
+                    <h2>@Model.TotalFeedback</h2>
 
-                            </a>
+                </div>
 
-                        </div>
+            </div>
 
-                      
+        </div>
 
-                    </div>
+        <div class="col-md-3">
+
+            <div class="card dashboard-card card-warning">
+
+                <div class="card-body">
+
+                    <i class="bi bi-folder2-open"></i>
+
+                    <h6>Open</h6>
+
+                    <h2>@Model.OpenFeedback</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card card-success">
+
+                <div class="card-body">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    <h6>Closed</h6>
+
+                    <h2>@Model.ClosedFeedback</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card card-info">
+
+                <div class="card-body">
+
+                    <i class="bi bi-star-fill"></i>
+
+                    <h6>Average Rating</h6>
+
+                    <h2>@Model.AverageRating</h2>
 
                 </div>
 
@@ -102,123 +127,63 @@
 
     </div>
 
-</section>
+    <!-- Quick Actions -->
 
-<!-- ========================================= -->
-<!-- OUR SERVICES -->
-<!-- ========================================= -->
+    <div class="card shadow-sm border-0 mb-4">
 
-<section class="section bg-light">
+        <div class="card-header bg-white">
 
-    <div class="container">
+            <h5 class="mb-0">
 
-        <div class="text-center mb-5">
+                Quick Actions
 
-            <h2 class="fw-bold text-primary">
-
-                Our Services
-
-            </h2>
-
-            <p class="text-muted">
-
-                Select the appropriate department while submitting your valuable feedback.
-
-            </p>
+            </h5>
 
         </div>
 
-        <div class="row g-4">
+        <div class="card-body">
 
-            @{
-                var services = new[]
-                {
-                        new { Name="Site Services", Icon="bi-tools" },
-                        new { Name="Calibration", Icon="bi-speedometer2" },
-                        new { Name="Bench Repair", Icon="bi-gear-wide-connected" },
-                        new { Name="Training", Icon="bi-journal-check" },
-                        new { Name="AMC", Icon="bi-calendar-check" },
-                        new { Name="Spares", Icon="bi-box-seam" },
-                        new { Name="System Upgrade", Icon="bi-cpu" },
-                        new { Name="Quality Support", Icon="bi-shield-check" }
-                        };
-            }
+            <div class="row g-3">
 
-            @foreach (var item in services)
-            {
-                <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="col-md-4">
 
-                    <div class="service-card fade-up">
+                    <a asp-controller="CustomerFeedback"
+                       asp-action="SelectFeedbackType"
+                       class="btn btn-primary w-100 p-3">
 
-                        <i class="bi @item.Icon"></i>
+                        <i class="bi bi-pencil-square"></i>
 
-                        <h5>@item.Name</h5>
+                        Fill Feedback
 
-                    </div>
-
-                </div>
-            }
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================= -->
-<!-- STATISTICS -->
-<!-- ========================================= -->
-
-<section class="section">
-
-    <div class="container">
-
-        <div class="row text-center">
-
-            <div class="col-md-3">
-
-                <div class="counter-card fade-up">
-
-                    <div class="counter" data-target="1200">0</div>
-
-                    <h5>Total Feedback</h5>
+                    </a>
 
                 </div>
 
-            </div>
+                <div class="col-md-4">
 
-            <div class="col-md-3">
+                    <a asp-controller="FeedbackUpload"
+                       asp-action="Index"
+                       class="btn btn-success w-100 p-3">
 
-                <div class="counter-card fade-up">
+                        <i class="bi bi-upload"></i>
 
-                    <div class="counter" data-target="7">0</div>
+                        Upload Feedback
 
-                    <h5>Departments</h5>
-
-                </div>
-
-            </div>
-
-            <div class="col-md-3">
-
-                <div class="counter-card fade-up">
-
-                    <div class="counter" data-target="98">0</div>
-
-                    <h5>Customer Satisfaction %</h5>
+                    </a>
 
                 </div>
 
-            </div>
+                <div class="col-md-4">
 
-            <div class="col-md-3">
+                    <a asp-controller="CustomerFeedback"
+                       asp-action="MyFeedback"
+                       class="btn btn-warning w-100 p-3">
 
-                <div class="counter-card fade-up">
+                        <i class="bi bi-card-list"></i>
 
-                    <div class="counter" data-target="24">0</div>
+                        My Feedback
 
-                    <h5>Support Hours</h5>
+                    </a>
 
                 </div>
 
@@ -228,167 +193,120 @@
 
     </div>
 
-</section>
+    <!-- Recent Feedback -->
 
+    <div class="card shadow-sm border-0">
 
-<!-- ========================================= -->
-<!-- WHY YOKOGAWA -->
-<!-- ========================================= -->
+        <div class="card-header bg-white">
 
-<section class="section why-section">
+            <h5 class="mb-0">
 
-    <div class="container">
+                Recent Feedback
 
-        <div class="text-center mb-5">
-
-            <h2 class="fw-bold text-primary">
-
-                Why Choose Yokogawa?
-
-            </h2>
-
-            <p class="text-muted">
-
-                Trusted globally for engineering excellence and customer satisfaction.
-
-            </p>
+            </h5>
 
         </div>
 
-        <div class="row">
+        <div class="card-body">
 
-            <div class="col-lg-3 col-md-6">
+            <table class="table table-hover align-middle">
 
-                <div class="why-card fade-up">
+                <thead>
 
-                    <i class="bi bi-award-fill"></i>
+                    <tr>
 
-                    <h5>Quality Service</h5>
+                        <th>Case No</th>
 
-                </div>
+                        <th>Company</th>
+                        @if (Model.DepartmentId == 1)
+                        {
+                            <th>Status</th>
+                        }
+                        <th>Date</th>
 
-            </div>
+                        <th></th>
 
-            <div class="col-lg-3 col-md-6">
+                    </tr>
 
-                <div class="why-card fade-up">
+                </thead>
 
-                    <i class="bi bi-people-fill"></i>
+                <tbody>
 
-                    <h5>Customer First</h5>
+                    @if (Model.RecentFeedbacks.Any())
+                    {
+                        @foreach (var item in Model.RecentFeedbacks)
+                        {
+                            <tr>
 
-                </div>
+                                <td>@item.CaseNumber</td>
 
-            </div>
+                                <td>@item.CompanyName</td>
 
-            <div class="col-lg-3 col-md-6">
+                                @if (Model.DepartmentId == 1)
+                                {
+                                    <td>
 
-                <div class="why-card fade-up">
+                                        @if (item.FeedbackStatus == "Closed")
+                                        {
+                                            <span class="badge bg-success">
 
-                    <i class="bi bi-globe2"></i>
+                                                Closed
 
-                    <h5>Global Presence</h5>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">
 
-                </div>
+                                                Open
 
-            </div>
+                                            </span>
+                                        }
 
-            <div class="col-lg-3 col-md-6">
+                                    </td>
+                                }
+                                <td>
 
-                <div class="why-card fade-up">
+                                    @(item.CreatedDate?.ToString("dd-MMM-yyyy"))
 
-                    <i class="bi bi-graph-up-arrow"></i>
+                                </td>
 
-                    <h5>Continuous Improvement</h5>
+                                <td>
 
-                </div>
+                                    <a asp-controller="CustomerFeedback"
+                                       asp-action="Details"
+                                       asp-route-id="@item.FeedbackID"
+                                       class="btn btn-sm btn-primary">
 
-            </div>
+                                        View
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="5"
+                                class="text-center text-muted">
+
+                                No feedback submitted yet.
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
 
         </div>
 
     </div>
-
-</section>
-
-
-<!-- ========================================= -->
-<!-- CONTACT -->
-<!-- ========================================= -->
-
-<section class="section bg-light">
-
-    <div class="container text-center">
-
-        <h2 class="fw-bold text-primary">
-
-            Contact Us
-
-        </h2>
-
-        <p class="mt-4">
-
-            <i class="bi bi-envelope-fill"></i>
-
-            Yil-ServiceApps@yokogawa.com
-
-        </p>
-
-        <p>
-
-            <i class="bi bi-telephone-fill"></i>
-
-            +91-XXXXXXXXXX
-
-        </p>
-
-        <p>
-
-            <i class="bi bi-geo-alt-fill"></i>
-
-            Yokogawa India Limited
-
-        </p>
-
-    </div>
-
-</section>
-
-
-<footer class="footer">
-
-    <div class="container text-center">
-
-        <img src="~/images/logo-horizontal.png"
-             height="60"
-             class="mb-3" />
-
-        <h5>
-
-            Yokogawa India Limited
-
-        </h5>
-
-        <p>
-
-            Customer Feedback Management Portal
-
-        </p>
-
-        <hr />
-
-        <small>
-
-            © @DateTime.Now.Year Yokogawa India Limited. All Rights Reserved.
-
-        </small>
-
-    </div>
-
-</footer>
-
-<div class="scroll-top">
-
-    <i class="bi bi-arrow-up"></i>
 
 </div>

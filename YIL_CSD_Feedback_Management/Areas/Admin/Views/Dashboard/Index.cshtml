@@ -23,7 +23,7 @@
             </p>
 
         </div>
-     
+
 
     </div>
 
@@ -148,16 +148,16 @@
 
     <div class="dashboard-card mt-4">
 
-        <div class="d-flex justify-content-between mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
 
-            <h5>Recent Feedback</h5>
+            <h5 class="mb-0">
+                Recent Feedback
+            </h5>
 
-            <a asp-area="Admin"
-               asp-controller="Feedback"
-               asp-action="Index">
-
+            <a href="/Admin/Feedback"
+               class="text-primary text-decoration-none"
+               style="cursor:pointer; position:relative; z-index:10;">
                 View All
-
             </a>
 
         </div>
@@ -167,7 +167,24 @@
             <thead>
 
                 <tr>
-                    <th>Case No.</th>
+                    <th>
+                        @if (Model.DepartmentID == 1)
+                        {
+                            @:Case No.
+                        }
+                        else if (Model.DepartmentID == 2)
+                        {
+                            @:Training Request No.
+                        }
+                        else if (Model.DepartmentID == 3)
+                        {
+                            @:Service Request No.
+                        }
+                        else
+                        {
+                            @:Reference No.
+                        }
+                    </th>
 
                     <th>Company</th>
 
@@ -175,13 +192,20 @@
 
                     <th>Source</th>
 
-                    <th>Status</th>
+                    @if (Model.DepartmentID == 1)
+                    {
+                        <th>Status</th>
+                    }
 
                     <th>Rating</th>
 
                     <th>Date</th>
 
-                    <th class="text-center">Action</th>
+                    <th>Excel Closed Date</th>
+
+                    <th class="text-center">Attachment</th>
+
+                    <th class="text-center">View</th>
 
                 </tr>
 
@@ -195,7 +219,7 @@
                     {
                         <tr>
 
-                            <!-- Case Number -->
+                            <!-- Reference Number -->
 
                             <td>
 
@@ -243,53 +267,29 @@
                             </td>
 
                             <!-- Status -->
+                            @if (Model.DepartmentID == 1)
+                            {
+                                <td class="text-center">
+                                    @switch (item.FeedbackStatus)
+                                    {
+                                        case "Closed":
+                                            <span class="status-badge status-closed">Closed</span>
+                                            break;
 
-                            <td class="text-center">
+                                        case "Pending":
+                                            <span class="status-badge status-pending">Pending</span>
+                                            break;
 
-                                @switch (item.FeedbackStatus)
-                                {
-                                    case "Closed":
+                                        case "In-Progress":
+                                            <span class="status-badge status-progress">In Progress</span>
+                                            break;
 
-                                        <span class="status-badge status-closed">
-
-                                            Closed
-
-                                        </span>
-
-                                        break;
-
-                                    case "Pending":
-
-                                        <span class="status-badge status-pending">
-
-                                            Pending
-
-                                        </span>
-
-                                        break;
-
-                                    case "In-Progress":
-
-                                        <span class="status-badge status-progress">
-
-                                            In Progress
-
-                                        </span>
-
-                                        break;
-
-                                    default:
-
-                                        <span class="status-badge status-open">
-
-                                            Open
-
-                                        </span>
-
-                                        break;
-                                }
-
-                            </td>
+                                        default:
+                                            <span class="status-badge status-open">Open</span>
+                                            break;
+                                    }
+                                </td>
+                            }
 
                             <!-- Rating -->
 
@@ -321,11 +321,39 @@
 
                             </td>
 
-                            <!-- Action -->
+                            <!-- Excel Closed Date -->
+
+                            <td>
+                                @(item.ExcelClosedDate?.ToString("dd-MMM-yyyy") ?? "-")
+                            </td>
+
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.FeedbackFilePath))
+                                {
+                                    <a asp-area="Admin"
+                                       asp-controller="Feedback"
+                                       asp-action="ViewAttachment"
+                                       asp-route-id="@item.FeedbackID"
+                                       target="_blank"
+                                       class="btn btn-sm btn-outline-primary"
+                                       title="View Attachment">
+
+                                        <i class="bi bi-paperclip"></i>
+                                        Attachment
+
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+
+                            <!-- Action/View -->
 
                             <td class="text-center">
 
-                               <a asp-area="Admin"
+                                <a asp-area="Admin"
                                    asp-controller="Feedback"
                                    asp-action="Details"
                                    asp-route-id="@item.FeedbackID"
@@ -347,7 +375,8 @@
                 {
                     <tr>
 
-                        <td colspan="8" class="text-center py-4">
+                        <td colspan="@(Model.DepartmentID == 1 ? 8 : 7)"
+                            class="text-center py-4">
 
                             <i class="bi bi-inbox display-6 text-muted"></i>
 
@@ -406,7 +435,7 @@
 
         </div>
 
-      
+
         <div class="col-lg-3 col-md-6 mb-3">
 
             <a asp-area="Admin"
@@ -458,7 +487,7 @@
 
         </div>
 
-      
+
     </div>
 
 </div>

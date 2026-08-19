@@ -1,0 +1,568 @@
+﻿@model YIL_CSD_Feedback_Management.ViewModels.MyFeedback.MyFeedbackSearchViewModel
+
+@{
+    ViewData["Title"] = "My Feedback";
+}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-card-list text-primary"></i>
+
+                My Feedback
+
+            </h2>
+
+            <small class="text-muted">
+
+                Manage all submitted customer feedback.
+
+            </small>
+
+        </div>
+
+        <div>
+
+            <a asp-action="SelectFeedbackType"
+               class="btn btn-primary">
+
+                <i class="bi bi-plus-circle"></i>
+
+                New Feedback
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="row mb-4">
+
+        <div class="col-lg-3 col-md-6 mb-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-muted">Total Feedback</h6>
+
+                    <h2 class="fw-bold text-primary">
+
+                        @Model.Feedbacks.Count
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-muted">Open</h6>
+
+                    <h2 class="fw-bold text-warning">
+
+                        @Model.Feedbacks.Count(x => x.FeedbackStatus == "Open")
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-muted">Closed</h6>
+
+                    <h2 class="fw-bold text-success">
+
+                        @Model.Feedbacks.Count(x => x.FeedbackStatus == "Closed")
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-muted">Average Rating</h6>
+
+                    <h2 class="fw-bold text-danger">
+
+                        @(Model.Feedbacks.Any()
+                                                ? Model.Feedbacks.Average(x => x.AverageRating).ToString("0.0")
+                                                : "0.0")
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Filter Card -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <input type="hidden"
+                       asp-for="PageNumber"
+                       value="1" />
+
+                <div class="row g-3">
+
+                    <!-- Search -->
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Search
+                        </label>
+
+                        <input asp-for="SearchText"
+                               class="form-control"
+                               placeholder="Case / Company / Respondent" />
+
+                    </div>
+
+
+                    <!-- Status -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Status
+                        </label>
+
+                        <select asp-for="Status"
+                                asp-items="Model.StatusList"
+                                class="form-select">
+                        </select>
+
+                    </div>
+
+
+                    <!-- Region -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Region
+                        </label>
+
+                        <select asp-for="Region"
+                                asp-items="Model.RegionList"
+                                class="form-select">
+                        </select>
+
+                    </div>
+
+
+                    <!-- From Date -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            From Date
+                        </label>
+
+                        <input asp-for="FromDate"
+                               type="date"
+                               class="form-control" />
+
+                    </div>
+
+
+                    <!-- To Date -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            To Date
+                        </label>
+
+                        <input asp-for="ToDate"
+                               type="date"
+                               class="form-control" />
+
+                    </div>
+
+
+                    <!-- Records Per Page -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Records per page
+                        </label>
+
+                        <select asp-for="PageSize"
+                                class="form-select"
+                                onchange="this.form.PageNumber.value='1'; this.form.submit();">
+
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Search Button -->
+                    <div class="col-md-1 d-grid">
+
+                        <label>&nbsp;</label>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="bi bi-search"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- Data Grid -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Case No</th>
+
+                            <th>Company</th>
+
+                            <th>Respondent</th>
+
+                            <th>Region</th>
+
+                            <th>Status</th>
+
+                            <th>Rating</th>
+
+                            <th>Date</th>
+
+                            <th width="100">Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model.Feedbacks.Any())
+                        {
+                            foreach (var item in Model.Feedbacks)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+
+                                            @item.CaseNumber
+
+                                        </strong>
+
+                                    </td>
+
+                                    <td>
+
+                                        @item.CompanyName
+
+                                    </td>
+
+                                    <td>
+
+                                        @item.RespondentName
+
+                                    </td>
+
+                                    <td>
+
+                                        @item.Region
+
+                                    </td>
+
+                                    <td>
+
+                                        @if (item.FeedbackStatus == "Closed")
+                                        {
+                                            <span class="badge-closed">
+
+                                                ✔ Closed
+
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-open">
+
+                                                ⏳ Open
+
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <td>
+
+                                        @{
+                                            var fullStars = (int)Math.Round(item.AverageRating);
+                                        }
+
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= fullStars)
+                                            {
+                                                <span class="text-warning">★</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-secondary">☆</span>
+                                            }
+                                        }
+
+                                        <br />
+
+                                        <small>
+
+                                            @item.AverageRating.ToString("0.0")
+
+                                        </small>
+
+                                    </td>
+
+                                    <td>
+
+                                        @(item.CreatedDate?.ToString("dd-MMM-yyyy"))
+
+                                    </td>
+
+                                    <td>
+
+                                       <div class="btn-group">
+
+                                            <a asp-action="Details"
+                                               asp-route-id="@item.FeedbackID"
+                                               class="btn btn-outline-primary btn-sm"
+                                               title="View">
+
+                                                <i class="bi bi-eye"></i>
+
+                                            </a>
+
+                                            @if (item.CanEdit)
+                                            {
+                                                <a asp-action="Edit"
+                                                   asp-route-id="@item.FeedbackID"
+                                                   class="btn btn-outline-warning btn-sm"
+                                                   title="Edit">
+
+                                                    <i class="bi bi-pencil-square"></i>
+
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-outline-secondary btn-sm"
+                                                        disabled
+                                                        title="Editing period expired">
+
+                                                    <i class="bi bi-lock-fill"></i>
+
+                                                </button>
+                                            }
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+
+                                <td colspan="8"
+                                    class="text-center py-5">
+
+                                    <img src="~/images/no-data.png"
+                                         style="height:120px;" />
+
+                                    <br /><br />
+
+                                    <strong>
+
+                                        No Feedback Found
+
+                                    </strong>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-4">
+
+            <!-- Record Information -->
+            <div class="text-muted">
+
+                Showing
+                <strong>
+                    @(((Model.PageNumber - 1) * Model.PageSize) + 1)
+                </strong>
+
+                -
+
+                <strong>
+                    @Math.Min(
+                    Model.PageNumber* Model.PageSize,
+                                Model.TotalRecords)
+            </strong>
+
+            of
+
+            <strong>
+                @Model.TotalRecords
+            </strong>
+
+            records
+
+        </div>
+
+
+        <!-- Pagination -->
+        <nav aria-label="Feedback pagination">
+
+            <ul class="pagination mb-0">
+
+                <!-- Previous -->
+                <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
+
+                    <a class="page-link"
+                       asp-action="MyFeedback"
+                       asp-route-PageNumber="@(Model.PageNumber - 1)"
+                       asp-route-PageSize="@Model.PageSize"
+                       asp-route-SearchText="@Model.SearchText"
+                       asp-route-Status="@Model.Status"
+                       asp-route-Region="@Model.Region"
+                       asp-route-FromDate="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                       asp-route-ToDate="@Model.ToDate?.ToString("yyyy-MM-dd")">
+
+                        <i class="bi bi-chevron-left"></i>
+                        Previous
+
+                    </a>
+
+                </li>
+
+
+                <!-- Page Numbers -->
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+
+                            <a class="page-link"
+                               asp-action="MyFeedback"
+                               asp-route-PageNumber="@i"
+                               asp-route-PageSize="@Model.PageSize"
+                               asp-route-SearchText="@Model.SearchText"
+                               asp-route-Status="@Model.Status"
+                               asp-route-Region="@Model.Region"
+                               asp-route-FromDate="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                               asp-route-ToDate="@Model.ToDate?.ToString("yyyy-MM-dd")">
+
+                                @i
+
+                            </a>
+
+                        </li>
+                    }
+
+
+                    <!-- Next -->
+                    <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+
+                        <a class="page-link"
+                           asp-action="MyFeedback"
+                           asp-route-PageNumber="@(Model.PageNumber + 1)"
+                           asp-route-PageSize="@Model.PageSize"
+                           asp-route-SearchText="@Model.SearchText"
+                           asp-route-Status="@Model.Status"
+                           asp-route-Region="@Model.Region"
+                           asp-route-FromDate="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                           asp-route-ToDate="@Model.ToDate?.ToString("yyyy-MM-dd")">
+
+                            Next
+                            <i class="bi bi-chevron-right"></i>
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+
+        </div>
+    }
+
+</div>

@@ -1,6 +1,18 @@
-﻿namespace YIL_CSD_Feedback_Management.wwwroot.css
-{
-    public class customer_feedback_form
-    {
-    }
+﻿/*=========================================
+Question Validation
+==========================================*/
+
+.question-card {
+    transition: all .3s ease;
+    border-radius: 10px;
 }
+
+    .question-card.question-error {
+        border: 2px solid #dc3545 !important;
+        background: #fff5f5;
+    }
+
+    .question-card.question-valid {
+        border: 2px solid #198754 !important;
+        background: #f8fff8;
+    }

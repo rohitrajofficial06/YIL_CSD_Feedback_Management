@@ -13,9 +13,37 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Services.Implementations
             _repository = repository;
         }
 
+        // ==========================================================
+        // Reports Dashboard
+        // ==========================================================
+
         public async Task<ReportsDashboardViewModel> GetDashboardAsync()
         {
             return await _repository.GetDashboardAsync();
+        }
+
+
+        // ==========================================================
+        // Pending Feedback Report
+        // ==========================================================
+
+        public async Task<PendingFeedbackViewModel> GetPendingFeedbackAsync(
+            string? searchText,
+            string? region,
+            DateTime? fromDate,
+            DateTime? toDate,
+            long? uploadId,
+            int pageNumber,
+            int pageSize)
+        {
+            return await _repository.GetPendingFeedbackAsync(
+                searchText,
+                region,
+                fromDate,
+                toDate,
+                uploadId,
+                pageNumber,
+                pageSize);
         }
     }
 }

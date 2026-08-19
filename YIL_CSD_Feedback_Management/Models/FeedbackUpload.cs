@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using YIL_CSD_Feedback_Management.Helpers;
 using YIL_CSD_Feedback_Management.Models.Common;
 
 namespace YIL_CSD_Feedback_Management.Models
@@ -52,7 +53,7 @@ namespace YIL_CSD_Feedback_Management.Models
         [StringLength(500)]
         public string? Remarks { get; set; }
 
-        public DateTime UploadedDate { get; set; } = DateTime.Now;
+        public DateTime UploadedDate { get; set; } = DateTimeHelper.Now;
         
         [NotMapped]
         public string? DepartmentName { get; set; }

@@ -1,0 +1,351 @@
+﻿/*=========================================================
+    ENGINEER PORTAL LAYOUT
+=========================================================*/
+
+:root {
+    --primary: #0054A6;
+    --primary-dark: #003D7A;
+    --secondary: #FFD400;
+    --light: #F4F7FC;
+    --white: #ffffff;
+    --text: #2F3542;
+    --sidebar-width: 260px;
+    --header-height: 70px;
+    --shadow: 0 8px 30px rgba(0,0,0,.08);
+}
+
+body {
+    background: var(--light);
+    overflow-x: hidden;
+}
+
+/*==========================================
+Wrapper
+==========================================*/
+
+.app-wrapper {
+    display: flex;
+}
+
+/*==========================================
+Top Header
+==========================================*/
+
+.top-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-shadow: var(--shadow);
+    z-index: 9999;
+}
+
+    .top-header .left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .top-header h4 {
+        margin: 0;
+        color: #0054A6;
+        font-weight: 700;
+    }
+
+    .top-header small {
+        color: #777;
+    }
+
+    .top-header .right {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+    }
+
+/*==========================================
+Menu Button
+==========================================*/
+
+#menuBtn {
+    width: 42px;
+    height: 42px;
+    border: none;
+    background: #EEF5FF;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+    #menuBtn:hover {
+        background: #0054A6;
+        color: #fff;
+    }
+
+    #menuBtn i {
+        font-size: 22px;
+    }
+
+/*==========================================
+Notification
+==========================================*/
+
+.notification {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #EEF5FF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+    .notification i {
+        color: #0054A6;
+        font-size: 20px;
+    }
+
+/*==========================================
+Profile
+==========================================*/
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+    .profile i {
+        font-size: 36px;
+        color: #0054A6;
+    }
+
+    .profile span {
+        font-weight: 600;
+    }
+/*==========================================
+Sidebar
+==========================================*/
+
+.sidebar {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 260px;
+    height: calc(100vh - 70px);
+    background: linear-gradient(180deg,#0054A6,#003D7A);
+    overflow-y: auto;
+    transition: .3s;
+    box-shadow: var(--shadow);
+}
+
+    /*==========================================
+Sidebar Collapse
+==========================================*/
+
+    .sidebar.collapsed {
+        width: 0;
+        overflow: hidden;
+    }
+
+.app-wrapper.sidebar-collapsed .main-content {
+    margin-left: 0;
+    width: 100%;
+}
+.sidebar-container {
+    padding: 25px 15px;
+}
+
+/*=========================================
+Sidebar Logo
+=========================================*/
+
+.sidebar-logo {
+    text-align: center;
+    padding: 20px 15px;
+    margin-bottom: 30px;
+}
+
+    .sidebar-logo img {
+        width: 170px;
+        height: auto;
+        display: block;
+        margin: 0 auto 15px;
+    }
+
+    .sidebar-logo h5 {
+        margin: 0;
+        color: #fff;
+        font-size: 1.6rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+.sidebar-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    .sidebar-menu li {
+        margin-bottom: 8px;
+    }
+
+    .sidebar-menu a {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 14px 18px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #fff;
+        transition: .3s;
+    }
+
+        .sidebar-menu a i {
+            font-size: 20px;
+            width: 25px;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(255,255,255,.15);
+            transform: translateX(6px);
+            box-shadow: 0 10px 20px rgba(0,0,0,.18);
+        }
+
+        .sidebar-menu a.active {
+            background: linear-gradient(90deg,#0D6EFD,#1976D2);
+            color: #fff;
+            font-weight: 600;
+            border-left: 5px solid #FFD400;
+            box-shadow: 0 12px 25px rgba(0,0,0,.20);
+            transform: translateX(4px);
+        }
+
+            .sidebar-menu a.active i,
+            .sidebar-menu a.active span {
+                color: #fff;
+            }
+
+/*==========================================
+Main Content
+==========================================*/
+
+.main-content {
+    margin-left: 260px;
+    margin-top: 70px;
+    padding: 30px;
+    width: calc(100% - 260px);
+    min-height: 100vh;
+    background: #F4F7FC;
+}
+
+/*==========================================
+Responsive Layout
+==========================================*/
+
+@media(max-width:991px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+    }
+
+        .sidebar.show {
+            transform: translateX(0);
+        }
+
+        .sidebar.collapsed {
+            width: 260px;
+            transform: translateX(-100%);
+        }
+
+    .main-content {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+/*==========================================
+Dashboard Cards
+==========================================*/
+
+.dashboard-card {
+    border: none;
+    border-radius: 18px;
+    color: #fff;
+    transition: .3s;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+    .dashboard-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 30px rgba(0,0,0,.15);
+    }
+
+    .dashboard-card .card-body {
+        text-align: center;
+        padding: 30px;
+    }
+
+    .dashboard-card i {
+        font-size: 40px;
+        margin-bottom: 15px;
+    }
+
+    .dashboard-card h2 {
+        margin-top: 10px;
+        font-weight: 700;
+    }
+
+.card-primary {
+    background: linear-gradient(135deg,#0054A6,#0D6EFD);
+}
+
+.card-success {
+    background: linear-gradient(135deg,#198754,#28A745);
+}
+
+.card-warning {
+    background: linear-gradient(135deg,#F39C12,#FFC107);
+    color: #222;
+}
+
+.card-info {
+    background: linear-gradient(135deg,#17A2B8,#0DCAF0);
+}
+
+.table thead {
+    background: #f8f9fa;
+}
+
+.table tbody tr {
+    transition: .25s;
+}
+
+    .table tbody tr:hover {
+        background: #F4F9FF;
+    }
+
+.card {
+    border-radius: 15px;
+}
+
+.form-control,
+.form-select {
+    border-radius: 10px;
+}
+
+.badge {
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: .85rem;
+}

@@ -38,6 +38,8 @@ namespace YIL_CSD_Feedback_Management.Data
 
         public DbSet<Region> Regions { get; set; }
 
+        public DbSet<UserActiveSession> UserActiveSessions { get; set; }
+
         // ==========================================
         // Model Configuration
         // ==========================================

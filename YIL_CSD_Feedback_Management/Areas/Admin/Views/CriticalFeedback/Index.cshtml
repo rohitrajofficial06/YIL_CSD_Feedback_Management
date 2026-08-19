@@ -315,17 +315,23 @@
 
                                 <td>
 
-                                    @if (item.AverageRating <= 1)
+                                    @if (item.LowestRating <= 1)
                                     {
-                                        <span class="badge bg-danger">Very Critical</span>
+                                        <span class="badge bg-danger">
+                                            Very Critical
+                                        </span>
                                     }
-                                    else if (item.AverageRating <= 2)
+                                    else if (item.LowestRating <= 2)
                                     {
-                                        <span class="badge bg-warning text-dark">Critical</span>
+                                        <span class="badge bg-warning text-dark">
+                                            Critical
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-info">Needs Attention</span>
+                                        <span class="badge bg-info">
+                                            Needs Attention
+                                        </span>
                                     }
 
                                 </td>

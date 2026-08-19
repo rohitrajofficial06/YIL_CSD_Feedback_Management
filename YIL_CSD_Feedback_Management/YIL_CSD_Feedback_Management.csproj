@@ -24,7 +24,6 @@
     <Folder Include="Documents\Templates\" />
     <Folder Include="Documents\OCR\" />
     <Folder Include="Interfaces\" />
-    <Folder Include="Middleware\" />
     <Folder Include="Filters\" />
     <Folder Include="Extensions\" />
     <Folder Include="Constants\" />
@@ -40,7 +39,7 @@
     <Folder Include="ViewComponents\" />
     <Folder Include="wwwroot\icons\" />
     <Folder Include="wwwroot\templates\" />
-    <Folder Include="wwwroot\uploads\" />
+    <Folder Include="wwwroot\uploads\feedbackDoc\" />
   </ItemGroup>
 
   <ItemGroup>

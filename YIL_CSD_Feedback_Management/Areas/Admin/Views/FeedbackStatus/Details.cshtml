@@ -115,9 +115,16 @@
 
                         <td>
 
-                            <span class="badge bg-info">
+                            <span class="badge bg-success">
 
-                                @Model.WestCases
+                                <a asp-action="RegionDetails"
+                                   asp-route-uploadId="@Model.UploadID"
+                                   asp-route-region="West"
+                                   class="text-decoration-none fw-bold">
+
+                                    @Model.WestCases
+
+                                </a>
 
                             </span>
 
@@ -131,10 +138,15 @@
 
                         <td>
 
-                            <span class="badge bg-warning text-dark">
+                            <span class="badge bg-success">
 
-                                @Model.NorthCases
+                                <a asp-action="RegionDetails"
+                                   asp-route-uploadId="@Model.UploadID"
+                                   asp-route-region="North"
+                                   class="text-decoration-none fw-bold">
 
+                                    @Model.NorthCases
+                                </a>
                             </span>
 
                         </td>
@@ -147,10 +159,15 @@
 
                         <td>
 
-                            <span class="badge bg-danger">
+                            <span class="badge bg-success">
 
-                                @Model.SouthCases
+                                <a asp-action="RegionDetails"
+                                   asp-route-uploadId="@Model.UploadID"
+                                   asp-route-region="South"
+                                   class="text-decoration-none fw-bold">
 
+                                    @Model.SouthCases
+                                </a>
                             </span>
 
                         </td>
@@ -163,10 +180,15 @@
 
                         <td>
 
-                            <span class="badge bg-secondary">
+                            <span class="badge bg-success">
 
-                                @Model.GujaratCases
+                                <a asp-action="RegionDetails"
+                                   asp-route-uploadId="@Model.UploadID"
+                                   asp-route-region="Gujarat"
+                                   class="text-decoration-none fw-bold">
 
+                                    @Model.GujaratCases
+                                </a>
                             </span>
 
                         </td>
@@ -179,10 +201,15 @@
 
                         <td>
 
-                            <span class="badge bg-dark">
+                            <span class="badge bg-success">
 
-                                @Model.BHQCases
+                                <a asp-action="RegionDetails"
+                                   asp-route-uploadId="@Model.UploadID"
+                                   asp-route-region="BHQ"
+                                   class="text-decoration-none fw-bold">
 
+                                    @Model.BHQCases
+                                </a>
                             </span>
 
                         </td>
@@ -226,6 +253,17 @@
 
 <div class="card shadow-sm">
 
+    <div class="alert alert-info mb-3">
+
+        <strong>Total Uploaded :</strong> @Model.TotalCases |
+
+        <strong>Matched :</strong>
+        @Model.Records.Count(x => x.FeedbackID.HasValue) |
+
+        <strong>Not Found :</strong>
+        @Model.Records.Count(x => !x.FeedbackID.HasValue)
+
+    </div>
     <div class="card-header">
 
         <h5 class="mb-0">
@@ -246,7 +284,7 @@
 
                     <th width="60">#</th>
 
-                    <th>Case Number</th>
+                    <th>Reference Number</th>
 
                     <th>Feedback ID</th>
 
@@ -271,11 +309,11 @@
                 @foreach (var item in Model.Records)
                 {
                     <tr class="@(item.MatchStatus == "Closed Successfully" ? "table-success"
-                                    : item.MatchStatus == "Already Closed" ? "table-warning"
-                                    : item.MatchStatus == "Feedback Not Found" ? "table-danger"
-                                    : "")">
+                                                                                    : item.MatchStatus == "Already Closed" ? "table-warning"
+                                                                                    : item.MatchStatus == "Feedback Not Found" ? "table-danger"
+                                                                                    : "")">
 
-                        <td>@sl</td>
+                    <td>@sl</td>
 
                         <td>
 
@@ -289,7 +327,7 @@
 
                         <td>
 
-                            @if (item.FeedbackID.HasValue)
+                        @if (item.FeedbackID.HasValue)
                             {
                                 @item.FeedbackID
                             }
@@ -321,7 +359,7 @@
                             @if (item.MatchStatus == "Closed Successfully")
                             {
                                 <span class="badge bg-success">
-
+                                    <i class="bi bi-check-circle-fill"></i>
                                     Closed Successfully
 
                                 </span>
@@ -329,7 +367,7 @@
                             else if (item.MatchStatus == "Already Closed")
                             {
                                 <span class="badge bg-warning text-dark">
-
+                                    <i class="bi bi-lock-fill"></i>
                                     Already Closed
 
                                 </span>
@@ -337,7 +375,7 @@
                             else if (item.MatchStatus == "Feedback Not Found")
                             {
                                 <span class="badge bg-danger">
-
+                                    <i class="bi bi-x-circle-fill"></i>
                                     Feedback Not Found
 
                                 </span>

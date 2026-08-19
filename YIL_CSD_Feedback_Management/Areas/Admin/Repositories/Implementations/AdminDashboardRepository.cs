@@ -60,7 +60,10 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
             // Customer Satisfaction
             model.CustomerSatisfaction = model.AverageRating * 20;
 
+            //===========================================
             // Recent Feedback
+            //===========================================
+
             model.RecentFeedbacks = await _context.CustomerFeedbacks
                 .Where(x => x.DepartmentID == departmentId)
                 .OrderByDescending(x => x.CreatedDate)
@@ -69,7 +72,7 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
                 {
                     FeedbackID = x.FeedbackID,
 
-                    CaseNumber = x.CaseNumber,
+                    CaseNumber = x.CaseNumber ?? string.Empty,
 
                     CompanyName = x.CompanyName,
 
@@ -83,22 +86,26 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
 
                     FeedbackSource = x.FeedbackSource,
 
-                    Rating = 0, // We'll calculate this later
+                    // Calculate Average Rating
+                    Rating = x.Ratings
+                        .Where(r => r.RatingValue.HasValue)
+                        .Select(r => (decimal?)r.RatingValue)
+                        .Average() ?? 0,
 
-                    CreatedDate = x.CreatedDate
+                    CreatedDate = x.CreatedDate,
+
+                    FeedbackFileName = x.FeedbackFileName,
+
+                    FeedbackFilePath = x.FeedbackFilePath,
+
+                    // Excel Closed Date
+                    ExcelClosedDate = _context.ClosedCaseUploadDetails
+                        .Where(c => c.CaseNumber == x.CaseNumber)
+                        .OrderByDescending(c => c.UploadID)
+                        .Select(c => c.ExcelClosedDate)
+                        .FirstOrDefault()
                 })
                 .ToListAsync();
-            foreach (var item in model.RecentFeedbacks)
-            {
-                var feedbackRatings = await _context.CustomerFeedbackRatings
-                    .Where(r => r.FeedbackID == item.FeedbackID && r.RatingValue.HasValue)
-                    .Select(r => r.RatingValue!.Value)
-                    .ToListAsync();
-
-                item.Rating = feedbackRatings.Any()
-                    ? (decimal)feedbackRatings.Average()
-                    : 0;
-            }
 
             return model;
         }

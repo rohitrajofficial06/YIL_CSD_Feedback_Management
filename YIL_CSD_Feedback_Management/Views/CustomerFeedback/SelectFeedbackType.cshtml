@@ -47,6 +47,8 @@
 
                         <div class="col-md-6 mb-4">
 
+                             <a asp-action="UploadFeedback"
+       class="text-decoration-none text-dark">
                             <div class="feedback-option-card">
 
                                 <i class="bi bi-cloud-arrow-up-fill option-icon"></i>
@@ -59,52 +61,48 @@
 
                                 <p>
 
-                                    Already have a completed
-                                    feedback form?
-
-                                    Upload it here.
+                                    Upload the customer feedback form
+                                    for OCR processing and data extraction.
 
                                 </p>
 
-                                <a asp-controller="UploadFeedback"
-                                   asp-action="Index"
-                                   class="btn btn-next">
+                                    <span class="btn btn-next">
 
                                     Upload Now
-
-                                </a>
+                                    </span>
+                              
 
                             </div>
-
+                            </a>
                         </div>
 
                         <div class="col-md-6 mb-4">
 
-                            <div class="feedback-option-card">
+                            <a asp-action="FillFeedback"
+                               class="text-decoration-none text-dark">
+                                <div class="feedback-option-card">
 
-                                <i class="bi bi-pencil-square option-icon"></i>
+                                    <i class="bi bi-pencil-square option-icon"></i>
 
-                                <h3>
+                                    <h3>
 
-                                    Fill Online
+                                        Fill Online
 
-                                </h3>
+                                    </h3>
 
-                                <p>
+                                    <p>
 
-                                    Complete the feedback form
-                                    online in just a few minutes.
+                                        Complete the feedback form
+                                        online in just a few minutes.
 
-                                </p>
+                                    </p>
 
-                                <a asp-action="FillFeedback"
-                                   class="btn btn-next">
+                                    <span class="btn btn-next">
+                                        Continue
+                                    </span>
 
-                                    Continue
-
-                                </a>
-
-                            </div>
+                                </div>
+                            </a>
 
                         </div>
 

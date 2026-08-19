@@ -1,95 +1,40 @@
-﻿<header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+﻿<header class="top-header">
 
-    <div class="container">
+    <div class="left">
 
-        <!-- Logo -->
-        <a class="navbar-brand d-flex align-items-center"
-           asp-controller="Dashboard"
-           asp-action="Index">
+        <button id="menuBtn">
 
-            <img src="~/images/yokogawa-logo.png"
-                 height="45"
-                 class="me-3" />
-
-            <div>
-                <h4 class="mb-0 fw-bold">
-                    YOKOGAWA INDIA LIMITED
-                </h4>
-
-                <small class="text-muted">
-                    Customer Feedback Management Portal
-                </small>
-            </div>
-
-        </a>
-
-        <!-- Mobile Menu -->
-        <button class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarMenu">
-
-            <span class="navbar-toggler-icon"></span>
+            <i class="bi bi-list"></i>
 
         </button>
 
-        <!-- Menu -->
-        <div class="collapse navbar-collapse"
-             id="navbarMenu">
+        <div>
 
-            <ul class="navbar-nav ms-auto align-items-center">
+            <h4>Customer Feedback Portal</h4>
 
-                <li class="nav-item">
-                    <a class="nav-link"
-                       asp-controller="Dashboard"
-                       asp-action="Index">
-                        Home
-                    </a>
-                </li>
+            <small>Yokogawa India Private Limited</small>
 
-                <li class="nav-item">
-                    <a class="nav-link"
-                       asp-controller="FeedbackUpload"
-                       asp-action="Index">
-                        Upload Feedback
-                    </a>
-                </li>
+        </div>
 
-                <li class="nav-item">
-                    <a class="nav-link"
-                       asp-controller="CustomerFeedback"
-                       asp-action="SelectDepartment">
-                        Fill Feedback
-                    </a>
-                </li>
+    </div>
 
-                <li class="nav-item ms-4">
+    <div class="right">
 
-                    <span class="nav-link">
+        <div class="notification">
 
-                        <i class="bi bi-person-circle"></i>
+            <i class="bi bi-bell"></i>
 
-                        @User.FindFirst("FullName")?.Value
+        </div>
 
-                    </span>
+        <div class="profile">
 
-                </li>
+            <i class="bi bi-person-circle"></i>
 
-                <li class="nav-item">
+            <span>
 
-                    <a class="nav-link text-danger"
-                       asp-controller="Account"
-                       asp-action="Logout">
+                @User.FindFirst("FullName")?.Value
 
-                        <i class="bi bi-box-arrow-right"></i>
-
-                        Logout
-
-                    </a>
-
-                </li>
-
-            </ul>
+            </span>
 
         </div>
 

@@ -21,5 +21,9 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.User
         public DateTime? LastLogin { get; set; }
 
         public DateTime CreatedDate { get; set; }
+
+        public bool IsOnline { get; set; }
+
+        public DateTime? LastActivityDate { get; set; }
     }
 }

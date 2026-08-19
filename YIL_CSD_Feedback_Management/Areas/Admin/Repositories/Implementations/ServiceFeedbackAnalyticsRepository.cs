@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Interfaces;
 using YIL_CSD_Feedback_Management.Areas.Admin.ViewModels;
 using YIL_CSD_Feedback_Management.Data;
+using YIL_CSD_Feedback_Management.Helpers;
 
 namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
 {
@@ -23,8 +24,8 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
             // Default Month & Year
             //==========================================
 
-            model.Month ??= DateTime.Now.Month;
-            model.Year ??= DateTime.Now.Year;
+            model.Month ??= DateTimeHelper.Now.Month;
+            model.Year ??= DateTimeHelper.Now.Year;
 
             //==========================================
             // Closed Cases Query
@@ -411,7 +412,7 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             {
                 FileDownloadName =
-                    $"ServiceFeedbackAnalytics_{DateTime.Now:yyyyMMddHHmmss}.xlsx"
+                    $"ServiceFeedbackAnalytics_{DateTimeHelper.Now:yyyyMMddHHmmss}.xlsx"
             };
         }
 
@@ -420,8 +421,8 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
       int? month,
       int? year)
         {
-            month ??= DateTime.Now.Month;
-            year ??= DateTime.Now.Year;
+            month ??= DateTimeHelper.Now.Month;
+            year ??= DateTimeHelper.Now.Year;
 
             var result = await
             (

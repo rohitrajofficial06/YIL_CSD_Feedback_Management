@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using YIL_CSD_Feedback_Management.Helpers;
 using YIL_CSD_Feedback_Management.Models;
 using YIL_CSD_Feedback_Management.Services.Interfaces;
 
@@ -16,8 +17,8 @@ namespace YIL_CSD_Feedback_Management.Services.Implementations
 
         public async Task<FileUploadResult> SaveFileAsync(IFormFile file)
         {
-            string year = DateTime.Now.Year.ToString();
-            string month = DateTime.Now.Month.ToString("00");
+            string year = DateTimeHelper.Now.Year.ToString();
+            string month = DateTimeHelper.Now.Month.ToString("00");
 
             string uploadFolder = Path.Combine(
                 _environment.WebRootPath,
@@ -55,7 +56,7 @@ namespace YIL_CSD_Feedback_Management.Services.Implementations
                 Extension = extension,
                 ContentType = file.ContentType,
                 FileSize = file.Length,
-                UploadedOn = DateTime.Now
+                UploadedOn = DateTimeHelper.Now
             };
         }
 
