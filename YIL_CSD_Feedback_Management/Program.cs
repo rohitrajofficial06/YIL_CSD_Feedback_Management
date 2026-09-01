@@ -100,9 +100,7 @@ builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 builder.Services.AddScoped<IFeedbackStatusRepository, FeedbackStatusRepository>();
 
-builder.Services.AddScoped<
-    IFeedbackStatusService,
-    FeedbackStatusService>();
+builder.Services.AddScoped<IFeedbackStatusService, FeedbackStatusService>();
 
 builder.Services.AddScoped<IClosedCasesRepository,
     ClosedCasesRepository>();

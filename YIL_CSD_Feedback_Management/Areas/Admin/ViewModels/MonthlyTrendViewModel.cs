@@ -2,13 +2,13 @@
 {
     public class MonthlyTrendViewModel
     {
-        public string Month { get; set; } = "";
+        public string MonthName { get; set; } = string.Empty;
 
         public int ClosedCases { get; set; }
 
         public int FeedbackReceived { get; set; }
 
-        public decimal CompletionPercentage { get; set; }
+        public decimal Percentage { get; set; }
 
         public decimal AverageRating { get; set; }
     }

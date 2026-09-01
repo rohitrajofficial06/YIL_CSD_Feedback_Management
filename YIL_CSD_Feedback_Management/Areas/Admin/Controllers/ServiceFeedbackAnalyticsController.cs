@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using YIL_CSD_Feedback_Management.Areas.Admin.Services.Interfaces;
-using YIL_CSD_Feedback_Management.Areas.Admin.ViewModels;
 using YIL_CSD_Feedback_Management.Services.Interfaces;
 
 namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
@@ -12,60 +11,157 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Controllers
         private readonly ILogService _logService;
 
         public ServiceFeedbackAnalyticsController(
-     IServiceFeedbackAnalyticsService service,
-     ILogService logService)
+            IServiceFeedbackAnalyticsService service,
+            ILogService logService)
         {
             _service = service;
             _logService = logService;
         }
 
+        // ============================================================
+        // MAIN ANALYTICS PAGE
+        // ============================================================
+
+        [HttpGet]
         public async Task<IActionResult> Index(
-            ServiceFeedbackAnalyticsViewModel model)
+            int? month,
+            int? year)
         {
-            model = await _service.GetAnalyticsAsync(model);
+            DateTime now = DateTime.Now;
+
+            int selectedMonth =
+                month ?? now.Month;
+
+            int selectedYear =
+                year ?? now.Year;
+
+            // --------------------------------------------------------
+            // Get analytics for selected month/year
+            // --------------------------------------------------------
+
+            var model =
+                await _service.GetAnalyticsAsync(
+                    selectedMonth,
+                    selectedYear);
+
+            // --------------------------------------------------------
+            // Log
+            // --------------------------------------------------------
 
             await _logService.InformationAsync(
-    "Service Feedback Analytics",
-    "Index",
-    $"Viewed Analytics Dashboard. Month : {model.Month}, Year : {model.Year}");
+                "Feedback Analytics",
+                "Index",
+                $"Viewed Feedback Analytics for {selectedMonth}/{selectedYear}.");
 
             return View(model);
         }
+
+
+        // ============================================================
+        // REGION DETAILS / PENDING FEEDBACK
+        // ============================================================
+
+        [HttpGet]
         public async Task<IActionResult> RegionDetails(
-    string region,
-    int? month,
-    int? year)
+            string region,
+            int? month,
+            int? year)
         {
+            // --------------------------------------------------------
+            // Region is required
+            // --------------------------------------------------------
+
             if (string.IsNullOrWhiteSpace(region))
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(
+                    nameof(Index),
+                    new
+                    {
+                        month = month,
+                        year = year
+                    });
             }
 
-            var data = await _service.GetRegionDetailsAsync(
-                region,
-                month,
-                year);
+            DateTime now = DateTime.Now;
+
+            int selectedMonth =
+                month ?? now.Month;
+
+            int selectedYear =
+                year ?? now.Year;
+
+            // --------------------------------------------------------
+            // Get region details
+            //
+            // Repository uses:
+            // tblClosedCaseUploadDetail
+            // ExcelClosedDate
+            // CaseNumber
+            //
+            // and matches against:
+            // trnCustomerFeedback
+            // --------------------------------------------------------
+
+            var model =
+                await _service.GetRegionDetailsAsync(
+                    region.Trim(),
+                    selectedMonth,
+                    selectedYear);
+
+            // --------------------------------------------------------
+            // Pass filter information to View
+            // --------------------------------------------------------
+
+            ViewBag.Region =
+                region.Trim();
+
+            ViewBag.Month =
+                selectedMonth;
+
+            ViewBag.Year =
+                selectedYear;
+
+            // --------------------------------------------------------
+            // Log
+            // --------------------------------------------------------
 
             await _logService.InformationAsync(
-    "Service Feedback Analytics",
-    "RegionDetails",
-    $"Viewed Region Analytics. Region : {region}, Month : {month}, Year : {year}");
+                "Feedback Analytics",
+                "RegionDetails",
+                $"Viewed {region.Trim()} region details for {selectedMonth}/{selectedYear}.");
 
-            ViewBag.Region = region;
-            ViewBag.Month = month;
-            ViewBag.Year = year;
-
-            return View(data);
+            return View(model);
         }
 
-        public async Task<IActionResult> ExportToExcel(int? month, int? year)
-        {
-            await _logService.InformationAsync(
-                "Service Feedback Analytics",
-                "ExportToExcel",
-                $"Exported Analytics Report. Month : {month}, Year : {year}");
 
-            return await _service.ExportToExcelAsync(month, year);
+        // ============================================================
+        // EXPORT TO EXCEL
+        // ============================================================
+
+        [HttpGet]
+        public async Task<IActionResult> Export(
+            int? month,
+            int? year)
+        {
+            // --------------------------------------------------------
+            // Export selected month/year
+            // --------------------------------------------------------
+
+            var file =
+                await _service.ExportToExcelAsync(
+                    month,
+                    year);
+
+            // --------------------------------------------------------
+            // Log
+            // --------------------------------------------------------
+
+            await _logService.InformationAsync(
+                "Feedback Analytics",
+                "Export",
+                $"Exported Feedback Analytics for {month}/{year}.");
+
+            return file;
         }
     }
 }

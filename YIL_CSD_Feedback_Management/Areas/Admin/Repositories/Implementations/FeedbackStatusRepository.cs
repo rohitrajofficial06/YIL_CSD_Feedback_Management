@@ -167,6 +167,9 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
 
                 int totalCases = 0;
 
+                var uploadedCaseNumbers = new HashSet<string>(
+      StringComparer.OrdinalIgnoreCase);
+
                 foreach (var row in worksheet.RowsUsed().Skip(1))
                 {
                     string caseNumber = row.Cell(caseNumberColumn)
@@ -176,44 +179,82 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
                     if (string.IsNullOrWhiteSpace(caseNumber))
                         continue;
 
+                    // Skip duplicate Case Number from Excel
+                    if (!uploadedCaseNumbers.Add(caseNumber))
+                        continue;
+
                     string caseOwnerOrg = row.Cell(caseOwnerOrgColumn)
-                                             .GetString()
-                                             .Trim();
-                    DateTime? excelClosedDate = null;
+                           .GetString()
+                           .Trim();
+
+                    // --------------------------------------
+                    // Read Closed Date from Excel
+                    // --------------------------------------
+
+                    DateTime? closedDate = null;
 
                     if (closedDateColumn > 0)
                     {
-                        var cell = row.Cell(closedDateColumn);
+                        var closedDateCell = row.Cell(closedDateColumn);
 
-                        if (!cell.IsEmpty())
+                        // First try Excel's actual DateTime value
+                        if (closedDateCell.TryGetValue<DateTime>(out DateTime excelDate))
                         {
-                            if (cell.DataType == XLDataType.DateTime)
+                            closedDate = excelDate;
+                        }
+                        else
+                        {
+                            // Fallback for text date
+                            string closedDateText =
+                                closedDateCell.GetString().Trim();
+
+                            if (!string.IsNullOrWhiteSpace(closedDateText))
                             {
-                                excelClosedDate = cell.GetDateTime();
-                            }
-                            else if (DateTime.TryParse(cell.GetString(), out DateTime dt))
-                            {
-                                excelClosedDate = dt;
+                                string[] dateFormats =
+                                {
+                "dd/MM/yy HH:mm",
+                "dd/MM/yyyy HH:mm",
+                "dd/MM/yy H:mm",
+                "dd/MM/yyyy H:mm",
+                "dd/MM/yy",
+                "dd/MM/yyyy"
+            };
+
+                                if (DateTime.TryParseExact(
+                                    closedDateText,
+                                    dateFormats,
+                                    System.Globalization.CultureInfo.InvariantCulture,
+                                    System.Globalization.DateTimeStyles.None,
+                                    out DateTime parsedDate))
+                                {
+                                    closedDate = parsedDate;
+                                }
+                                else if (DateTime.TryParse(
+                                    closedDateText,
+                                    out DateTime generalParsedDate))
+                                {
+                                    closedDate = generalParsedDate;
+                                }
                             }
                         }
                     }
 
-                    ClosedCaseUploadDetail detail = new ClosedCaseUploadDetail
-                    {
-                        UploadID = upload.UploadID,
-                        CaseNumber = caseNumber,
-                        CaseOwnerOrg = caseOwnerOrg,
-                        ExcelClosedDate = excelClosedDate,
-                        Region = GetRegion(caseOwnerOrg),
-                        MatchStatus = "Pending",
-                        Remarks = ""
-                    };
+                    ClosedCaseUploadDetail detail =
+                        new ClosedCaseUploadDetail
+                        {
+                            UploadID = upload.UploadID,
+                            CaseNumber = caseNumber,
+                            CaseOwnerOrg = caseOwnerOrg,
+                            Region = GetRegion(caseOwnerOrg),
+                            ExcelClosedDate = closedDate,
+                            MatchStatus = "Pending",
+                            Remarks = ""
+                        };
 
                     _context.ClosedCaseUploadDetails.Add(detail);
 
                     totalCases++;
                 }
-
                 //--------------------------------------
                 // Update Upload Header
                 //--------------------------------------
@@ -450,9 +491,13 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
                 //---------------------------------------
 
                 var uploadedRows = await _context.ClosedCaseUploadDetails
-                    .Where(x => x.UploadID == uploadId)
-                    .OrderBy(x => x.DetailID)
-                    .ToListAsync();
+                   .Where(x => x.UploadID == uploadId)
+                   .GroupBy(x => x.CaseNumber)
+                   .Select(g => g
+                       .OrderBy(x => x.DetailID)
+                       .First())
+                   .OrderBy(x => x.DetailID)
+                   .ToListAsync();
 
                 //---------------------------------------
                 // Summary Counters

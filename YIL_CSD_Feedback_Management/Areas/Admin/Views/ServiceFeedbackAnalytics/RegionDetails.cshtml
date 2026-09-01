@@ -1,102 +1,483 @@
 ﻿@model List<YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.RegionDetailsViewModel>
 
 @{
-    ViewData["Title"] = "Region Details";
+    ViewData["Title"] = "Pending Feedback Details";
+
+    string region =
+        ViewBag.Region?.ToString() ?? "";
+
+    int month =
+        ViewBag.Month != null
+            ? Convert.ToInt32(ViewBag.Month)
+            : DateTime.Now.Month;
+
+    int year =
+        ViewBag.Year != null
+            ? Convert.ToInt32(ViewBag.Year)
+            : DateTime.Now.Year;
+
+    DateTime selectedDate =
+        new DateTime(year, month, 1);
+
+    string monthName =
+        selectedDate.ToString("MMMM yyyy");
+
+    int totalPending =
+        Model?.Count ?? 0;
 }
+
 
 <div class="container-fluid">
 
-    <div class="card shadow-sm">
+    <!-- ========================================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ========================================================= -->
 
-        <div class="card-header bg-primary text-white">
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-            <h4 class="mb-0">
-                Region : @ViewBag.Region
-            </h4>
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-hourglass-split text-warning me-2"></i>
+
+                Pending Feedback Details
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Region:
+                <strong>@region</strong>
+
+                &nbsp; | &nbsp;
+
+                Period:
+                <strong>@monthName</strong>
+
+            </p>
+
+        </div>
+
+
+        <!-- BACK TO ANALYTICS -->
+
+        <div>
+
+            <a asp-area="Admin"
+               asp-controller="ServiceFeedbackAnalytics"
+               asp-action="Index"
+               asp-route-month="@month"
+               asp-route-year="@year"
+               class="btn btn-secondary">
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                Back to Analytics
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- SUMMARY CARDS -->
+    <!-- ========================================================= -->
+
+    <div class="row mb-4">
+
+        <!-- REGION -->
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow-sm border-primary h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Region
+                            </h6>
+
+                            <h3 class="fw-bold text-primary mb-0">
+                                @region
+                            </h3>
+
+                        </div>
+
+                        <div class="fs-1 text-primary opacity-50">
+
+                            <i class="bi bi-geo-alt-fill"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PERIOD -->
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow-sm border-info h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Selected Period
+                            </h6>
+
+                            <h3 class="fw-bold text-info mb-0">
+                                @monthName
+                            </h3>
+
+                        </div>
+
+                        <div class="fs-1 text-info opacity-50">
+
+                            <i class="bi bi-calendar3"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PENDING -->
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow-sm border-warning h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted mb-2">
+                                Pending Feedback
+                            </h6>
+
+                            <h3 class="fw-bold text-warning mb-0">
+                                @totalPending
+                            </h3>
+
+                        </div>
+
+                        <div class="fs-1 text-warning opacity-50">
+
+                            <i class="bi bi-hourglass-split"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- SEARCH -->
+    <!-- ========================================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-search me-2"></i>
+
+                Search Pending Cases
+
+            </h5>
 
         </div>
 
         <div class="card-body">
 
-            <a asp-action="Index"
-               asp-route-month="@ViewBag.Month"
-               asp-route-year="@ViewBag.Year"
-               class="btn btn-secondary mb-3">
+            <div class="row">
 
-                ← Back
+                <div class="col-md-8">
 
-            </a>
+                    <label class="form-label fw-semibold">
+                        Search
+                    </label>
+
+                    <input type="text"
+                           id="caseSearch"
+                           class="form-control"
+                           placeholder="Search Case Number or Engineer..." />
+
+                </div>
+
+                <div class="col-md-4 d-flex align-items-end">
+
+                    <button type="button"
+                            id="clearSearch"
+                            class="btn btn-secondary w-100">
+
+                        <i class="bi bi-x-circle me-1"></i>
+
+                        Clear Search
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- PENDING CASE TABLE -->
+    <!-- ========================================================= -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-warning">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-list-check me-2"></i>
+
+                Pending Feedback Cases
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-0">
 
             <div class="table-responsive">
 
-                <table class="table table-bordered table-hover">
+                <table id="detailsTable"
+                       class="table table-bordered table-hover align-middle mb-0">
 
                     <thead class="table-light">
 
                         <tr>
-                            <th>Case Number</th>
-                            <th>Company</th>
-                            <th>Respondent</th>
-                            <th>Engineer</th>
-                            <th>Closed Date</th>
-                            <th>Feedback</th>
-                            <th>Rating</th>
+
+                            <th style="width:70px;"
+                                class="text-center">
+
+                                S.No.
+
+                            </th>
+
+                            <th>
+
+                                Case Number
+
+                            </th>
+
+                            <th>
+
+                                Engineer
+
+                            </th>
+
+                            <th>
+
+                                Closed Date
+
+                            </th>
+
+                            <th class="text-center">
+
+                                Status
+
+                            </th>
+
+                            <th class="text-center">
+
+                                Rating
+
+                            </th>
+
                         </tr>
 
                     </thead>
 
+
                     <tbody>
 
-                        @if (Model.Any())
+                        @if (Model != null && Model.Any())
                         {
+                            int serialNo = 1;
+
                             foreach (var item in Model)
                             {
                                 <tr>
 
-                                    <td>@item.CaseNumber</td>
+                                    <!-- S.NO -->
 
-                                    <td>@item.CompanyName</td>
+                                    <td class="text-center">
 
-                                    <td>@item.RespondentName</td>
+                                        @serialNo
 
-                                    <td>@item.YILEngineer</td>
-
-                                    <td>
-                                        @(item.ClosedDate?.ToString("dd-MMM-yyyy"))
                                     </td>
 
+
+                                    <!-- CASE NUMBER -->
+
                                     <td>
+
+                                        <strong>
+
+                                            @item.CaseNumber
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- ENGINEER -->
+
+                                    <td>
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                                                        item.YILEngineer))
+                                        {
+                                            @item.YILEngineer
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+
+                                                -
+
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- CLOSED DATE -->
+
+                                    <td>
+
+                                        @if (item.ClosedDate.HasValue)
+                                        {
+                                @item.ClosedDate.Value.ToString("dd-MMM-yyyy");
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+
+                                                -
+
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td class="text-center">
 
                                         @if (item.FeedbackReceived)
                                         {
                                             <span class="badge bg-success">
+
                                                 Received
+
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-danger">
+                                            <span class="badge bg-warning text-dark">
+
                                                 Pending
+
                                             </span>
                                         }
 
                                     </td>
 
-                                    <td>
-                                        @(item.Rating?.ToString("0.00") ?? "-")
+
+                                    <!-- RATING -->
+
+                                    <td class="text-center">
+
+                                        @if (item.Rating.HasValue)
+                                        {
+                                            <strong>
+
+                                                @item.Rating.Value
+                                                .ToString("0.00")
+
+                                                <i class="bi bi-star-fill text-warning"></i>
+
+                                            </strong>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+
+                                                -
+
+                                            </span>
+                                        }
+
                                     </td>
 
                                 </tr>
+
+                                serialNo++;
                             }
                         }
                         else
                         {
                             <tr>
 
-                                <td colspan="7"
-                                    class="text-center">
+                                <td colspan="6"
+                                    class="text-center py-5">
 
-                                    No records found.
+                                    <i class="bi bi-check-circle display-4 text-success"></i>
+
+                                    <h5 class="mt-3">
+
+                                        No Pending Feedback
+
+                                    </h5>
+
+                                    <p class="text-muted mb-0">
+
+                                        No pending feedback cases were found
+                                        for this region and selected period.
+
+                                    </p>
 
                                 </td>
 
@@ -114,3 +495,99 @@
     </div>
 
 </div>
+
+
+<!-- ============================================================= -->
+<!-- SEARCH SCRIPT -->
+<!-- ============================================================= -->
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const searchBox =
+                document.getElementById("caseSearch");
+
+            const clearButton =
+                document.getElementById("clearSearch");
+
+            const table =
+                document.getElementById("detailsTable");
+
+            if (!searchBox || !table) {
+                return;
+            }
+
+
+            function filterTable() {
+
+                const searchText =
+                    searchBox.value
+                        .trim()
+                        .toLowerCase();
+
+                const rows =
+                    table.querySelectorAll(
+                        "tbody tr"
+                    );
+
+
+                rows.forEach(function (row) {
+
+                    const rowText =
+                        row.innerText
+                            .toLowerCase();
+
+                    if (!searchText) {
+
+                        row.style.display = "";
+
+                        return;
+                    }
+
+
+                    if (rowText.includes(searchText)) {
+
+                        row.style.display = "";
+
+                    }
+                    else {
+
+                        row.style.display = "none";
+
+                    }
+
+                });
+
+            }
+
+
+            searchBox.addEventListener(
+                "keyup",
+                filterTable
+            );
+
+
+            if (clearButton) {
+
+                clearButton.addEventListener(
+                    "click",
+                    function () {
+
+                        searchBox.value = "";
+
+                        filterTable();
+
+                        searchBox.focus();
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+</script>

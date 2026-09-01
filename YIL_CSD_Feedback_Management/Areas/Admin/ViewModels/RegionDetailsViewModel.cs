@@ -4,10 +4,6 @@
     {
         public string CaseNumber { get; set; } = string.Empty;
 
-        public string? CompanyName { get; set; }
-
-        public string? RespondentName { get; set; }
-
         public string? YILEngineer { get; set; }
 
         public DateTime? ClosedDate { get; set; }

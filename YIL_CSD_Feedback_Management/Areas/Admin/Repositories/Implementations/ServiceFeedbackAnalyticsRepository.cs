@@ -8,487 +8,1033 @@ using YIL_CSD_Feedback_Management.Helpers;
 
 namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Implementations
 {
-    public class ServiceFeedbackAnalyticsRepository : IServiceFeedbackAnalyticsRepository
+    public class ServiceFeedbackAnalyticsRepository
+        : IServiceFeedbackAnalyticsRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public ServiceFeedbackAnalyticsRepository(ApplicationDbContext context)
+        public ServiceFeedbackAnalyticsRepository(
+            ApplicationDbContext context)
         {
             _context = context;
         }
 
+        // ============================================================
+        // MAIN ANALYTICS
+        // ============================================================
+
+        // ============================================================
+        // MAIN ANALYTICS
+        // ============================================================
+
         public async Task<ServiceFeedbackAnalyticsViewModel> GetAnalyticsAsync(
-      ServiceFeedbackAnalyticsViewModel model)
+            int month,
+            int year)
         {
-            //==========================================
-            // Default Month & Year
-            //==========================================
+            DateTime startDate = new DateTime(year, month, 1);
+            DateTime endDate = startDate.AddMonths(1);
 
-            model.Month ??= DateTimeHelper.Now.Month;
-            model.Year ??= DateTimeHelper.Now.Year;
+            // ========================================================
+            // REGION LIST
+            // Keep BHQ even if there are currently no cases.
+            // ========================================================
 
-            //==========================================
-            // Closed Cases Query
-            //==========================================
+            var regions = new List<string>
+    {
+        "East",
+        "Gujarat",
+        "North",
+        "South",
+        "West",
+        "BHQ"
+    };
 
-            var closedCasesQuery = _context.ClosedCaseUploadDetails
-                .AsNoTracking()
+            // ========================================================
+            // CLOSED CASES
+            //
+            // Source:
+            // dbo.tblClosedCaseUploadDetail
+            //
+            // Date:
+            // ExcelClosedDate
+            //
+            // IMPORTANT:
+            // Duplicate CaseNumber must NOT be counted.
+            // ========================================================
+
+            var closedCasesRaw =
+                await _context.ClosedCaseUploadDetails
+                    .Where(x =>
+                        x.ExcelClosedDate.HasValue &&
+                        x.ExcelClosedDate.Value >= startDate &&
+                        x.ExcelClosedDate.Value < endDate &&
+                        !string.IsNullOrWhiteSpace(x.CaseNumber))
+                    .Select(x => new
+                    {
+                        x.CaseNumber,
+                        x.Region,
+                        ClosedDate = x.ExcelClosedDate.Value
+                    })
+                    .ToListAsync();
+
+            // ========================================================
+            // REMOVE DUPLICATE CLOSED CASE NUMBERS
+            //
+            // One CaseNumber = one closed case
+            // ========================================================
+
+            var closedCases = closedCasesRaw
+                .GroupBy(x =>
+                    x.CaseNumber.Trim().ToUpper())
+                .Select(g => g.First())
+                .ToList();
+
+            // ========================================================
+            // FEEDBACK
+            //
+            // Source:
+            // dbo.trnCustomerFeedback
+            //
+            // Only submitted feedback is considered.
+            //
+            // Feedback is filtered by CreatedDate for the
+            // selected month.
+            // ========================================================
+
+            var feedbackRaw =
+                await _context.CustomerFeedbacks
+                    .Where(x =>
+                        x.CreatedDate >= startDate &&
+                        x.CreatedDate < endDate &&
+                        x.IsSubmitted &&
+                        !string.IsNullOrWhiteSpace(x.CaseNumber))
+                    .Select(x => new
+                    {
+                        x.FeedbackID,
+                        x.CaseNumber,
+                        x.Region,
+                        x.CreatedDate
+                    })
+                    .ToListAsync();
+
+            // ========================================================
+            // REMOVE DUPLICATE FEEDBACK CASE NUMBERS
+            //
+            // One CaseNumber = one feedback
+            // ========================================================
+
+            var feedbacks = feedbackRaw
+                .GroupBy(x =>
+                    x.CaseNumber!.Trim().ToUpper())
+                .Select(g => g.First())
+                .ToList();
+
+            // ========================================================
+            // FEEDBACK CASE NUMBER LOOKUP
+            //
+            // Used to match closed cases with feedback.
+            // ========================================================
+
+            var feedbackCaseNumbers = feedbacks
+                .Select(x =>
+                    x.CaseNumber!.Trim().ToUpper())
+                .ToHashSet();
+
+            // ========================================================
+            // REGION ANALYTICS
+            // ========================================================
+
+            var regionAnalytics =
+                new List<RegionAnalyticsViewModel>();
+
+            foreach (var region in regions)
+            {
+                // ----------------------------------------------------
+                // Closed cases for selected region
+                // ----------------------------------------------------
+
+                var regionClosedCases = closedCases
+                    .Where(x =>
+                        string.Equals(
+                            x.Region?.Trim(),
+                            region,
+                            StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                // ----------------------------------------------------
+                // Unique CaseNumbers for region
+                // ----------------------------------------------------
+
+                var regionClosedCaseNumbers =
+                    regionClosedCases
+                        .Select(x =>
+                            x.CaseNumber.Trim().ToUpper())
+                        .ToHashSet();
+
+                int closedCount =
+                    regionClosedCaseNumbers.Count;
+
+                // ----------------------------------------------------
+                // Feedback Received
+                //
+                // Match using CaseNumber.
+                // Do NOT depend on FeedbackID in
+                // tblClosedCaseUploadDetail.
+                // ----------------------------------------------------
+
+                int feedbackReceivedCount =
+                    regionClosedCaseNumbers
+                        .Count(caseNumber =>
+                            feedbackCaseNumbers.Contains(caseNumber));
+
+                // ----------------------------------------------------
+                // Pending Feedback
+                // ----------------------------------------------------
+
+                int pendingCount =
+                    Math.Max(
+                        closedCount -
+                        feedbackReceivedCount,
+                        0);
+
+                // ----------------------------------------------------
+                // Percentage
+                // ----------------------------------------------------
+
+                decimal percentage = 0m;
+
+                if (closedCount > 0)
+                {
+                    percentage = Math.Round(
+                        ((decimal)feedbackReceivedCount /
+                         closedCount) * 100m,
+                        2,
+                        MidpointRounding.AwayFromZero);
+                }
+
+                // ----------------------------------------------------
+                // Feedback IDs for this region
+                //
+                // Only feedback belonging to closed cases in this
+                // region will be considered for rating.
+                // ----------------------------------------------------
+
+                var regionFeedbackIds = feedbacks
+                    .Where(x =>
+                        !string.IsNullOrWhiteSpace(x.CaseNumber) &&
+                        regionClosedCaseNumbers.Contains(
+                            x.CaseNumber.Trim().ToUpper()))
+                    .Select(x => x.FeedbackID)
+                    .Distinct()
+                    .ToList();
+
+                // ----------------------------------------------------
+                // Average Rating
+                // ----------------------------------------------------
+
+                decimal averageRating = 0m;
+
+                if (regionFeedbackIds.Any())
+                {
+                    var ratings =
+                        await _context.CustomerFeedbackRatings
+                            .Where(x =>
+                                regionFeedbackIds.Contains(x.FeedbackID) &&
+                                x.RatingValue.HasValue &&
+                                !x.IsNotApplicable)
+                            .Select(x => x.RatingValue!.Value)
+                            .ToListAsync();
+
+                    if (ratings.Any())
+                    {
+                        averageRating = Math.Round(
+                            (decimal)ratings.Average(),
+                            2,
+                            MidpointRounding.AwayFromZero);
+                    }
+                }
+
+                // ----------------------------------------------------
+                // Add Region Result
+                // ----------------------------------------------------
+
+                regionAnalytics.Add(
+                    new RegionAnalyticsViewModel
+                    {
+                        Region = region,
+
+                        ClosedCases =
+                            closedCount,
+
+                        FeedbackReceived =
+                            feedbackReceivedCount,
+
+                        PendingFeedback =
+                            pendingCount,
+
+                        Percentage =
+                            percentage,
+
+                        AverageRating =
+                            averageRating
+                    });
+            }
+
+            // ========================================================
+            // TOTAL CLOSED CASES
+            // ========================================================
+
+            int totalClosedCases =
+                closedCases
+                    .Select(x =>
+                        x.CaseNumber.Trim().ToUpper())
+                    .Distinct()
+                    .Count();
+
+            // ========================================================
+            // TOTAL FEEDBACK RECEIVED
+            //
+            // Only feedback whose CaseNumber exists in the
+            // selected month's closed cases is counted.
+            // ========================================================
+
+            var allClosedCaseNumbers =
+                closedCases
+                    .Select(x =>
+                        x.CaseNumber.Trim().ToUpper())
+                    .ToHashSet();
+
+            int totalFeedbackReceived =
+                feedbackCaseNumbers
+                    .Count(caseNumber =>
+                        allClosedCaseNumbers.Contains(caseNumber));
+
+            // ========================================================
+            // TOTAL PENDING FEEDBACK
+            // ========================================================
+
+            int totalPendingFeedback =
+                Math.Max(
+                    totalClosedCases -
+                    totalFeedbackReceived,
+                    0);
+
+            // ========================================================
+            // TOTAL PERCENTAGE
+            // ========================================================
+
+            decimal totalPercentage = 0m;
+
+            if (totalClosedCases > 0)
+            {
+                totalPercentage = Math.Round(
+                    ((decimal)totalFeedbackReceived /
+                     totalClosedCases) * 100m,
+                    2,
+                    MidpointRounding.AwayFromZero);
+            }
+
+            // ========================================================
+            // OVERALL AVERAGE RATING
+            // ========================================================
+
+            var allFeedbackIds = feedbacks
                 .Where(x =>
-                    x.ExcelClosedDate.HasValue &&
-                    x.ExcelClosedDate.Value.Month == model.Month &&
-                    x.ExcelClosedDate.Value.Year == model.Year);
+                    !string.IsNullOrWhiteSpace(x.CaseNumber) &&
+                    allClosedCaseNumbers.Contains(
+                        x.CaseNumber.Trim().ToUpper()))
+                .Select(x => x.FeedbackID)
+                .Distinct()
+                .ToList();
 
+            decimal overallAverageRating = 0m;
 
-            //==========================================
-            // Dashboard Summary
-            //==========================================
-
-            model.TotalClosedCases = await closedCasesQuery
-    .Select(x => x.CaseNumber)
-    .Distinct()
-    .CountAsync();
-
-            model.TotalFeedbackReceived = await
-                 (
-                     from feedback in _context.CustomerFeedbacks.AsNoTracking()
-
-                     join closed in _context.ClosedCaseUploadDetails.AsNoTracking()
-                         on feedback.CaseNumber equals closed.CaseNumber
-
-                     where closed.ExcelClosedDate.HasValue
-                           && closed.ExcelClosedDate.Value.Month == model.Month
-                           && closed.ExcelClosedDate.Value.Year == model.Year
-
-                     select feedback.FeedbackID
-
-                 )
-                 .Distinct()
-                 .CountAsync();
-
-            model.CompletionPercentage =
-                model.TotalClosedCases == 0
-                ? 0
-                : Math.Round(
-                    ((decimal)model.TotalFeedbackReceived /
-                     model.TotalClosedCases) * 100, 2);
-
-            // Overall Average Rating (Selected Month Only)
-            var averageRating = await
-            (
-                from rating in _context.CustomerFeedbackRatings.AsNoTracking()
-
-                join feedback in _context.CustomerFeedbacks.AsNoTracking()
-                    on rating.FeedbackID equals feedback.FeedbackID
-
-                join closed in _context.ClosedCaseUploadDetails.AsNoTracking()
-                    on feedback.CaseNumber equals closed.CaseNumber
-
-                where rating.RatingValue.HasValue
-                      && closed.ExcelClosedDate.HasValue
-                      && closed.ExcelClosedDate.Value.Month == model.Month
-                      && closed.ExcelClosedDate.Value.Year == model.Year
-
-                select (decimal?)rating.RatingValue
-
-            ).AverageAsync();
-
-            model.AverageRating = Math.Round(averageRating ?? 0, 2);
-
-            //==========================================
-            // Region Analytics
-            //==========================================
-            var closedRegionData = await closedCasesQuery
-      .GroupBy(x => string.IsNullOrWhiteSpace(x.Region) ? "Unknown" : x.Region)
-      .Select(g => new
-      {
-          Region = g.Key,
-
-          ClosedCases = g
-              .Select(x => x.CaseNumber)
-              .Distinct()
-              .Count()
-      })
-      .ToListAsync();
-
-            var feedbackRegionData = await
- (
-     from feedback in _context.CustomerFeedbacks.AsNoTracking()
-
-     join closed in _context.ClosedCaseUploadDetails.AsNoTracking()
-         on feedback.CaseNumber equals closed.CaseNumber
-
-     where closed.ExcelClosedDate.HasValue
-           && closed.ExcelClosedDate.Value.Month == model.Month
-           && closed.ExcelClosedDate.Value.Year == model.Year
-
-     group feedback by (string.IsNullOrWhiteSpace(closed.Region) ? "Unknown" : closed.Region) into g
-
-     select new
-     {
-         Region = g.Key,
-
-         FeedbackReceived = g
-             .Select(x => x.FeedbackID)
-             .Distinct()
-             .Count()
-     }
-
- ).ToListAsync();
-
-            var ratingRegionData = await
-
-
-(
-    from rating in _context.CustomerFeedbackRatings.AsNoTracking()
-
-    join feedback in _context.CustomerFeedbacks.AsNoTracking()
-        on rating.FeedbackID equals feedback.FeedbackID
-
-    join closed in _context.ClosedCaseUploadDetails.AsNoTracking()
-        on feedback.CaseNumber equals closed.CaseNumber
-
-    where rating.RatingValue.HasValue
-          && closed.ExcelClosedDate.HasValue
-          && closed.ExcelClosedDate.Value.Month == model.Month
-          && closed.ExcelClosedDate.Value.Year == model.Year
-
-    group rating by (string.IsNullOrWhiteSpace(closed.Region)
-                      ? "Unknown"
-                      : closed.Region) into g
-
-    select new
-    {
-        Region = g.Key,
-
-        AverageRating = g.Average(x => (decimal)x.RatingValue.Value)
-    }
-
-).ToListAsync();
-
-            var closedDictionary = closedRegionData
-    .ToDictionary(x => x.Region);
-
-            var feedbackDictionary = feedbackRegionData
-                .ToDictionary(x => x.Region);
-
-            var ratingDictionary = ratingRegionData
-                .ToDictionary(x => x.Region);
-
-            var allRegions = closedRegionData
-    .Select(x => x.Region)
-    .Union(feedbackRegionData.Select(x => x.Region))
-    .Union(ratingRegionData.Select(x => x.Region))
-    .Distinct()
-    .OrderBy(x => x)
-    .ToList();
-
-            foreach (var region in allRegions)
+            if (allFeedbackIds.Any())
             {
-                closedDictionary.TryGetValue(region, out var closed);
+                var allRatings =
+                    await _context.CustomerFeedbackRatings
+                        .Where(x =>
+                            allFeedbackIds.Contains(x.FeedbackID) &&
+                            x.RatingValue.HasValue &&
+                            !x.IsNotApplicable)
+                        .Select(x => x.RatingValue!.Value)
+                        .ToListAsync();
 
-                feedbackDictionary.TryGetValue(region, out var feedback);
-
-                ratingDictionary.TryGetValue(region, out var rating);
-
-                int closedCases = closed?.ClosedCases ?? 0;
-
-                int feedbackReceived = feedback?.FeedbackReceived ?? 0;
-
-                decimal completion = closedCases == 0
-                    ? 0
-                    : Math.Round(
-                        ((decimal)feedbackReceived / closedCases) * 100, 2);
-
-                model.Regions.Add(new RegionAnalyticsViewModel
+                if (allRatings.Any())
                 {
-                    Region = region,
-
-                    ClosedCases = closedCases,
-
-                    FeedbackReceived = feedbackReceived,
-
-                    CompletionPercentage = completion,
-
-                    AverageRating = (decimal)(rating?.AverageRating ?? 0),
-
-                    Status = GetStatus(completion)
-                });
+                    overallAverageRating = Math.Round(
+                        (decimal)allRatings.Average(),
+                        2,
+                        MidpointRounding.AwayFromZero);
+                }
             }
 
-            var monthlyClosedCases = await _context.ClosedCaseUploadDetails
-     .AsNoTracking()
-     .Where(x =>
-         x.ExcelClosedDate.HasValue &&
-         x.ExcelClosedDate.Value.Year == model.Year)
-     .GroupBy(x => x.ExcelClosedDate.Value.Month)
-     .Select(g => new
-     {
-         Month = g.Key,
+            // ========================================================
+            // MONTHLY TREND
+            // ========================================================
 
-         ClosedCases = g
-             .Select(x => x.CaseNumber)
-             .Distinct()
-             .Count()
-     })
-     .ToListAsync();
+            var monthlyTrend =
+                await GetMonthlyTrendAsync(
+                    month,
+                    year);
 
-            var monthlyFeedback = await
-(
-    from feedback in _context.CustomerFeedbacks.AsNoTracking()
+            // ========================================================
+            // FINAL VIEW MODEL
+            // ========================================================
 
-    join closed in _context.ClosedCaseUploadDetails.AsNoTracking()
-        on feedback.CaseNumber equals closed.CaseNumber
-
-    where closed.ExcelClosedDate.HasValue
-          && closed.ExcelClosedDate.Value.Year == model.Year
-
-    group feedback by closed.ExcelClosedDate.Value.Month into g
-
-    select new
-    {
-        Month = g.Key,
-
-        FeedbackReceived = g
-            .Select(x => x.FeedbackID)
-            .Distinct()
-            .Count()
-    }
-
-).ToListAsync();
-
-
-            var monthlyRatings = await
-(
-    from rating in _context.CustomerFeedbackRatings.AsNoTracking()
-
-    join feedback in _context.CustomerFeedbacks.AsNoTracking()
-        on rating.FeedbackID equals feedback.FeedbackID
-
-    join closed in _context.ClosedCaseUploadDetails.AsNoTracking()
-        on feedback.CaseNumber equals closed.CaseNumber
-
-    where rating.RatingValue.HasValue
-          && closed.ExcelClosedDate.HasValue
-          && closed.ExcelClosedDate.Value.Year == model.Year
-
-    group rating by closed.ExcelClosedDate.Value.Month into g
-
-    select new
-    {
-        Month = g.Key,
-
-        AverageRating = g.Average(x => (decimal)x.RatingValue.Value)
-    }
-
-).ToListAsync();
-
-            //==========================================
-            // Monthly Trend
-            //==========================================
-
-            var monthlyFeedbackDictionary = monthlyFeedback
-                .ToDictionary(x => x.Month);
-
-            var monthlyRatingDictionary = monthlyRatings
-                .ToDictionary(x => x.Month);
-
-            model.MonthlyTrend.Clear();
-
-            foreach (var month in monthlyClosedCases.OrderBy(x => x.Month))
-            {
-                monthlyFeedbackDictionary.TryGetValue(month.Month, out var feedback);
-
-                monthlyRatingDictionary.TryGetValue(month.Month, out var rating);
-
-                decimal completion = month.ClosedCases == 0
-                    ? 0
-                    : Math.Round(
-                        ((decimal)(feedback?.FeedbackReceived ?? 0)
-                        / month.ClosedCases) * 100, 2);
-
-                model.MonthlyTrend.Add(new MonthlyTrendViewModel
-                {
-                    Month = new DateTime(model.Year.Value, month.Month, 1)
-                        .ToString("MMM"),
-
-                    ClosedCases = month.ClosedCases,
-
-                    FeedbackReceived = feedback?.FeedbackReceived ?? 0,
-
-                    CompletionPercentage = completion,
-
-                    AverageRating = Math.Round(
-                        rating?.AverageRating ?? 0,
-                        2)
-                });
-            }
-
-            return model;
-        }
-
-        public async Task<FileResult> ExportToExcelAsync(int? month, int? year)
-        {
-            var model = new ServiceFeedbackAnalyticsViewModel
+            return new ServiceFeedbackAnalyticsViewModel
             {
                 Month = month,
-                Year = year
+
+                Year = year,
+
+                TotalClosedCases =
+                    totalClosedCases,
+
+                TotalFeedbackReceived =
+                    totalFeedbackReceived,
+
+                TotalPendingFeedback =
+                    totalPendingFeedback,
+
+                CompletionPercentage =
+                    totalPercentage,
+
+                AverageRating =
+                    overallAverageRating,
+
+                Regions =
+                    regionAnalytics,
+
+                MonthlyTrend =
+                    monthlyTrend
             };
+        }
 
-            model = await GetAnalyticsAsync(model);
+        // ============================================================
+        // MONTHLY TREND
+        // ============================================================
 
-            using var workbook = new XLWorkbook();
+        private async Task<List<MonthlyTrendViewModel>>
+            GetMonthlyTrendAsync(
+                int selectedMonth,
+                int selectedYear)
+        {
+            var result =
+                new List<MonthlyTrendViewModel>();
 
-            var worksheet = workbook.Worksheets.Add("Analytics");
+            // ========================================================
+            // LAST 12 MONTHS
+            // Includes selected month
+            // ========================================================
 
-            int row = 1;
+            DateTime selectedDate =
+                new DateTime(
+                    selectedYear,
+                    selectedMonth,
+                    1);
 
-            worksheet.Cell(row, 1).Value = "Service Feedback Analytics";
-            worksheet.Range(row, 1, row, 6).Merge();
-            worksheet.Cell(row, 1).Style.Font.Bold = true;
-            worksheet.Cell(row, 1).Style.Font.FontSize = 16;
+            DateTime firstMonth =
+                selectedDate.AddMonths(-11);
 
-            row += 2;
+            DateTime endMonth =
+                selectedDate.AddMonths(1);
 
-            worksheet.Cell(row, 1).Value = "Month";
-            worksheet.Cell(row, 2).Value =
-                new DateTime(model.Year.Value, model.Month.Value, 1)
-                .ToString("MMMM yyyy");
+            // ========================================================
+            // CLOSED CASES
+            //
+            // Source:
+            // tblClosedCaseUploadDetail
+            //
+            // Date:
+            // ExcelClosedDate
+            //
+            // Duplicate CaseNumber will be removed.
+            // ========================================================
 
-            row += 2;
+            var closedCasesRaw =
+                await _context.ClosedCaseUploadDetails
+                    .Where(x =>
+                        x.ExcelClosedDate.HasValue &&
+                        x.ExcelClosedDate.Value >= firstMonth &&
+                        x.ExcelClosedDate.Value < endMonth &&
+                        !string.IsNullOrWhiteSpace(x.CaseNumber))
+                    .Select(x => new
+                    {
+                        x.CaseNumber,
+                        x.Region,
+                        ClosedDate = x.ExcelClosedDate.Value
+                    })
+                    .ToListAsync();
 
-            worksheet.Cell(row, 1).Value = "Total Closed Cases";
-            worksheet.Cell(row, 2).Value = model.TotalClosedCases;
+            // ========================================================
+            // REMOVE DUPLICATE CLOSED CASE NUMBERS
+            // ========================================================
 
-            row++;
+            var closedCases =
+                closedCasesRaw
+                    .GroupBy(x =>
+                        x.CaseNumber.Trim().ToUpper())
+                    .Select(g => g.First())
+                    .ToList();
 
-            worksheet.Cell(row, 1).Value = "Feedback Received";
-            worksheet.Cell(row, 2).Value = model.TotalFeedbackReceived;
+            // ========================================================
+            // FEEDBACK
+            //
+            // Source:
+            // trnCustomerFeedback
+            //
+            // Only submitted feedback is considered.
+            // ========================================================
 
-            row++;
+            var feedbackRaw =
+                await _context.CustomerFeedbacks
+                    .Where(x =>
+                        x.CreatedDate >= firstMonth &&
+                        x.CreatedDate < endMonth &&
+                        x.IsSubmitted &&
+                        !string.IsNullOrWhiteSpace(x.CaseNumber))
+                    .Select(x => new
+                    {
+                        x.FeedbackID,
+                        x.CaseNumber,
+                        x.CreatedDate
+                    })
+                    .ToListAsync();
 
-            worksheet.Cell(row, 1).Value = "Completion %";
-            worksheet.Cell(row, 2).Value = model.CompletionPercentage;
+            // ========================================================
+            // REMOVE DUPLICATE FEEDBACK CASE NUMBERS
+            // ========================================================
 
-            row++;
+            var feedbacks =
+                feedbackRaw
+                    .GroupBy(x =>
+                        x.CaseNumber!.Trim().ToUpper())
+                    .Select(g => g.First())
+                    .ToList();
 
-            worksheet.Cell(row, 1).Value = "Average Rating";
-            worksheet.Cell(row, 2).Value = model.AverageRating;
+            // ========================================================
+            // BUILD FEEDBACK CASE NUMBER LOOKUP
+            // ========================================================
 
-            row += 3;
+            var feedbackCaseNumbers =
+                feedbacks
+                    .Select(x =>
+                        x.CaseNumber!.Trim().ToUpper())
+                    .ToHashSet();
 
-            worksheet.Cell(row, 1).Value = "Region";
-            worksheet.Cell(row, 2).Value = "Closed Cases";
-            worksheet.Cell(row, 3).Value = "Feedback Received";
-            worksheet.Cell(row, 4).Value = "Completion %";
-            worksheet.Cell(row, 5).Value = "Average Rating";
-            worksheet.Cell(row, 6).Value = "Status";
+            // ========================================================
+            // CREATE 12 MONTHS
+            // ========================================================
 
-            worksheet.Range(row, 1, row, 6).Style.Font.Bold = true;
-
-            row++;
-
-            foreach (var item in model.Regions)
+            for (int i = 0; i < 12; i++)
             {
-                worksheet.Cell(row, 1).Value = item.Region;
-                worksheet.Cell(row, 2).Value = item.ClosedCases;
-                worksheet.Cell(row, 3).Value = item.FeedbackReceived;
-                worksheet.Cell(row, 4).Value = item.CompletionPercentage;
-                worksheet.Cell(row, 5).Value = item.AverageRating;
-                worksheet.Cell(row, 6).Value = item.Status;
+                DateTime monthStart =
+                    firstMonth.AddMonths(i);
+
+                DateTime monthEnd =
+                    monthStart.AddMonths(1);
+
+                // ----------------------------------------------------
+                // Closed cases for this month
+                // ----------------------------------------------------
+
+                var monthClosedCases =
+                    closedCases
+                        .Where(x =>
+                            x.ClosedDate >= monthStart &&
+                            x.ClosedDate < monthEnd)
+                        .ToList();
+
+                // ----------------------------------------------------
+                // Unique closed CaseNumbers
+                // ----------------------------------------------------
+
+                var monthClosedCaseNumbers =
+                    monthClosedCases
+                        .Select(x =>
+                            x.CaseNumber.Trim().ToUpper())
+                        .ToHashSet();
+
+                int closedCount =
+                    monthClosedCaseNumbers.Count;
+
+                // ----------------------------------------------------
+                // Feedback received
+                //
+                // Feedback must:
+                // 1. Be created in this month
+                // 2. Match a closed CaseNumber for this month
+                // ----------------------------------------------------
+
+                var monthFeedbacks =
+                    feedbacks
+                        .Where(x =>
+                            x.CreatedDate >= monthStart &&
+                            x.CreatedDate < monthEnd &&
+                            monthClosedCaseNumbers.Contains(
+                                x.CaseNumber!.Trim().ToUpper()))
+                        .ToList();
+
+                int feedbackCount =
+                    monthFeedbacks
+                        .Select(x =>
+                            x.CaseNumber!.Trim().ToUpper())
+                        .Distinct()
+                        .Count();
+
+                // ----------------------------------------------------
+                // Percentage
+                // ----------------------------------------------------
+
+                decimal percentage = 0m;
+
+                if (closedCount > 0)
+                {
+                    percentage =
+                        Math.Round(
+                            ((decimal)feedbackCount /
+                             closedCount) * 100m,
+                            2,
+                            MidpointRounding.AwayFromZero);
+                }
+
+                // ----------------------------------------------------
+                // Average Rating
+                // ----------------------------------------------------
+
+                decimal averageRating = 0m;
+
+                var monthFeedbackIds =
+                    monthFeedbacks
+                        .Select(x => x.FeedbackID)
+                        .Distinct()
+                        .ToList();
+
+                if (monthFeedbackIds.Any())
+                {
+                    var ratings =
+                        await _context.CustomerFeedbackRatings
+                            .Where(x =>
+                                monthFeedbackIds.Contains(
+                                    x.FeedbackID) &&
+                                x.RatingValue.HasValue &&
+                                !x.IsNotApplicable)
+                            .Select(x =>
+                                x.RatingValue!.Value)
+                            .ToListAsync();
+
+                    if (ratings.Any())
+                    {
+                        averageRating =
+                            Math.Round(
+                                (decimal)ratings.Average(),
+                                2,
+                                MidpointRounding.AwayFromZero);
+                    }
+                }
+
+                // ----------------------------------------------------
+                // Add monthly result
+                // ----------------------------------------------------
+
+                result.Add(
+                    new MonthlyTrendViewModel
+                    {
+                        MonthName =
+                            monthStart.ToString("MMM-yyyy"),
+
+                        ClosedCases =
+                            closedCount,
+
+                        FeedbackReceived =
+                            feedbackCount,
+
+                        Percentage =
+                            percentage,
+
+                        AverageRating =
+                            averageRating
+                    });
+            }
+
+            return result;
+        }
+
+        // ============================================================
+        // REGION DETAILS / PENDING FEEDBACK
+        // ============================================================
+
+        public async Task<List<RegionDetailsViewModel>>
+            GetRegionDetailsAsync(
+                string region,
+                int? month,
+                int? year)
+        {
+            // ========================================================
+            // VALIDATE REGION
+            // ========================================================
+
+            if (string.IsNullOrWhiteSpace(region))
+            {
+                return new List<RegionDetailsViewModel>();
+            }
+
+            // ========================================================
+            // DEFAULT MONTH / YEAR
+            // ========================================================
+
+            DateTime now = DateTime.Now;
+
+            int selectedMonth =
+                month ?? now.Month;
+
+            int selectedYear =
+                year ?? now.Year;
+
+            DateTime startDate =
+                new DateTime(
+                    selectedYear,
+                    selectedMonth,
+                    1);
+
+            DateTime endDate =
+                startDate.AddMonths(1);
+
+            // ========================================================
+            // CLOSED CASES
+            //
+            // Source:
+            // tblClosedCaseUploadDetail
+            //
+            // Date:
+            // ExcelClosedDate
+            // ========================================================
+
+            var closedCasesRaw =
+                await _context.ClosedCaseUploadDetails
+                    .Where(x =>
+                        x.ExcelClosedDate.HasValue &&
+                        x.ExcelClosedDate.Value >= startDate &&
+                        x.ExcelClosedDate.Value < endDate &&
+                        !string.IsNullOrWhiteSpace(x.CaseNumber) &&
+                        x.Region != null &&
+                        x.Region.Trim().ToUpper()
+                            == region.Trim().ToUpper())
+                    .Select(x => new
+                    {
+                        x.CaseNumber,
+                        x.Region,
+                        ClosedDate = x.ExcelClosedDate.Value
+                    })
+                    .ToListAsync();
+
+            // ========================================================
+            // REMOVE DUPLICATE CASE NUMBERS
+            //
+            // One CaseNumber = one closed case
+            // ========================================================
+
+            var closedCases =
+                closedCasesRaw
+                    .GroupBy(x =>
+                        x.CaseNumber.Trim().ToUpper())
+                    .Select(g => g.First())
+                    .ToList();
+
+            // ========================================================
+            // IF NO CLOSED CASES
+            // ========================================================
+
+            if (!closedCases.Any())
+            {
+                return new List<RegionDetailsViewModel>();
+            }
+
+            // ========================================================
+            // GET CASE NUMBERS
+            // ========================================================
+
+            var closedCaseNumbers =
+                closedCases
+                    .Select(x =>
+                        x.CaseNumber.Trim().ToUpper())
+                    .ToHashSet();
+
+            // ========================================================
+            // GET SUBMITTED FEEDBACK
+            //
+            // Source:
+            // trnCustomerFeedback
+            //
+            // Only submitted feedback is considered.
+            // ========================================================
+
+            var feedbacksRaw =
+                await _context.CustomerFeedbacks
+                    .Where(x =>
+                        x.IsSubmitted &&
+                        !string.IsNullOrWhiteSpace(x.CaseNumber))
+                    .Select(x => new
+                    {
+                        x.FeedbackID,
+                        x.CaseNumber,
+                        x.YILEngineer
+                    })
+                    .ToListAsync();
+
+            // ========================================================
+            // REMOVE DUPLICATE FEEDBACK CASE NUMBERS
+            // ========================================================
+
+            var feedbacks =
+                feedbacksRaw
+                    .GroupBy(x =>
+                        x.CaseNumber!.Trim().ToUpper())
+                    .Select(g => g.First())
+                    .ToList();
+
+            // ========================================================
+            // FIND PENDING CASES
+            //
+            // Closed CaseNumber that does not exist in submitted
+            // feedback.
+            // ========================================================
+
+            var pendingCases =
+                closedCases
+                    .Where(x =>
+                        !feedbacks.Any(f =>
+                            string.Equals(
+                                f.CaseNumber?.Trim(),
+                                x.CaseNumber.Trim(),
+                                StringComparison.OrdinalIgnoreCase)))
+                    .ToList();
+
+            // ========================================================
+            // GET ENGINEER INFORMATION
+            //
+            // Feedback does not exist for pending cases, so there
+            // may not be an engineer available from trnCustomerFeedback.
+            // Therefore we don't invent engineer information.
+            // ========================================================
+
+            var result =
+                pendingCases
+                    .Select(x => new RegionDetailsViewModel
+                    {
+                        CaseNumber =
+                            x.CaseNumber,
+
+                        YILEngineer =
+                            null,
+
+                        ClosedDate =
+                            x.ClosedDate,
+
+                        FeedbackReceived =
+                            false,
+
+                        Rating =
+                            null
+                    })
+                    .OrderBy(x => x.CaseNumber)
+                    .ToList();
+
+            return result;
+        }
+
+
+        // ============================================================
+        // EXPORT TO EXCEL
+        // ============================================================
+
+        public async Task<FileResult> ExportToExcelAsync(
+            int? month,
+            int? year)
+        {
+            int selectedMonth =
+                month ?? DateTime.Now.Month;
+
+            int selectedYear =
+                year ?? DateTime.Now.Year;
+
+            DateTime startDate =
+                new DateTime(
+                    selectedYear,
+                    selectedMonth,
+                    1);
+
+            DateTime endDate =
+                startDate.AddMonths(1);
+
+            var closedCases =
+                await _context.ClosedCaseUploadDetails
+                    .Where(x =>
+                        x.ExcelClosedDate.HasValue &&
+                        x.ExcelClosedDate.Value >= startDate &&
+                        x.ExcelClosedDate.Value < endDate)
+                    .OrderBy(x => x.Region)
+                    .ThenBy(x => x.CaseNumber)
+                    .ToListAsync();
+
+            var feedbackIds =
+                closedCases
+                    .Where(x => x.FeedbackID.HasValue)
+                    .Select(x => x.FeedbackID!.Value)
+                    .Distinct()
+                    .ToList();
+
+            var feedbackData =
+                await _context.CustomerFeedbacks
+                    .Where(x =>
+                        feedbackIds.Contains(x.FeedbackID))
+                    .Select(x => new
+                    {
+                        x.FeedbackID,
+                        x.YILEngineer
+                    })
+                    .ToListAsync();
+
+            using var workbook =
+                new XLWorkbook();
+
+            var worksheet =
+                workbook.Worksheets.Add(
+                    "Feedback Analytics");
+
+            // --------------------------------------------------------
+            // Header
+            // --------------------------------------------------------
+
+            worksheet.Cell(1, 1)
+                .Value = "Feedback Analytics";
+
+            worksheet.Cell(2, 1)
+                .Value = "Month";
+
+            worksheet.Cell(2, 2)
+                .Value =
+                    startDate.ToString("MMMM yyyy");
+
+            worksheet.Cell(4, 1)
+                .Value = "Case Number";
+
+            worksheet.Cell(4, 2)
+                .Value = "Region";
+
+            worksheet.Cell(4, 3)
+                .Value = "Closed Date";
+
+            worksheet.Cell(4, 4)
+                .Value = "Engineer";
+
+            worksheet.Cell(4, 5)
+                .Value = "Feedback Status";
+
+            worksheet.Cell(4, 6)
+                .Value = "Rating";
+
+            // --------------------------------------------------------
+            // Data
+            // --------------------------------------------------------
+
+            int row = 5;
+
+            foreach (var item in closedCases)
+            {
+                var feedback =
+                    item.FeedbackID.HasValue
+                        ? feedbackData.FirstOrDefault(
+                            x => x.FeedbackID ==
+                                 item.FeedbackID.Value)
+                        : null;
+
+                worksheet.Cell(row, 1)
+                    .Value = item.CaseNumber;
+
+                worksheet.Cell(row, 2)
+                    .Value = item.Region;
+
+                worksheet.Cell(row, 3)
+                    .Value =
+                        item.ExcelClosedDate;
+
+                worksheet.Cell(row, 4)
+                    .Value =
+                        feedback?.YILEngineer ?? "-";
+
+                worksheet.Cell(row, 5)
+                    .Value =
+                        item.FeedbackID.HasValue
+                            ? "Received"
+                            : "Pending";
+
+                worksheet.Cell(row, 6)
+                    .Value = "-";
 
                 row++;
             }
 
-            worksheet.Columns().AdjustToContents();
+            // --------------------------------------------------------
+            // Formatting
+            // --------------------------------------------------------
 
-            using var stream = new MemoryStream();
+            var headerRange =
+                worksheet.Range(
+                    "A4:F4");
+
+            headerRange.Style.Font.Bold =
+                true;
+
+            headerRange.Style.Alignment.Horizontal =
+                XLAlignmentHorizontalValues.Center;
+
+            worksheet.Columns()
+                .AdjustToContents();
+
+            worksheet.Column(3)
+                .Style.DateFormat.Format =
+                "dd-MMM-yyyy";
+
+            // --------------------------------------------------------
+            // Save Excel
+            // --------------------------------------------------------
+
+            using var stream =
+                new MemoryStream();
 
             workbook.SaveAs(stream);
 
             stream.Position = 0;
 
+            string fileName =
+                $"Feedback_Analytics_{startDate:MMM-yyyy}.xlsx";
+
             return new FileContentResult(
                 stream.ToArray(),
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             {
-                FileDownloadName =
-                    $"ServiceFeedbackAnalytics_{DateTimeHelper.Now:yyyyMMddHHmmss}.xlsx"
+                FileDownloadName = fileName
             };
         }
 
-        public async Task<List<RegionDetailsViewModel>> GetRegionDetailsAsync(
-      string region,
-      int? month,
-      int? year)
+
+        // ============================================================
+        // DECIMAL TRUNCATION
+        // ============================================================
+
+        private static decimal TruncateDecimal(
+            decimal value,
+            int decimals)
         {
-            month ??= DateTimeHelper.Now.Month;
-            year ??= DateTimeHelper.Now.Year;
+            decimal factor =
+                (decimal)Math.Pow(
+                    10,
+                    decimals);
 
-            var result = await
-            (
-                from closed in _context.ClosedCaseUploadDetails.AsNoTracking()
-
-                join feedback in _context.CustomerFeedbacks.AsNoTracking()
-                    on closed.CaseNumber equals feedback.CaseNumber
-                    into fb
-
-                from feedback in fb.DefaultIfEmpty()
-
-                join rating in _context.CustomerFeedbackRatings.AsNoTracking()
-                    on feedback.FeedbackID equals rating.FeedbackID
-                    into rt
-
-                from rating in rt.DefaultIfEmpty()
-
-                where closed.ExcelClosedDate.HasValue
-                      && closed.ExcelClosedDate.Value.Month == month
-                      && closed.ExcelClosedDate.Value.Year == year
-                      && closed.Region == region
-
-                orderby closed.ExcelClosedDate descending
-
-                select new RegionDetailsViewModel
-                {
-                    CaseNumber = closed.CaseNumber,
-
-                    CompanyName = feedback != null
-                        ? feedback.CompanyName
-                        : string.Empty,
-
-                    RespondentName = feedback != null
-                        ? feedback.RespondentName
-                        : string.Empty,
-
-                    YILEngineer = feedback != null
-                        ? feedback.YILEngineer
-                        : string.Empty,
-
-                    ClosedDate = closed.ExcelClosedDate,
-
-                    FeedbackReceived = feedback != null,
-
-                    Rating = rating != null
-                        ? rating.RatingValue
-                        : null
-                }
-
-            ).ToListAsync();
-
-            return result;
+            return Math.Truncate(
+                value * factor) / factor;
         }
-        private string GetStatus(decimal completionPercentage)
-        {
-            if (completionPercentage >= 100)
-                return "Outstanding";
-
-            if (completionPercentage >= 95)
-                return "Excellent";
-
-            if (completionPercentage >= 90)
-                return "Good";
-
-            return "Needs Attention";
-        }
-
     }
 }

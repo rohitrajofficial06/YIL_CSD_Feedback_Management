@@ -17,6 +17,9 @@ namespace YIL_CSD_Feedback_Management.Models
         [StringLength(50)]
         public string CaseNumber { get; set; } = string.Empty;
 
+        [StringLength(300)]
+        public string? CustomerName { get; set; }
+
         [StringLength(50)]
         public string Region { get; set; } = string.Empty;
 

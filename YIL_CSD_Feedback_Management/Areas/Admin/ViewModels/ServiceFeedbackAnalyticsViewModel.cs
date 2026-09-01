@@ -6,9 +6,13 @@
 
         public int? Year { get; set; }
 
+        public string MonthName { get; set; } = string.Empty;
+
         public int TotalClosedCases { get; set; }
 
         public int TotalFeedbackReceived { get; set; }
+
+        public int TotalPendingFeedback { get; set; }
 
         public decimal CompletionPercentage { get; set; }
 
@@ -18,6 +22,6 @@
             = new();
 
         public List<MonthlyTrendViewModel> MonthlyTrend { get; set; }
-    = new();
+            = new();
     }
 }

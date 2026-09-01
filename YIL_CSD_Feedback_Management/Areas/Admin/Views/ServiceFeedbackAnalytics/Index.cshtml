@@ -1,84 +1,155 @@
 ﻿@model YIL_CSD_Feedback_Management.Areas.Admin.ViewModels.ServiceFeedbackAnalyticsViewModel
 
 @{
-    ViewData["Title"] = "Service Feedback Analytics";
+    ViewData["Title"] = "Feedback Analytics";
+
+    int selectedMonth = Model.Month ?? DateTime.Now.Month;
+    int selectedYear = Model.Year ?? DateTime.Now.Year;
+
+    string[] monthNames =
+    {
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+    };
 }
 
 <div class="container-fluid">
 
-    <div class="row mb-3">
+    <!-- ========================================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ========================================================= -->
 
-        <div class="col-md-12">
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-            <h2>
-                <i class="bi bi-bar-chart-line-fill text-primary"></i>
-
-                Service Feedback Analytics
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-graph-up-arrow text-primary me-2"></i>
+                Feedback Analytics
             </h2>
 
-            <hr />
+            <p class="text-muted mb-0">
+                Customer Feedback vs Closed Cases Analysis
+            </p>
+        </div>
 
+        <div>
+            <a asp-action="Export"
+               asp-route-month="@selectedMonth"
+               asp-route-year="@selectedYear"
+               class="btn btn-success">
+
+                <i class="bi bi-file-earmark-excel me-1"></i>
+                Export Excel
+
+            </a>
         </div>
 
     </div>
-    <div class="card shadow-sm mb-3">
+
+
+    <!-- ========================================================= -->
+    <!-- MONTH / YEAR FILTER -->
+    <!-- ========================================================= -->
+
+    <div class="card shadow-sm mb-4">
 
         <div class="card-body">
 
-            <form method="get">
+            <form asp-area="Admin"
+                  asp-controller="ServiceFeedbackAnalytics"
+                  asp-action="Index"
+                  method="get">
 
-                <div class="row">
+                <div class="row align-items-end">
 
-                    <div class="col-md-3">
+                    <!-- MONTH -->
 
-                        <label>Month</label>
+                    <div class="col-md-4">
 
-                        <select asp-for="Month"
+                        <label class="form-label fw-semibold">
+                            Select Month
+                        </label>
+
+                        <select name="month"
                                 class="form-select">
 
                             @for (int i = 1; i <= 12; i++)
                             {
-                                <option value="@i">
-
-                                    @(new DateTime(2000, i, 1).ToString("MMMM"))
-
-                                </option>
+                                if (i == selectedMonth)
+                                {
+                                    <option value="@i" selected>
+                                        @monthNames[i - 1]
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@i">
+                                        @monthNames[i - 1]
+                                    </option>
+                                }
                             }
 
                         </select>
 
                     </div>
 
-                    <div class="col-md-2">
 
-                        <label>Year</label>
+                    <!-- YEAR -->
 
-                        <input asp-for="Year"
-                               type="number"
-                               min="2024"
-                               max="2050"
-                               class="form-control" />
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Select Year
+                        </label>
+
+                        <select name="year"
+                                class="form-select">
+
+                            @for (
+                                                        int y = DateTime.Now.Year - 3;
+                                                        y <= DateTime.Now.Year + 1;
+                                                        y++)
+                            {
+                                if (y == selectedYear)
+                                {
+                                    <option value="@y" selected>
+                                        @y
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@y">
+                                        @y
+                                    </option>
+                                }
+                            }
+
+                        </select>
 
                     </div>
 
-                    <div class="col-md-2 d-flex align-items-end">
 
-                        <button type="submit" class="btn btn-primary">
+                    <!-- BUTTON -->
 
-                            <i class="bi bi-search"></i>
+                    <div class="col-md-4">
 
-                            Search
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+
+                            <i class="bi bi-search me-1"></i>
+                            Generate Analytics
 
                         </button>
-
-                        <a asp-action="ExportToExcel"
-                           asp-route-month="@Model.Month"
-                           asp-route-year="@Model.Year"
-                           class="btn btn-success ms-2">
-
-                            <i class="bi bi-file-earmark-excel"></i>
-                            Export Excel
-                        </a>
 
                     </div>
 
@@ -90,13 +161,35 @@
 
     </div>
 
+
+    <!-- ========================================================= -->
+    <!-- SELECTED PERIOD -->
+    <!-- ========================================================= -->
+
+    <div class="alert alert-primary shadow-sm">
+
+        <i class="bi bi-calendar3 me-2"></i>
+
+        Showing Feedback Analytics for
+
+        <strong>
+            @monthNames[selectedMonth - 1] @selectedYear
+        </strong>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- KPI CARDS -->
+    <!-- ========================================================= -->
+
     <div class="row mb-4">
 
-        <!-- Closed Cases -->
+        <!-- TOTAL CLOSED CASES -->
 
-        <div class="col-lg-3 col-md-6">
+        <div class="col-xl-3 col-md-6 mb-3">
 
-            <div class="card border-0 shadow-sm">
+            <div class="card border-primary shadow-sm h-100">
 
                 <div class="card-body">
 
@@ -104,8 +197,8 @@
 
                         <div>
 
-                            <h6 class="text-muted mb-2">
-                                Closed Cases
+                            <h6 class="text-muted">
+                                Total Closed Cases
                             </h6>
 
                             <h2 class="fw-bold text-primary">
@@ -114,11 +207,8 @@
 
                         </div>
 
-                        <div class="align-self-center">
-
-                            <i class="bi bi-folder-check"
-                               style="font-size:40px;color:#0d6efd;"></i>
-
+                        <div class="fs-1 text-primary opacity-50">
+                            <i class="bi bi-folder-check"></i>
                         </div>
 
                     </div>
@@ -129,11 +219,12 @@
 
         </div>
 
-        <!-- Feedback Received -->
 
-        <div class="col-lg-3 col-md-6">
+        <!-- FEEDBACK RECEIVED -->
 
-            <div class="card border-0 shadow-sm">
+        <div class="col-xl-3 col-md-6 mb-3">
+
+            <div class="card border-success shadow-sm h-100">
 
                 <div class="card-body">
 
@@ -141,7 +232,7 @@
 
                         <div>
 
-                            <h6 class="text-muted mb-2">
+                            <h6 class="text-muted">
                                 Feedback Received
                             </h6>
 
@@ -151,11 +242,8 @@
 
                         </div>
 
-                        <div class="align-self-center">
-
-                            <i class="bi bi-chat-left-text"
-                               style="font-size:40px;color:#198754;"></i>
-
+                        <div class="fs-1 text-success opacity-50">
+                            <i class="bi bi-chat-square-check"></i>
                         </div>
 
                     </div>
@@ -166,11 +254,12 @@
 
         </div>
 
-        <!-- Completion -->
 
-        <div class="col-lg-3 col-md-6">
+        <!-- PENDING FEEDBACK -->
 
-            <div class="card border-0 shadow-sm">
+        <div class="col-xl-3 col-md-6 mb-3">
+
+            <div class="card border-warning shadow-sm h-100">
 
                 <div class="card-body">
 
@@ -178,58 +267,53 @@
 
                         <div>
 
-                            <h6 class="text-muted mb-2">
-                                Completion %
+                            <h6 class="text-muted">
+                                Pending Feedback
                             </h6>
 
                             <h2 class="fw-bold text-warning">
+                                @Model.TotalPendingFeedback
+                            </h2>
+
+                        </div>
+
+                        <div class="fs-1 text-warning opacity-50">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PERCENTAGE -->
+
+        <div class="col-xl-3 col-md-6 mb-3">
+
+            <div class="card border-info shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <h6 class="text-muted">
+                                Feedback Percentage
+                            </h6>
+
+                            <h2 class="fw-bold text-info">
                                 @Model.CompletionPercentage.ToString("0.00")%
                             </h2>
 
                         </div>
 
-                        <div class="align-self-center">
-
-                            <i class="bi bi-graph-up-arrow"
-                               style="font-size:40px;color:#ffc107;"></i>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Average Rating -->
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <h6 class="text-muted mb-2">
-                                Average Rating
-                            </h6>
-
-                            <h2 class="fw-bold text-danger">
-                                @Model.AverageRating.ToString("0.00") ★
-                            </h2>
-
-                        </div>
-
-                        <div class="align-self-center">
-
-                            <i class="bi bi-star-fill"
-                               style="font-size:40px;color:#dc3545;"></i>
-
+                        <div class="fs-1 text-info opacity-50">
+                            <i class="bi bi-percent"></i>
                         </div>
 
                     </div>
@@ -242,196 +326,288 @@
 
     </div>
 
-    <div class="row mb-4">
 
-        <div class="col-md-6">
-
-            <div class="card shadow-sm">
-
-                <div class="card-header bg-success text-white">
-
-                    <h6 class="mb-0">
-
-                        Completion % by Region
-
-                    </h6>
-
-                </div>
-
-                <div class="card-body">
-
-                    <canvas id="completionChart"
-                            height="250"></canvas>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-6">
-
-            <div class="card shadow-sm">
-
-                <div class="card-header bg-danger text-white">
-
-                    <h6 class="mb-0">
-
-                        Average Rating by Region
-
-                    </h6>
-
-                </div>
-
-                <div class="card-body">
-
-                    <canvas id="ratingChart"
-                            height="250"></canvas>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
+    <!-- ========================================================= -->
+    <!-- REGION ANALYTICS TABLE -->
+    <!-- ========================================================= -->
 
     <div class="card shadow-sm mb-4">
-
-        <div class="card-header bg-info text-white">
-
-            <h5 class="mb-0">
-
-                <i class="bi bi-graph-up"></i>
-
-                Monthly Trend
-
-            </h5>
-
-        </div>
-
-        <div class="card-body">
-
-            <canvas id="monthlyTrendChart"
-                    height="100"></canvas>
-
-        </div>
-
-    </div>
-
-    <div class="card shadow-sm">
 
         <div class="card-header bg-primary text-white">
 
             <h5 class="mb-0">
-                <i class="bi bi-table"></i>
 
-                Regional Performance
+                <i class="bi bi-table me-2"></i>
+
+                Region Wise Feedback Analytics
+
             </h5>
 
         </div>
 
-        <div class="card-body">
+
+        <div class="card-body p-0">
 
             <div class="table-responsive">
 
-                <table class="table table-bordered table-hover align-middle">
+                <table class="table table-bordered table-hover align-middle mb-0">
 
                     <thead class="table-light">
 
                         <tr>
 
-                            <th>Region</th>
+                            <th style="width:60px;">
+                                S.No.
+                            </th>
 
-                            <th class="text-center">Closed Cases</th>
+                            <th>
+                                Region
+                            </th>
 
-                            <th class="text-center">Feedback Received</th>
+                            <th class="text-center">
+                                Closed Cases
+                            </th>
 
-                            <th class="text-center">Completion %</th>
+                            <th class="text-center">
+                                Feedback Received
+                            </th>
 
-                            <th class="text-center">Average Rating</th>
+                            <th class="text-center">
+                                Pending Feedback
+                            </th>
 
-                            <th class="text-center">Status</th>
+                            <th class="text-center">
+                                Percentage
+                            </th>
+
+                            <th class="text-center">
+                                Average Rating
+                            </th>
 
                         </tr>
 
                     </thead>
 
+
                     <tbody>
 
-                        @if (Model.Regions.Any())
+                        @if (Model.Regions != null &&
+                                                Model.Regions.Any())
                         {
-                        @foreach (var item in Model.Regions)
-                        {
-                            <tr>
+                            int serialNo = 1;
+
+                            foreach (var item in Model.Regions)
+                            {
+                                <tr>
+
+                                    <!-- SERIAL NUMBER -->
+
+                                    <td>
+                                        @serialNo
+                                    </td>
+
+
+                                    <!-- REGION -->
 
                                     <td>
 
-                                        <a asp-action="RegionDetails"
-                                           asp-route-region="@item.Region"
-                                           asp-route-month="@Model.Month"
-                                           asp-route-year="@Model.Year">
-
+                                        <strong>
                                             @item.Region
-
-                                        </a>
+                                        </strong>
 
                                     </td>
 
-                                <td class="text-center">
-                                    @item.ClosedCases
-                                </td>
 
-                                <td class="text-center">
-                                    @item.FeedbackReceived
-                                </td>
+                                    <!-- CLOSED CASES -->
 
-                                <td class="text-center">
-                                    @item.CompletionPercentage.ToString("0.00")%
-                                </td>
+                                    <td class="text-center">
 
-                                <td class="text-center">
-                                    @item.AverageRating.ToString("0.00") ★
-                                </td>
-
-                                <td class="text-center">
-
-                                    @if (item.Status == "Outstanding")
-                                    {
-                                        <span class="badge bg-success">
-                                            Outstanding
+                                        <span class="badge bg-primary fs-6">
+                                            @item.ClosedCases
                                         </span>
-                                    }
-                                    else if (item.Status == "Excellent")
-                                    {
-                                        <span class="badge bg-primary">
-                                            Excellent
+
+                                    </td>
+
+
+                                    <!-- FEEDBACK RECEIVED -->
+
+                                    <td class="text-center">
+
+                                        <span class="badge bg-success fs-6">
+                                            @item.FeedbackReceived
                                         </span>
-                                    }
-                                    else if (item.Status == "Good")
-                                    {
-                                        <span class="badge bg-warning text-dark">
-                                            Good
+
+                                    </td>
+
+
+                                    <!-- PENDING FEEDBACK -->
+
+                                    <td class="text-center">
+
+                                        @if (item.PendingFeedback > 0)
+                                        {
+                                            <a asp-area="Admin"
+                                               asp-controller="ServiceFeedbackAnalytics"
+                                               asp-action="RegionDetails"
+                                               asp-route-region="@item.Region"
+                                               asp-route-month="@selectedMonth"
+                                               asp-route-year="@selectedYear"
+                                               class="btn btn-sm btn-warning">
+
+                                                <i class="bi bi-hourglass-split me-1"></i>
+
+                                                @item.PendingFeedback
+
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success fs-6">
+                                                0
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- PERCENTAGE -->
+
+                                    <td class="text-center">
+
+                                        @{
+                                            string percentageClass =
+                                            item.Percentage >= 95
+                                            ? "bg-success"
+                                            : item.Percentage >= 80
+                                            ? "bg-warning text-dark"
+                                            : "bg-danger";
+                                        }
+
+                                        <span class="badge @percentageClass fs-6">
+
+                                            @item.Percentage.ToString("0.00")%
+
                                         </span>
+
+                                    </td>
+
+
+                                    <!-- AVERAGE RATING -->
+
+                                    <td class="text-center">
+
+                                        @if (item.AverageRating > 0)
+                                        {
+                                            <span class="fw-bold">
+
+                                                @item.AverageRating.ToString("0.00")
+
+                                                <i class="bi bi-star-fill text-warning"></i>
+
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                -
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+
+                                serialNo++;
+                            }
+
+
+                            <!-- ================================================= -->
+                            <!-- TOTAL ROW -->
+                            <!-- ================================================= -->
+
+                            <tr class="table-primary fw-bold">
+
+                                <td colspan="2"
+                                    class="text-end">
+
+                                    TOTAL
+
+                                </td>
+
+
+                                <!-- TOTAL CLOSED -->
+
+                                <td class="text-center">
+
+                                    @Model.TotalClosedCases
+
+                                </td>
+
+
+                                <!-- TOTAL FEEDBACK -->
+
+                                <td class="text-center">
+
+                                    @Model.TotalFeedbackReceived
+
+                                </td>
+
+
+                                <!-- TOTAL PENDING -->
+
+                                <td class="text-center">
+
+                                    @Model.TotalPendingFeedback
+
+                                </td>
+
+
+                                <!-- TOTAL PERCENTAGE -->
+
+                                <td class="text-center">
+
+                                    @Model.CompletionPercentage.ToString("0.00")%
+
+                                </td>
+
+
+                                <!-- TOTAL RATING -->
+
+                                <td class="text-center">
+
+                                    @if (Model.AverageRating > 0)
+                                    {
+                                        @Model.AverageRating.ToString("0.00")
+
+                                        <i class="bi bi-star-fill text-warning"></i>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-danger">
-                                            Needs Attention
+                                        <span class="text-muted">
+                                            -
                                         </span>
                                     }
 
                                 </td>
 
                             </tr>
-                        }
+
                         }
                         else
                         {
                             <tr>
-                                <td colspan="6" class="text-center text-muted">
-                                    No records found.
+
+                                <td colspan="7"
+                                    class="text-center py-5">
+
+                                    <i class="bi bi-inbox display-4 text-muted"></i>
+
+                                    <p class="text-muted mt-3 mb-0">
+                                        No analytics data found for the selected month.
+                                    </p>
+
                                 </td>
+
                             </tr>
                         }
 
@@ -445,193 +621,373 @@
 
     </div>
 
+
+    <!-- ========================================================= -->
+    <!-- CHARTS -->
+    <!-- ========================================================= -->
+
+    <div class="row mb-4">
+
+        <!-- ===================================================== -->
+        <!-- BAR CHART -->
+        <!-- ===================================================== -->
+
+        <div class="col-lg-8 mb-4">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-header">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-bar-chart-fill text-primary me-2"></i>
+
+                        Region Wise Comparison
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div style="height:350px;">
+
+                        <canvas id="regionBarChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- PIE CHART -->
+        <!-- ===================================================== -->
+
+        <div class="col-lg-4 mb-4">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-header">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-pie-chart-fill text-success me-2"></i>
+
+                        Feedback Status
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div style="height:350px;">
+
+                        <canvas id="feedbackPieChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- MONTHLY TREND -->
+    <!-- ========================================================= -->
+
+    <div class="card shadow-sm mb-5">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-graph-up text-info me-2"></i>
+
+                Monthly Feedback Trend
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div style="height:350px;">
+
+                <canvas id="monthlyTrendChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
-@section Scripts
-{
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
+<!-- ============================================================= -->
+<!-- CHART.JS -->
+<!-- ============================================================= -->
 
-        // Region Labels
-        var regions = [
-            @Html.Raw(string.Join(",", Model.Regions.Select(x => $"'{x.Region}'")))
-        ];
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        // Completion %
-        var completion = [
-            @Html.Raw(string.Join(",", Model.Regions.Select(x => x.CompletionPercentage)))
-        ];
 
-        // Average Rating
-        var ratings = [
-            @Html.Raw(string.Join(",", Model.Regions.Select(x => x.AverageRating)))
-        ];
+<script>
 
-    </script>
+    // =============================================================
+    // REGION DATA
+    // =============================================================
 
-    <script>
+    const regionLabels = [
+        @Html.Raw(
+            string.Join(
+                    ",",
+                    Model.Regions.Select(x =>
+                            $"'{x.Region.Replace("'", "\\'")}'")
+            )
+                )
+    ];
 
-const completionChart = new Chart(
-    document.getElementById('completionChart'),
-    {
-        type: 'bar',
+    const closedCasesData = [
+        @string.Join(
+                        ",",
+                        Model.Regions.Select(x => x.ClosedCases)
+                )
+    ];
 
-        data:
+    const feedbackReceivedData = [
+        @string.Join(
+                        ",",
+                        Model.Regions.Select(x => x.FeedbackReceived)
+                )
+    ];
+
+    const pendingFeedbackData = [
+        @string.Join(
+                        ",",
+                        Model.Regions.Select(x => x.PendingFeedback)
+                )
+    ];
+
+
+    // =============================================================
+    // REGION BAR CHART
+    // =============================================================
+
+    new Chart(
+        document.getElementById('regionBarChart'),
         {
-            labels: regions,
+            type: 'bar',
 
-            datasets:
-            [
-                {
-                    label: 'Completion %',
-
-                    data: completion,
-
-                    backgroundColor: [
-                        '#0d6efd',
-                        '#198754',
-                        '#ffc107',
-                        '#dc3545',
-                        '#6f42c1',
-                        '#20c997'
-                    ],
-
-                    borderWidth: 1
-                }
-            ]
-        },
-
-        options:
-        {
-            responsive: true,
-
-            plugins:
+            data:
             {
-                legend:
-                {
-                    display: false
-                }
+                labels: regionLabels,
+
+                datasets:
+                [
+                    {
+                        label: 'Closed Cases',
+                        data: closedCasesData
+                    },
+
+                    {
+                        label: 'Feedback Received',
+                        data: feedbackReceivedData
+                    },
+
+                    {
+                        label: 'Pending Feedback',
+                        data: pendingFeedbackData
+                    }
+                ]
             },
 
-            scales:
+            options:
             {
-                y:
-                {
-                    beginAtZero: true,
+                responsive: true,
 
-                    max: 100
+                maintainAspectRatio: false,
+
+                plugins:
+                {
+                    legend:
+                    {
+                        position: 'bottom'
+                    }
+                },
+
+                scales:
+                {
+                    y:
+                    {
+                        beginAtZero: true,
+
+                        ticks:
+                        {
+                            precision: 0
+                        }
+                    }
                 }
             }
         }
-    });
+    );
 
-</script>
 
-    <script>
+    // =============================================================
+    // FEEDBACK STATUS PIE / DOUGHNUT CHART
+    // =============================================================
 
-        const ratingChart = new Chart(
-            document.getElementById('ratingChart'),
+    new Chart(
+        document.getElementById('feedbackPieChart'),
+        {
+            type: 'doughnut',
+
+            data:
             {
-                type: 'bar',
+                labels:
+                [
+                    'Feedback Received',
+                    'Pending Feedback'
+                ],
 
-                data:
-                {
-                    labels: regions,
-
-                    datasets:
-                    [
-                        {
-                            label: 'Average Rating',
-
-                            data: ratings,
-
-                            backgroundColor: '#198754',
-
-                            borderWidth: 1
-                        }
-                    ]
-                },
-
-                options:
-                {
-                    responsive: true,
-
-                    plugins:
+                datasets:
+                [
                     {
-                        legend:
-                        {
-                            display: false
-                        }
+                        data:
+                        [
+                            @Model.TotalFeedbackReceived,
+                            @Model.TotalPendingFeedback
+                        ]
+                    }
+                ]
+            },
+
+            options:
+            {
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins:
+                {
+                    legend:
+                    {
+                        position: 'bottom'
+                    }
+                }
+            }
+        }
+    );
+
+
+    // =============================================================
+    // MONTHLY TREND DATA
+    // =============================================================
+
+    const monthlyLabels = [
+        @Html.Raw(
+                        string.Join(
+                                ",",
+                                Model.MonthlyTrend.Select(x =>
+                                        $"'{x.MonthName.Replace("'", "\\'")}'")
+                        )
+                )
+    ];
+
+    const monthlyClosedCases = [
+        @string.Join(
+                        ",",
+                        Model.MonthlyTrend.Select(
+                                x => x.ClosedCases)
+                )
+    ];
+
+    const monthlyFeedbackReceived = [
+        @string.Join(
+                        ",",
+                        Model.MonthlyTrend.Select(
+                                x => x.FeedbackReceived)
+                )
+    ];
+
+    const monthlyPercentage = [
+        @string.Join(
+                        ",",
+                        Model.MonthlyTrend.Select(
+                                x => x.Percentage)
+                )
+    ];
+
+
+    // =============================================================
+    // MONTHLY TREND CHART
+    // =============================================================
+
+    new Chart(
+        document.getElementById('monthlyTrendChart'),
+        {
+            type: 'line',
+
+            data:
+            {
+                labels: monthlyLabels,
+
+                datasets:
+                [
+                    {
+                        label: 'Closed Cases',
+
+                        data: monthlyClosedCases,
+
+                        tension: 0.3
                     },
 
-                    scales:
                     {
-                        y:
-                        {
-                            beginAtZero: true,
+                        label: 'Feedback Received',
 
-                            max: 5
-                        }
+                        data: monthlyFeedbackReceived,
+
+                        tension: 0.3
                     }
-                }
-            });
+                ]
+            },
 
-    </script>
-
-    <script>
-
-        var months = [
-            @Html.Raw(string.Join(",", Model.MonthlyTrend.Select(x => $"'{x.Month}'")))
-        ];
-
-        var trend = [
-            @Html.Raw(string.Join(",", Model.MonthlyTrend.Select(x => x.CompletionPercentage)))
-        ];
-
-        new Chart(
-            document.getElementById('monthlyTrendChart'),
+            options:
             {
-                type: 'line',
+                responsive: true,
 
-                data:
+                maintainAspectRatio: false,
+
+                plugins:
                 {
-                    labels: months,
-
-                    datasets:
-                    [
-                        {
-                            label: 'Completion %',
-
-                            data: trend,
-
-                            borderColor: '#0dcaf0',
-
-                            backgroundColor: 'rgba(13,202,240,0.20)',
-
-                            fill: true,
-
-                            tension: 0.3
-                        }
-                    ]
+                    legend:
+                    {
+                        position: 'bottom'
+                    }
                 },
 
-                options:
+                scales:
                 {
-                    responsive: true,
-
-                    scales:
+                    y:
                     {
-                        y:
-                        {
-                            beginAtZero: true,
+                        beginAtZero: true,
 
-                            max: 100
+                        ticks:
+                        {
+                            precision: 0
                         }
                     }
                 }
-            });
+            }
+        }
+    );
 
-    </script>
-
-}
+</script>

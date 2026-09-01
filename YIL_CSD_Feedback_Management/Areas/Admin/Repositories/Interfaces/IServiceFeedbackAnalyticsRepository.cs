@@ -6,14 +6,16 @@ namespace YIL_CSD_Feedback_Management.Areas.Admin.Repositories.Interfaces
     public interface IServiceFeedbackAnalyticsRepository
     {
         Task<ServiceFeedbackAnalyticsViewModel> GetAnalyticsAsync(
-            ServiceFeedbackAnalyticsViewModel model);
+            int month,
+            int year);
 
-        Task<FileResult> ExportToExcelAsync(int? month, int? year);
+        Task<FileResult> ExportToExcelAsync(
+            int? month,
+            int? year);
 
         Task<List<RegionDetailsViewModel>> GetRegionDetailsAsync(
-    string region,
-    int? month,
-    int? year);
-
+            string region,
+            int? month,
+            int? year);
     }
 }
